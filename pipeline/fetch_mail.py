@@ -25,7 +25,11 @@ if os.environ.get("EWS_NO_VERIFY", "0") == "1":
     BaseProtocol.HTTP_ADAPTER_CLS = NoVerifyHTTPAdapter
 
 creds = Credentials(username=USER, password=PASS)
-config = Configuration(server=SERVER, credentials=creds, auth_type=NTLM)
+URL = os.environ.get("EWS_URL", "").strip()   # полный адрес EWS, если он не на EWS_SERVER (напр. https://autodiscover.kmtf.kmg.kz/EWS/Exchange.asmx)
+if URL:
+    config = Configuration(service_endpoint=URL, credentials=creds, auth_type=NTLM)
+else:
+    config = Configuration(server=SERVER, credentials=creds, auth_type=NTLM)
 acc = Account(primary_smtp_address=EMAIL, config=config, autodiscover=False, access_type=DELEGATE)
 tz = EWSTimeZone("Asia/Aqtau")
 

@@ -43,9 +43,9 @@ if last and last.tzinfo is None: last = last.replace(tzinfo=tz)
 if last and last > since: since = last
 
 def ews_dt(d):
-    if isinstance(d, EWSDateTime): return d
     if d.tzinfo is None: d = d.replace(tzinfo=tz)
-    return EWSDateTime.from_datetime(d)
+    d = datetime.datetime(d.year, d.month, d.day, d.hour, d.minute, d.second, tzinfo=d.tzinfo).astimezone(tz)
+    return EWSDateTime.from_datetime(datetime.datetime(d.year, d.month, d.day, d.hour, d.minute, d.second, tzinfo=tz))
 
 folders = [acc.inbox]
 try:

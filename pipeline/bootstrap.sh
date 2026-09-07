@@ -26,8 +26,8 @@ fi
 chmod 600 config.env
 echo "== 5/6 проверка почты"
 if ! python fetch_mail.py; then
-  echo "!!! Почта не ответила. Запусти ещё раз: curl -sL https://raw.githubusercontent.com/anu-rich/dislokacia/main/pipeline/bootstrap.sh | bash  — и введи пароль заново."
-  rm -f config.env; exit 1
+  echo "!!! Почта не ответила. Пароль сохранён; чтобы ввести заново: rm /root/dislokacia/pipeline/config.env"
+  exit 1
 fi
 echo "== 6/6 ключ для GitHub и расписание"
 [ -f ~/.ssh/id_ed25519 ] || ssh-keygen -q -t ed25519 -N "" -f ~/.ssh/id_ed25519 -C "dislokacia-vps"

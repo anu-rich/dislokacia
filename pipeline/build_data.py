@@ -101,12 +101,19 @@ for cand in [os.environ.get("WEATHER_JSON", ""), os.path.join(os.path.dirname(os
 kmtf_t = [canon(r["Суда"]) for r in snap["tanker_supplies"]]
 kmtf_b = [canon(r["Суда"]) for r in snap["bulk_supplies"]]
 # суда КМТФ вне таблиц запасов: афрамаксы в открытых морях и буксиры в бербоут-чартере
+# Третьи судовладельцы (не КМТФ и не АСКО). Источники: mobilexkz.com; fleetphoto.ru / vesselfinder (RST27, экс «ВФ Танкер-20/21», под флаг РК с 2023).
+OWNERS = {
+    "Казахстан": {"owner": "Mobilex Energy Group", "note": "танкер 12,4 тыс. т, 2005 г.; причал №11 в Актау"},
+    "Абай":      {"owner": "Mobilex Energy Group", "note": "танкер 12,8 тыс. т, 2005 г."},
+    "Караганда": {"owner": "казахстанский судовладелец (не установлен)", "note": "RST27, 7,0 тыс. т, 2013 г., экс «ВФ Танкер-21», флаг РК с 01.2023"},
+    "Костанай":  {"owner": "казахстанский судовладелец (не установлен)", "note": "RST27, 7,0 тыс. т, 2013 г., экс «ВФ Танкер-20», флаг РК с 02.2023"},
+}
 KMTF_EXTRA = {"aframax": ["Алтай", "Алатау"], "tugs": ["TUG Talas", "TUG Emba", "TUG Irgiz"], "containers": ["GC Barys", "GC Berkut", "GC Sunkar"]}
 # суда АСКО (Азербайджанское Каспийское морское пароходство) — для разбивки объёмов по перевозчикам
 ASCO = ["Пр.Гейдар Алиев", "Джульфа", "Джаббар Гашимов", "Д.Мамедгулузаде", "Шуша", "Гахраман Халилбейли", "Ходжаванд", "Азербайджан", "Баку", "Нариман Нариманов", "Лачин", "Нафталан", "Ш.И.Хатай", "Бабек", "Зенгезур", "Куруш", "Кяльбаджар", "Агдам", "Физули",
         "Расул Рза", "Натаван", "Гусейн Джавид", "Генерал Асланов", "Шаир Вагиф", "Шаир Сабир", "Махмут Рагимов", "Теймур Ахмедов", "Узейр Гаджибейли", "Гарадаг", "Гафур Мамедов", "Академик Зарифа Алиева", "Мерджан", "Проф. Азиз Алиев", "Профессор Азиз Алиев", "Ак.Хошбахт Юсифзаде", "Карабах", "Балакен", "Зарифа Алиева", "Маэстро Ниязи", "Ростов Великий"]
 
-out = {"generated": __import__("datetime").date.today().isoformat(), "snapshot": snap, "weather": wx, "kmtf": {"tankers": kmtf_t, "bulk": kmtf_b, "aframax": KMTF_EXTRA["aframax"], "tugs": KMTF_EXTRA["tugs"], "asco": ASCO, "containers": KMTF_EXTRA["containers"]}, "snapshots": hist,
+out = {"generated": __import__("datetime").date.today().isoformat(), "snapshot": snap, "weather": wx, "kmtf": {"tankers": kmtf_t, "bulk": kmtf_b, "aframax": KMTF_EXTRA["aframax"], "tugs": KMTF_EXTRA["tugs"], "asco": ASCO, "containers": KMTF_EXTRA["containers"], "owners": OWNERS}, "snapshots": hist,
        "tank_cols": ["vessel", "shpr", "terminal", "berth", "arr", "berth_at", "load_start", "load_end", "draft", "cargo", "dep"],
        "tank": tank,
        "bulk_cols": ["vessel", "berth", "arr", "berth_at", "unload_start", "unload_end", "in_kind", "in_qty", "in_qty_raw", "in_teu", "load_start", "load_end", "out_kind", "out_qty", "out_qty_raw", "out_teu", "dep"],

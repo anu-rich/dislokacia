@@ -200,6 +200,7 @@ select:focus-visible,input:focus-visible{outline:2px solid var(--s1);outline-off
     <div class="f" id="seg-f"><label>Сегмент</label><div class="segs" id="seg">
       <button aria-pressed="true" data-v="tank">Танкеры</button><button aria-pressed="false" data-v="bulk">Сухогрузы и контейнеровозы</button></div></div>
     <div class="f"><label>Флот</label><div class="segs" id="fleetsel"><button aria-pressed="true" data-v="all">Все суда в порту</button><button aria-pressed="false" data-v="kmtf">Только КМТФ</button></div></div>
+    <div class="f"><label>Часы считать как</label><div class="segs" id="aggsel"><button aria-pressed="true" data-v="avg">Среднее</button><button aria-pressed="false" data-v="med">Медиана</button></div></div>
     <div class="f"><label>С</label><select id="y0"></select></div>
     <div class="f"><label>По</label><select id="y1"></select></div>
     <div class="f"><label>Судно</label><select id="vsel"><option value="">Все суда</option></select></div>
@@ -238,6 +239,7 @@ select:focus-visible,input:focus-visible{outline:2px solid var(--s1);outline-off
     <div class="card"><h2>По месяцам и маршрутам, тыс. т</h2><div class="sub" id="volc1-sub"></div><div class="legend" id="volc1-leg"></div><div class="chart tall"><canvas id="volc1"></canvas></div></div>
     <div class="card"><h2>Баку: КМТФ и АСКО по месяцам, тыс. т</h2><div class="sub" id="volc2-sub"></div><div class="legend" id="volc2-leg"></div><div class="chart tall"><canvas id="volc2"></canvas></div></div>
     <div class="card" style="grid-column:1/-1"><h2>Нефть по месяцам, т</h2><div class="sub" id="volt1-sub"></div><div class="tw" id="volt1"></div></div>
+    <div class="card" style="grid-column:1/-1"><h2>Прочие судовладельцы</h2><div class="sub" id="volt3-sub"></div><div class="tw" id="volt3"></div></div>
     <div class="card" style="grid-column:1/-1"><h2>Полнота данных</h2><div id="vol-gaps"></div></div>
   </div>
 </section>
@@ -245,12 +247,13 @@ select:focus-visible,input:focus-visible{outline:2px solid var(--s1);outline-off
 <section class="panel" id="p-cnt" hidden>
   <div class="filters">
     <div class="f"><label>Год</label><select id="vol-year2"></select></div>
-    <div class="note" style="align-self:center">Контейнеры — штуки по сводке диспетчера (выгружено и погружено в Актау), ДФЭ — где указаны (в основном по судам КМТФ). Перевозчик — по судну.</div>
+    <div class="note" style="align-self:center">Контейнеры — штуки по сводке диспетчера. Направление: Актау → Баку — погружено в Актау, Баку → Актау — выгружено в Актау (порт отправления/назначения в сводке не указывается, линия Актау–Баку). ДФЭ — где указаны (в основном по судам КМТФ). Перевозчик — по судну.</div>
   </div>
   <div class="kpis" id="vol-cnt-kpis"></div>
   <div class="grid2" style="margin-top:0">
-    <div class="card"><h2>Контейнеры по месяцам, шт</h2><div class="sub">Выгружено + погружено в Актау, по перевозчику.</div><div class="legend" id="volc3-leg"></div><div class="chart tall"><canvas id="volc3"></canvas></div></div>
-    <div class="card"><h2>Контейнеры по месяцам, таблица</h2><div class="sub">шт — по сводке диспетчера; ДФЭ указываются в основном по судам КМТФ.</div><div class="tw" id="volt2"></div></div>
+    <div class="card"><h2>Актау → Баку по месяцам, шт</h2><div class="sub">Погружено в Актау, по перевозчику.</div><div class="legend" id="volc3-leg"></div><div class="chart tall"><canvas id="volc3"></canvas></div></div>
+    <div class="card"><h2>Баку → Актау по месяцам, шт</h2><div class="sub">Выгружено в Актау, по перевозчику.</div><div class="legend" id="volc4-leg"></div><div class="chart tall"><canvas id="volc4"></canvas></div></div>
+    <div class="card" style="grid-column:1/-1"><h2>Контейнеры по месяцам и направлениям, таблица</h2><div class="sub">шт — по сводке диспетчера; ДФЭ указываются в основном по судам КМТФ.</div><div class="tw" id="volt2"></div></div>
   </div>
 </section>
 

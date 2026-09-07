@@ -123,7 +123,7 @@ function renderNow() {
   document.getElementById('ports-kpis').innerHTML = kpiHtml([
     ['Судов в портах Каспия', uniq(allShips), `${uniq(allShips.filter(x => x.seg === 't'))} танкеров · ${uniq(allShips.filter(x => x.seg === 'b'))} сухогрузов и контейнеровозов, все перевозчики`],
     ['Свободных причалов', freeB, closedB ? `ещё ${closedB} закрыто на ремонт` : 'по всем портам сводки'],
-    ['Отгружено танкерами за сутки', fmtN(tons) + ' т', [...new Set(tDep24.map(x => x.n))].join(', ') || 'отходов не было'],
+    ['Отгружено танкерами за сутки', fmtN(tons) + ' т', [...new Set(tDep24.map(x => x.n))].join(', ') || 'судозаходов не было'],
     ['Отошло сухогрузов за сутки', uniq(bDep24), [...new Set(bDep24.map(x => x.n))].join(', ') || '—'],
   ]);
   // ---- open seas
@@ -253,6 +253,8 @@ function renderWx() {
 /* ---------- VOLUMES ---------- */
 const ASCO = new Set(D.kmtf.asco || []);
 const carrier = v => KM.has(v) ? 'КМТФ' : ASCO.has(v) ? 'АСКО' : 'Прочие';
+const OWN = D.kmtf.owners || {};
+const ownerOf = v => KM.has(v) ? 'КМТФ' : ASCO.has(v) ? 'АСКО' : (OWN[v] ? OWN[v].owner : 'не установлен');
 const routeOf = s => { const x = (s || '').toUpperCase().replace(/\s+/g, ''); if (/[-]?Б$/.test(x) && x.length > 1) return 'Баку'; if (/[-]?М$/.test(x) && x.length > 1) return 'Махачкала'; return 'не указан'; };
 const cntQty = s => { if (!s) return 0; const m = /(\d[\d\s]*)\s*шт/i.exec(s); if (m) return +m[1].replace(/\s/g, ''); return 0; };
 const isCont = k => (k || '').startsWith('контейнер');
@@ -274,7 +276,7 @@ function renderVol() {
     const tot = by(arr, m), b = by(arr, m, r => r.route === 'Баку'), mk_ = by(arr, m, r => r.route === 'Махачкала'), unk = by(arr, m, r => r.route === 'не указан');
     const bk = by(arr, m, r => r.route === 'Баку' && r.car === 'КМТФ'), ba = by(arr, m, r => r.route === 'Баку' && r.car === 'АСКО'), bo = b - bk - ba;
     const mkk = by(arr, m, r => r.route === 'Махачкала' && r.car === 'КМТФ'), mko = mk_ - mkk;
-    return kp(label + ' · всего', fmtN(tot / 1000, 1) + ' тыс. т', `${arr.filter(r => !m || r.m === m).length} отходов${unk ? ' · маршрут не указан: ' + fmtN(unk / 1000, 1) + ' тыс. т' : ''}`) +
+    return kp(label + ' · всего', fmtN(tot / 1000, 1) + ' тыс. т', `${arr.filter(r => !m || r.m === m).length} судозаходов${unk ? ' · маршрут не указан: ' + fmtN(unk / 1000, 1) + ' тыс. т' : ''}`) +
       kp(label + ' · Баку', fmtN(b / 1000, 1) + ' тыс. т', `КМТФ ${fmtN(bk / 1000, 1)} · АСКО ${fmtN(ba / 1000, 1)}${bo > 0 ? ' · прочие ' + fmtN(bo / 1000, 1) : ''}`) +
       kp(label + ' · Махачкала', fmtN(mk_ / 1000, 1) + ' тыс. т', `КМТФ ${fmtN(mkk / 1000, 1)}${mko > 0 ? ' · прочие ' + fmtN(mko / 1000, 1) : ''}`);
   };
@@ -289,7 +291,7 @@ function renderVol() {
   mk('volc2', { type: 'bar', data: { labels: months.map(mLabel), datasets: CARR.map((cr, i) => ({ label: cr, data: months.map(m => by(T, m, x => x.route === 'Баку' && x.car === cr) / 1000), backgroundColor: [C[0], C[1], css('--ink-3')][i], borderColor: css('--surface'), borderWidth: { bottom: 2 }, borderSkipped: false, barPercentage: .7 })) },
     options: { maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { mode: 'index', callbacks: { label: c => `${c.dataset.label}: ${fmtN(c.parsed.y, 1)} тыс. т` } } }, scales: { x: { stacked: true, grid: { display: false }, border: g.border }, y: { stacked: true, grid: g.grid, border: { display: false } } } } });
   // table oil
-  const cols = [['Всего', r => true], ['Баку всего', r => r.route === 'Баку'], ['Баку КМТФ', r => r.route === 'Баку' && r.car === 'КМТФ'], ['Баку АСКО', r => r.route === 'Баку' && r.car === 'АСКО'], ['Баку прочие', r => r.route === 'Баку' && r.car === 'Прочие'], ['Махачкала всего', r => r.route === 'Махачкала'], ['Махачкала КМТФ', r => r.route === 'Махачкала' && r.car === 'КМТФ'], ['Махачкала прочие', r => r.route === 'Махачкала' && r.car !== 'КМТФ'], ['Не указан', r => r.route === 'не указан'], ['Отходов', null]];
+  const cols = [['Всего', r => true], ['Баку всего', r => r.route === 'Баку'], ['Баку КМТФ', r => r.route === 'Баку' && r.car === 'КМТФ'], ['Баку АСКО', r => r.route === 'Баку' && r.car === 'АСКО'], ['Баку прочие', r => r.route === 'Баку' && r.car === 'Прочие'], ['Махачкала всего', r => r.route === 'Махачкала'], ['Махачкала КМТФ', r => r.route === 'Махачкала' && r.car === 'КМТФ'], ['Махачкала прочие', r => r.route === 'Махачкала' && r.car !== 'КМТФ'], ['Не указан', r => r.route === 'не указан'], ['Судозаходов', null]];
   const rowsT = months.map(m => [mLabel(m), ...cols.map(([n, f]) => f ? fmtN(by(T, m, f)) : fmtN(T.filter(r => r.m === m).length))]);
   rowsT.push([`<b>Итого ${Y}</b>`, ...cols.map(([n, f]) => `<b>${f ? fmtN(by(T, null, f)) : fmtN(T.length)}</b>`)]);
   document.getElementById('volt1-sub').textContent = `Тонны по месяцу отхода. Записи без указанного количества груза: ${T.filter(r => !r.cargo).length}.`;
@@ -297,14 +299,21 @@ function renderVol() {
   // containers
   const B = BULK.filter(r => r.dep.startsWith(Y) && (isCont(r.in_kind) || isCont(r.out_kind))).map(r => ({ ...r, m: r.dep.slice(0, 7), car: carrier(r.vessel), qin: isCont(r.in_kind) ? cntQty(r.in_qty_raw) : 0, qout: isCont(r.out_kind) ? cntQty(r.out_qty_raw) : 0, tin: r.in_teu || 0, tout: r.out_teu || 0 }));
   const bs = (m, f, k) => B.filter(r => (!m || r.m === m) && (!f || f(r))).reduce((s, r) => s + r[k], 0);
-  const cKpi = (label, m) => CARR.map(cr => kp(`${label} · ${cr}`, fmtN(bs(m, r => r.car === cr, 'qin') + bs(m, r => r.car === cr, 'qout')) + ' шт', `выгр. ${fmtN(bs(m, r => r.car === cr, 'qin'))} · погр. ${fmtN(bs(m, r => r.car === cr, 'qout'))} · ${B.filter(r => (!m || r.m === m) && r.car === cr).length} заходов${bs(m, r => r.car === cr, 'tin') + bs(m, r => r.car === cr, 'tout') ? ' · ДФЭ ' + fmtN(bs(m, r => r.car === cr, 'tin') + bs(m, r => r.car === cr, 'tout')) : ''}`)).join('');
+  const DIRS = [['Актау → Баку', 'qout'], ['Баку → Актау', 'qin']];
+  const cKpi = (label, m) => CARR.map(cr => kp(`${label} · ${cr}`, fmtN(bs(m, r => r.car === cr, 'qin') + bs(m, r => r.car === cr, 'qout')) + ' шт', `Актау → Баку ${fmtN(bs(m, r => r.car === cr, 'qout'))} · Баку → Актау ${fmtN(bs(m, r => r.car === cr, 'qin'))} · ${B.filter(r => (!m || r.m === m) && r.car === cr).length} судозаходов${bs(m, r => r.car === cr, 'tin') + bs(m, r => r.car === cr, 'tout') ? ' · ДФЭ ' + fmtN(bs(m, r => r.car === cr, 'tin') + bs(m, r => r.car === cr, 'tout')) : ''}`)).join('');
   document.getElementById('vol-cnt-kpis').innerHTML = cKpi(curYear ? 'Этот месяц' : monthName(lastM), lastM) + cKpi(Y + (curYear ? ' с начала года' : ''), null);
-  legend('volc3-leg', CARR.map((c, i) => [c, [C[0], C[1], css('--ink-3')][i]]));
-  mk('volc3', { type: 'bar', data: { labels: months.map(mLabel), datasets: CARR.map((cr, i) => ({ label: cr, data: months.map(m => bs(m, r => r.car === cr, 'qin') + bs(m, r => r.car === cr, 'qout')), backgroundColor: [C[0], C[1], css('--ink-3')][i], borderColor: css('--surface'), borderWidth: { bottom: 2 }, borderSkipped: false, barPercentage: .7 })) },
-    options: { maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { mode: 'index', callbacks: { label: c => `${c.dataset.label}: ${fmtN(c.parsed.y)} шт` } } }, scales: { x: { stacked: true, grid: { display: false }, border: g.border }, y: { stacked: true, grid: g.grid, border: { display: false } } } } });
-  const rowsC = months.map(m => [mLabel(m), ...CARR.flatMap(cr => [fmtN(bs(m, r => r.car === cr, 'qin')), fmtN(bs(m, r => r.car === cr, 'qout'))]), fmtN(bs(m, null, 'qin') + bs(m, null, 'qout')), fmtN(bs(m, r => r.car === 'КМТФ', 'tin') + bs(m, r => r.car === 'КМТФ', 'tout'))]);
-  rowsC.push([`<b>Итого</b>`, ...CARR.flatMap(cr => [`<b>${fmtN(bs(null, r => r.car === cr, 'qin'))}</b>`, `<b>${fmtN(bs(null, r => r.car === cr, 'qout'))}</b>`]), `<b>${fmtN(bs(null, null, 'qin') + bs(null, null, 'qout'))}</b>`, `<b>${fmtN(bs(null, r => r.car === 'КМТФ', 'tin') + bs(null, r => r.car === 'КМТФ', 'tout'))}</b>`]);
-  document.getElementById('volt2').innerHTML = tbl(['Месяц', 'КМТФ выгр.', 'КМТФ погр.', 'АСКО выгр.', 'АСКО погр.', 'Прочие выгр.', 'Прочие погр.', 'Всего, шт', 'КМТФ, ДФЭ'], rowsC);
+  for (const [cid, key] of [['volc3', 'qout'], ['volc4', 'qin']]) {
+    legend(cid + '-leg', CARR.map((c, i) => [c, [C[0], C[1], css('--ink-3')][i]]));
+    mk(cid, { type: 'bar', data: { labels: months.map(mLabel), datasets: CARR.map((cr, i) => ({ label: cr, data: months.map(m => bs(m, r => r.car === cr, key)), backgroundColor: [C[0], C[1], css('--ink-3')][i], borderColor: css('--surface'), borderWidth: { bottom: 2 }, borderSkipped: false, barPercentage: .7 })) },
+      options: { maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { mode: 'index', callbacks: { label: c => `${c.dataset.label}: ${fmtN(c.parsed.y)} шт` } } }, scales: { x: { stacked: true, grid: { display: false }, border: g.border }, y: { stacked: true, grid: g.grid, border: { display: false } } } } });
+  }
+  const rowsC = months.map(m => [mLabel(m), ...DIRS.flatMap(([dn, k]) => [...CARR.map(cr => fmtN(bs(m, r => r.car === cr, k))), `<b>${fmtN(bs(m, null, k))}</b>`]), `<b>${fmtN(bs(m, null, 'qin') + bs(m, null, 'qout'))}</b>`, fmtN(bs(m, r => r.car === 'КМТФ', 'tin') + bs(m, r => r.car === 'КМТФ', 'tout'))]);
+  rowsC.push([`<b>Итого</b>`, ...DIRS.flatMap(([dn, k]) => [...CARR.map(cr => `<b>${fmtN(bs(null, r => r.car === cr, k))}</b>`), `<b>${fmtN(bs(null, null, k))}</b>`]), `<b>${fmtN(bs(null, null, 'qin') + bs(null, null, 'qout'))}</b>`, `<b>${fmtN(bs(null, r => r.car === 'КМТФ', 'tin') + bs(null, r => r.car === 'КМТФ', 'tout'))}</b>`]);
+  document.getElementById('volt2').innerHTML = tbl(['Месяц', ...DIRS.flatMap(([dn]) => [...CARR.map(cr => `${dn}<br>${cr}`), `${dn}<br>всего`]), 'Всего, шт', 'КМТФ, ДФЭ'], rowsC);
+  // other owners table
+  const oth = {}; T.filter(r => r.car === 'Прочие').forEach(r => { const o = oth[r.vessel] = oth[r.vessel] || { n: 0, t: 0, b: 0, m: 0 }; o.n++; o.t += r.t; if (r.route === 'Баку') o.b += r.t; if (r.route === 'Махачкала') o.m += r.t; });
+  document.getElementById('volt3-sub').textContent = `Танкеры в журнале ${Y}, не относящиеся ни к КМТФ, ни к АСКО. Владелец — по открытым источникам.`;
+  document.getElementById('volt3').innerHTML = tbl(['Судно', 'Владелец', 'Справка', 'Судозаходов', 'Тонн', 'на Баку', 'на Махачкалу'], Object.entries(oth).sort((a, b) => b[1].t - a[1].t).map(([v, o]) => [esc(v), esc(ownerOf(v)), esc(OWN[v] ? OWN[v].note : ''), fmtN(o.n), fmtN(o.t), fmtN(o.b), fmtN(o.m)]));
   // gaps
   const allM = {}; TANK.forEach(r => { const m = r.dep.slice(0, 7); allM[m] = allM[m] || { t: 0, b: 0, tc: 0 }; allM[m].t++; if (!r.cargo) allM[m].tc++; }); BULK.forEach(r => { const m = r.dep.slice(0, 7); allM[m] = allM[m] || { t: 0, b: 0, tc: 0 }; allM[m].b++; });
   const ms = Object.keys(allM).sort(), first = ms[0], last = ms[ms.length - 1];
@@ -316,14 +325,17 @@ function renderVol() {
   const ycov = {}; TANK.forEach(r => { const y = r.dep.slice(0, 4); ycov[y] = ycov[y] || new Set(); ycov[y].add(r.dep.slice(5, 7)); });
   document.getElementById('vol-gaps').innerHTML = `
     <p style="margin:0 0 8px"><b>Журнал рейсов</b> покрывает <b>${mLabel(first)} — ${last.slice(8, 10) ? '' : ''}${dmy(TANK[TANK.length - 1].dep)}</b> без пропущенных месяцев${missing.length ? ' — кроме: ' + missing.map(mLabel).join(', ') : ''}. Полные календарные годы: ${Object.entries(ycov).filter(([y, s]) => s.size === 12).map(x => x[0]).join(', ') || '—'}; ${Y} — ${ycov[Y] ? ycov[Y].size : 0} мес.</p>
-    <p style="margin:0 0 8px"><b>Подозрительно мало записей</b> (меньше 60 % от медианы): танкеры — ${lowT.length ? lowT.map(m => `${mLabel(m)} (${allM[m].t})`).join(', ') : 'нет'}; сухогрузы — ${lowB.length ? lowB.map(m => `${mLabel(m)} (${allM[m].b})`).join(', ') : 'нет'}. Медиана: ${fmtN(medT)} отходов танкеров и ${fmtN(medB)} сухогрузов в месяц. Эти месяцы одинаковы во всех исходных файлах — вероятно, так и было, но стоит сверить с отчётностью.</p>
-    <p style="margin:0 0 8px"><b>В ${Y}:</b> у ${noRoute} отходов танкеров не указан грузоотправитель (маршрут неизвестен); у ${noCargo} нет количества груза (в тоннах не учтены). Суда с грузом, не отнесённые ни к КМТФ, ни к АСКО (считаются «прочие»): ${unkCar.length ? unkCar.join(', ') : '—'}.</p>
+    <p style="margin:0 0 8px"><b>Подозрительно мало записей</b> (меньше 60 % от медианы): танкеры — ${lowT.length ? lowT.map(m => `${mLabel(m)} (${allM[m].t})`).join(', ') : 'нет'}; сухогрузы — ${lowB.length ? lowB.map(m => `${mLabel(m)} (${allM[m].b})`).join(', ') : 'нет'}. Медиана: ${fmtN(medT)} судозаходов танкеров и ${fmtN(medB)} сухогрузов в месяц. Эти месяцы одинаковы во всех исходных файлах — вероятно, так и было, но стоит сверить с отчётностью.</p>
+    <p style="margin:0 0 8px"><b>В ${Y}:</b> у ${noRoute} судозаходов танкеров не указан грузоотправитель (маршрут неизвестен); у ${noCargo} нет количества груза (в тоннах не учтены). Суда с грузом, не отнесённые ни к КМТФ, ни к АСКО (считаются «прочие»): ${unkCar.length ? unkCar.map(v => `${v} — ${ownerOf(v)}`).join('; ') : '—'}.</p>
     <p style="margin:0"><b>Сами файлы сводок</b> (снимки 3 раза в день) есть с сентября 2023; в почте нет периода май 2025 — март 2026. На объёмы это не влияет — они берутся из накопительных листов «Статистика», которые есть в каждом файле. ДФЭ по контейнерам диспетчер указывает только по судам КМТФ, по АСКО и прочим — только штуки.</p>`;
 }
 
 /* ---------- HISTORY ---------- */
 
-const S = { seg: 'tank', fleet: 'all', y0: null, y1: null, vessel: '', shpr: '' };
+const S = { seg: 'tank', fleet: 'all', y0: null, y1: null, vessel: '', shpr: '', agg: 'avg' };
+const cen = a => S.agg === 'avg' ? avg(a) : med(a); const MED = a => med(a), AVG = a => avg(a);          // центральная мера для часов: среднее / медиана
+const CENL = () => S.agg === 'avg' ? 'среднее' : 'медиана';
+const CENP = () => S.agg === 'avg' ? 'средние' : 'медианы';
 const years = [...new Set([...TANK.map(r => r.dep.slice(0, 4)), ...BULK.map(r => r.dep.slice(0, 4))])].sort();
 const y0 = document.getElementById('y0'), y1 = document.getElementById('y1');
 years.forEach(y => { y0.add(new Option(y, y)); y1.add(new Option(y, y)); });
@@ -332,8 +344,8 @@ y0.onchange = () => { S.y0 = y0.value; if (S.y1 < S.y0) { y1.value = S.y0; S.y1 
 y1.onchange = () => { S.y1 = y1.value; if (S.y1 < S.y0) { y0.value = S.y1; S.y0 = S.y1; } renderHist(); };
 document.getElementById('vsel').onchange = e => { S.vessel = e.target.value; renderHist(); };
 document.getElementById('ssel').onchange = e => { S.shpr = e.target.value; renderHist(); };
-for (const id of ['seg', 'fleetsel']) document.getElementById(id).querySelectorAll('button').forEach(b => b.onclick = () => {
-  document.getElementById(id).querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); S[id === 'fleetsel' ? 'fleet' : id] = b.dataset.v; if (id === 'seg') { S.vessel = ''; S.shpr = ''; } fillSelects(); renderHist();
+for (const id of ['seg', 'fleetsel', 'aggsel']) document.getElementById(id).querySelectorAll('button').forEach(b => b.onclick = () => {
+  document.getElementById(id).querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); S[id === 'fleetsel' ? 'fleet' : id === 'aggsel' ? 'agg' : id] = b.dataset.v; if (id === 'seg') { S.vessel = ''; S.shpr = ''; } fillSelects(); renderHist();
 });
 function base() { return S.seg === 'tank' ? TANK : S.seg === 'bulk' ? BULK : BUNK; }
 function dateOf(r) { return r.dep || r.b_start || r.arr; }
@@ -370,8 +382,8 @@ const COLS = () => [css('--s1'), css('--s2'), css('--s3'), css('--s4'), css('--s
 /* ---------- EXPLORER (показатель в разрезе) ---------- */
 const EX = { m: null, d: 'm', a: null, c: 'bar' };
 const EX_METRICS = {
-  tank: [['n', 'Отходов, шт', 'sum'], ['cargo', 'Груз, т', 'sum'], ['draft', 'Осадка, м', 'avg'], ['hR', 'Ожидание на рейде, ч', 'med'], ['hB', 'У причала (постановка → отход), ч', 'med'], ['hL', 'Чистая погрузка, ч', 'med'], ['hT', 'Оборот в порту (рейд → отход), ч', 'med'], ['hW', 'Постановка → начало погрузки, ч', 'med'], ['hE', 'Окончание погрузки → отход, ч', 'med'], ['rate', 'Темп погрузки, т/ч', 'med']],
-  bulk: [['n', 'Отходов, шт', 'sum'], ['in_teu', 'ДФЭ выгружено', 'sum'], ['out_teu', 'ДФЭ погружено', 'sum'], ['qin', 'Контейнеров выгружено, шт', 'sum'], ['qout', 'Контейнеров погружено, шт', 'sum'], ['hR', 'Ожидание на рейде, ч', 'med'], ['hB', 'У причала, ч', 'med'], ['hU', 'Выгрузка, ч', 'med'], ['hLd', 'Погрузка, ч', 'med'], ['hT', 'Оборот в порту, ч', 'med']],
+  tank: [['n', 'Судозаходов, шт', 'sum'], ['cargo', 'Груз, т', 'sum'], ['draft', 'Осадка, м', 'avg'], ['hR', 'Ожидание на рейде, ч', 'med'], ['hB', 'У причала (постановка → отход), ч', 'med'], ['hL', 'Чистая погрузка, ч', 'med'], ['hT', 'Оборот в порту (рейд → отход), ч', 'med'], ['hW', 'Постановка → начало погрузки, ч', 'med'], ['hE', 'Окончание погрузки → отход, ч', 'med'], ['rate', 'Темп погрузки, т/ч', 'med']],
+  bulk: [['n', 'Судозаходов, шт', 'sum'], ['in_teu', 'ДФЭ выгружено', 'sum'], ['out_teu', 'ДФЭ погружено', 'sum'], ['qin', 'Контейнеров выгружено, шт', 'sum'], ['qout', 'Контейнеров погружено, шт', 'sum'], ['hR', 'Ожидание на рейде, ч', 'med'], ['hB', 'У причала, ч', 'med'], ['hU', 'Выгрузка, ч', 'med'], ['hLd', 'Погрузка, ч', 'med'], ['hT', 'Оборот в порту, ч', 'med']],
   bunk: [['n', 'Бункеровок, шт', 'sum'], ['dt', 'Дизтопливо, т', 'sum'], ['tt', 'Тяжёлое топливо, т', 'sum'], ['h', 'Длительность бункеровки, ч', 'med'], ['hW', 'Ожидание до бункеровки, ч', 'med']],
 };
 const EX_DIMS = {
@@ -433,9 +445,9 @@ function renderHist() {
   if (S.seg === 'tank') {
     rs.forEach(r => { r.hR = hrs(r.arr, r.berth_at); r.hB = hrs(r.berth_at, r.dep); r.hL = hrs(r.load_start, r.load_end); r.hT = hrs(r.arr, r.dep); });
     const tons = rs.reduce((a, r) => a + (r.cargo || 0), 0);
-    document.getElementById('h-kpis').innerHTML = kpi('Отходов', fmtN(rs.length), per) + kpi('Отгружено', fmtN(tons / 1000, 1) + ' тыс. т', `в среднем ${fmtN(avg(rs.map(r => r.cargo)))} т на рейс`) +
-      kpi('Ожидание на рейде', fmtN(med(rs.map(r => r.hR)), 1) + ' ч', 'медиана · среднее ' + fmtN(avg(rs.map(r => r.hR)), 1) + ' ч') + kpi('У причала', fmtN(med(rs.map(r => r.hB)), 1) + ' ч', 'медиана от постановки до отхода') +
-      kpi('Чистая погрузка', fmtN(med(rs.map(r => r.hL)), 1) + ' ч', 'медиана') + kpi('Оборот в порту', fmtN(med(rs.map(r => r.hT)), 1) + ' ч', 'рейд → отход, медиана');
+    document.getElementById('h-kpis').innerHTML = kpi('Судозаходов', fmtN(rs.length), per) + kpi('Отгружено', fmtN(tons / 1000, 1) + ' тыс. т', `в среднем ${fmtN(avg(rs.map(r => r.cargo)))} т на рейс`) +
+      kpi('Ожидание на рейде', fmtN(cen(rs.map(r => r.hR)), 1) + ' ч', CENL() + ' · ' + (S.agg === 'avg' ? 'медиана ' + fmtN(MED(rs.map(r => r.hR)), 1) : 'среднее ' + fmtN(AVG(rs.map(r => r.hR)), 1)) + ' ч') + kpi('У причала', fmtN(cen(rs.map(r => r.hB)), 1) + ' ч', CENL() + ' от постановки до отхода') +
+      kpi('Чистая погрузка', fmtN(cen(rs.map(r => r.hL)), 1) + ' ч', CENL()) + kpi('Оборот в порту', fmtN(cen(rs.map(r => r.hT)), 1) + ' ч', 'рейд → отход, ' + CENL());
     // c1: monthly tonnage stacked by shipper (top 3 + other)
     const sc = {}; rs.forEach(r => sc[r.shpr || '—'] = (sc[r.shpr || '—'] || 0) + (r.cargo || 0));
     const top = Object.entries(sc).sort((a, b) => b[1] - a[1]).map(x => x[0]); const keep = top.slice(0, 3); const names = [...keep, ...(top.length > 3 ? ['Прочие'] : [])];
@@ -452,30 +464,30 @@ function renderHist() {
     mk('c2', { type: 'bar', data: { labels: top12.map(x => x[0]), datasets: [{ label: 'тыс. т', data: top12.map(x => x[1].t / 1000), backgroundColor: top12.map(x => KM.has(x[0]) ? C[0] : css('--ink-3')), borderRadius: 3, barPercentage: .7 }] },
       options: { indexAxis: 'y', maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: ttf('', 'тыс. т', 1) }, scales: { x: { grid: g.grid, border: { display: false } }, y: { grid: { display: false }, border: g.border } } } });
     // c3: monthly median hours: roads wait / at berth
-    T('c3-title', 'Время в порту по месяцам, часы (медиана)'); T('c3-sub', 'Ожидание на рейде до постановки и время у причала до отхода.');
+    T('c3-title', 'Время в порту по месяцам, часы (' + CENL() + ')'); T('c3-sub', 'Ожидание на рейде до постановки и время у причала до отхода.');
     legend('c3-leg', [['На рейде', C[0]], ['У причала', C[1]], ['Погрузка', C[2]]]);
-    const line = (lab, key, col) => ({ label: lab, data: mk2.map(k => med(rs.filter(r => r.dep.startsWith(k)).map(r => r[key]))), borderColor: col, backgroundColor: col, borderWidth: 2, pointRadius: 2, pointHoverRadius: 5, tension: .25, spanGaps: true });
+    const line = (lab, key, col) => ({ label: lab, data: mk2.map(k => cen(rs.filter(r => r.dep.startsWith(k)).map(r => r[key]))), borderColor: col, backgroundColor: col, borderWidth: 2, pointRadius: 2, pointHoverRadius: 5, tension: .25, spanGaps: true });
     mk('c3', { type: 'line', data: { labels: mk2.map(mlab), datasets: [line('На рейде', 'hR', C[0]), line('У причала', 'hB', C[1]), line('Погрузка', 'hL', C[2])] },
       options: { maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => `${c.dataset.label}: ${fmtN(c.parsed.y, 1)} ч` } } }, scales: { x: { grid: { display: false }, border: g.border, ticks: { maxRotation: 0 } }, y: { grid: g.grid, border: { display: false }, beginAtZero: true } } } });
     // t1
-    T('t1-title', 'Сводная таблица по судам'); T('t1-sub', 'Часы — медианы. Оборот = от прихода на рейд до отхода.');
-    document.getElementById('t1').innerHTML = tblFold(['Судно', 'Флот', 'Отходов', 'Всего, т', 'Ср. партия, т', 'Ср. осадка', 'Рейд, ч', 'У причала, ч', 'Погрузка, ч', 'Оборот, ч'],
-      vlist.map(([v, o]) => [esc(v), KM.has(v) ? '<span class="pill k">КМТФ</span>' : '', fmtN(o.n), fmtN(o.t), fmtN(avg(o.c)), fmtN(avg(rs.filter(r => r.vessel === v).map(r => r.draft)), 1), fmtN(med(o.hR), 1), fmtN(med(o.hB), 1), fmtN(med(o.hL), 1), fmtN(med(o.hT), 1)]));
+    T('t1-title', 'Сводная таблица по судам'); T('t1-sub', 'Часы — ' + CENP() + '. Оборот = от прихода на рейд до отхода.');
+    document.getElementById('t1').innerHTML = tblFold(['Судно', 'Флот', 'Судозаходов', 'Всего, т', 'Ср. партия, т', 'Ср. осадка', 'Рейд, ч', 'У причала, ч', 'Погрузка, ч', 'Оборот, ч'],
+      vlist.map(([v, o]) => [esc(v), KM.has(v) ? '<span class="pill k">КМТФ</span>' : '', fmtN(o.n), fmtN(o.t), fmtN(avg(o.c)), fmtN(avg(rs.filter(r => r.vessel === v).map(r => r.draft)), 1), fmtN(cen(o.hR), 1), fmtN(cen(o.hB), 1), fmtN(cen(o.hL), 1), fmtN(cen(o.hT), 1)]));
     // t2 shippers
     document.getElementById('c4-card').style.display = ''; T('c4-title', 'По грузоотправителям'); T('c4-sub', 'SHPR из сводки: -Б — Баку/Сангачал, -М — Махачкала.');
     const sh = {}; rs.forEach(r => { const o = sh[r.shpr || '—'] = sh[r.shpr || '—'] || { n: 0, t: 0, term: {} }; o.n++; o.t += r.cargo || 0; if (r.terminal) o.term[r.terminal] = (o.term[r.terminal] || 0) + 1; });
-    document.getElementById('t2').innerHTML = tbl(['Отправитель', 'Отходов', 'Тонн', 'Доля', 'Терминал'], Object.entries(sh).sort((a, b) => b[1].t - a[1].t).map(([k, o]) => [esc(k), fmtN(o.n), fmtN(o.t), fmtN(100 * o.t / (tons || 1), 1) + ' %', esc(Object.entries(o.term).sort((a, b) => b[1] - a[1]).slice(0, 2).map(x => x[0]).join(', '))]));
+    document.getElementById('t2').innerHTML = tbl(['Отправитель', 'Судозаходов', 'Тонн', 'Доля', 'Терминал'], Object.entries(sh).sort((a, b) => b[1].t - a[1].t).map(([k, o]) => [esc(k), fmtN(o.n), fmtN(o.t), fmtN(100 * o.t / (tons || 1), 1) + ' %', esc(Object.entries(o.term).sort((a, b) => b[1] - a[1]).slice(0, 2).map(x => x[0]).join(', '))]));
     // t3 years
     T('c5-title', 'По годам'); T('c5-sub', 'Итоги по годам в текущем фильтре (2026 — по ' + dmy(SNAP.timestamp) + ').');
     const yy = {}; rs.forEach(r => { const y = r.dep.slice(0, 4); const o = yy[y] = yy[y] || { n: 0, t: 0, hR: [], hB: [], hT: [], v: new Set() }; o.n++; o.t += r.cargo || 0; o.hR.push(r.hR); o.hB.push(r.hB); o.hT.push(r.hT); o.v.add(r.vessel); });
-    document.getElementById('t3').innerHTML = tbl(['Год', 'Отходов', 'Тонн', 'Судов', 'Рейд, ч', 'У причала, ч', 'Оборот, ч'], Object.entries(yy).map(([y, o]) => [y, fmtN(o.n), fmtN(o.t), o.v.size, fmtN(med(o.hR), 1), fmtN(med(o.hB), 1), fmtN(med(o.hT), 1)]));
+    document.getElementById('t3').innerHTML = tbl(['Год', 'Судозаходов', 'Тонн', 'Судов', 'Рейд, ч', 'У причала, ч', 'Оборот, ч'], Object.entries(yy).map(([y, o]) => [y, fmtN(o.n), fmtN(o.t), o.v.size, fmtN(cen(o.hR), 1), fmtN(cen(o.hB), 1), fmtN(cen(o.hT), 1)]));
   } else if (S.seg === 'bulk') {
     rs.forEach(r => { r.hR = hrs(r.arr, r.berth_at); r.hB = hrs(r.berth_at, r.dep); r.hT = hrs(r.arr, r.dep); r.teu = (r.in_teu || 0) + (r.out_teu || 0); });
     const teuIn = rs.reduce((a, r) => a + (r.in_teu || 0), 0), teuOut = rs.reduce((a, r) => a + (r.out_teu || 0), 0);
     const cont = rs.filter(r => r.in_kind.startsWith('контейнер') || r.out_kind.startsWith('контейнер')).length;
-    document.getElementById('h-kpis').innerHTML = kpi('Отходов', fmtN(rs.length), per) + kpi('Контейнерных заходов', fmtN(cont), `${fmtN(100 * cont / (rs.length || 1))} % от всех`) + kpi('ДФЭ выгружено', fmtN(teuIn), 'в Актау') + kpi('ДФЭ погружено', fmtN(teuOut), 'из Актау') +
-      kpi('Ожидание на рейде', fmtN(med(rs.map(r => r.hR)), 1) + ' ч', 'медиана') + kpi('У причала', fmtN(med(rs.map(r => r.hB)), 1) + ' ч', 'медиана');
-    T('c1-title', 'Заходы сухогрузов по месяцам'); T('c1-sub', 'Отходы по месяцам, по виду груза на выход. ' + per);
+    document.getElementById('h-kpis').innerHTML = kpi('Судозаходов', fmtN(rs.length), per) + kpi('Контейнерных заходов', fmtN(cont), `${fmtN(100 * cont / (rs.length || 1))} % от всех`) + kpi('ДФЭ выгружено', fmtN(teuIn), 'в Актау') + kpi('ДФЭ погружено', fmtN(teuOut), 'из Актау') +
+      kpi('Ожидание на рейде', fmtN(cen(rs.map(r => r.hR)), 1) + ' ч', CENL()) + kpi('У причала', fmtN(cen(rs.map(r => r.hB)), 1) + ' ч', CENL());
+    T('c1-title', 'Заходы сухогрузов по месяцам'); T('c1-sub', 'Судозаходы по месяцам, по виду груза на выход. ' + per);
     const kinds = {}; rs.forEach(r => { const k = r.out_kind || r.in_kind || '—'; kinds[k] = (kinds[k] || 0) + 1; });
     const top = Object.entries(kinds).sort((a, b) => b[1] - a[1]).map(x => x[0]); const keep = top.slice(0, 4); const names = [...keep, ...(top.length > 4 ? ['Прочие'] : [])];
     const kk = r => { const k = r.out_kind || r.in_kind || '—'; return keep.includes(k) ? k : 'Прочие'; };
@@ -484,26 +496,26 @@ function renderHist() {
       options: { maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { mode: 'index', callbacks: { label: c => `${c.dataset.label}: ${c.parsed.y}` } } }, scales: { x: { stacked: true, grid: { display: false }, border: g.border, ticks: { maxRotation: 0 } }, y: { stacked: true, grid: g.grid, border: { display: false } } } } });
     const vv = {}; rs.forEach(r => { const o = vv[r.vessel] = vv[r.vessel] || { n: 0, teu: 0, ti: 0, to: 0, hR: [], hB: [], hT: [] }; o.n++; o.teu += r.teu; o.ti += r.in_teu || 0; o.to += r.out_teu || 0; o.hR.push(r.hR); o.hB.push(r.hB); o.hT.push(r.hT); });
     const vlist = Object.entries(vv).sort((a, b) => b[1].n - a[1].n); const top12 = vlist.slice(0, 14);
-    T('c2-title', 'Заходы по судам'); T('c2-sub', 'Топ-14 судов по числу отходов. Оранжевым — флот КМТФ.');
-    mk('c2', { type: 'bar', data: { labels: top12.map(x => x[0]), datasets: [{ label: 'отходов', data: top12.map(x => x[1].n), backgroundColor: top12.map(x => KM.has(x[0]) ? C[1] : css('--ink-3')), borderRadius: 3, barPercentage: .7 }] },
+    T('c2-title', 'Заходы по судам'); T('c2-sub', 'Топ-14 судов по числу судозаходов. Оранжевым — флот КМТФ.');
+    mk('c2', { type: 'bar', data: { labels: top12.map(x => x[0]), datasets: [{ label: 'судозаходов', data: top12.map(x => x[1].n), backgroundColor: top12.map(x => KM.has(x[0]) ? C[1] : css('--ink-3')), borderRadius: 3, barPercentage: .7 }] },
       options: { indexAxis: 'y', maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: ttf('', '') }, scales: { x: { grid: g.grid, border: { display: false } }, y: { grid: { display: false }, border: g.border } } } });
     T('c3-title', 'ДФЭ по месяцам'); T('c3-sub', 'Контейнеры в двадцатифутовом эквиваленте: выгрузка и погрузка в Актау.');
     legend('c3-leg', [['Выгружено', C[0]], ['Погружено', C[1]]]);
     mk('c3', { type: 'bar', data: { labels: mk2.map(mlab), datasets: [['Выгружено', 'in_teu', C[0]], ['Погружено', 'out_teu', C[1]]].map(([l, k, c]) => ({ label: l, data: mk2.map(m => rs.filter(r => r.dep.startsWith(m)).reduce((a, r) => a + (r[k] || 0), 0)), backgroundColor: c, borderRadius: 2, barPercentage: .8 })) },
       options: { maintainAspectRatio: false, interaction: { mode: 'index' }, plugins: { legend: { display: false }, tooltip: ttf('', 'ДФЭ') }, scales: { x: { grid: { display: false }, border: g.border, ticks: { maxRotation: 0 } }, y: { grid: g.grid, border: { display: false } } } } });
-    T('t1-title', 'Сводная таблица по судам'); T('t1-sub', 'Часы — медианы.');
-    document.getElementById('t1').innerHTML = tblFold(['Судно', 'Флот', 'Отходов', 'ДФЭ выгр.', 'ДФЭ погр.', 'Рейд, ч', 'У причала, ч', 'Оборот, ч'], vlist.map(([v, o]) => [esc(v), KM.has(v) ? '<span class="pill b">КМТФ</span>' : '', fmtN(o.n), fmtN(o.ti), fmtN(o.to), fmtN(med(o.hR), 1), fmtN(med(o.hB), 1), fmtN(med(o.hT), 1)]));
-    document.getElementById('c4-card').style.display = ''; T('c4-title', 'По видам груза'); T('c4-sub', 'Груз на выход из Актау (по числу отходов).');
+    T('t1-title', 'Сводная таблица по судам'); T('t1-sub', 'Часы — ' + CENP() + '.');
+    document.getElementById('t1').innerHTML = tblFold(['Судно', 'Флот', 'Судозаходов', 'ДФЭ выгр.', 'ДФЭ погр.', 'Рейд, ч', 'У причала, ч', 'Оборот, ч'], vlist.map(([v, o]) => [esc(v), KM.has(v) ? '<span class="pill b">КМТФ</span>' : '', fmtN(o.n), fmtN(o.ti), fmtN(o.to), fmtN(cen(o.hR), 1), fmtN(cen(o.hB), 1), fmtN(cen(o.hT), 1)]));
+    document.getElementById('c4-card').style.display = ''; T('c4-title', 'По видам груза'); T('c4-sub', 'Груз на выход из Актау (по числу судозаходов).');
     const kk2 = {}; rs.forEach(r => { const k = r.out_kind || '—'; const o = kk2[k] = kk2[k] || { n: 0, q: 0 }; o.n++; o.q += r.out_qty || 0; });
-    document.getElementById('t2').innerHTML = tbl(['Груз на выход', 'Отходов', 'Доля'], Object.entries(kk2).sort((a, b) => b[1].n - a[1].n).slice(0, 15).map(([k, o]) => [esc(k), fmtN(o.n), fmtN(100 * o.n / (rs.length || 1), 1) + ' %']));
+    document.getElementById('t2').innerHTML = tbl(['Груз на выход', 'Судозаходов', 'Доля'], Object.entries(kk2).sort((a, b) => b[1].n - a[1].n).slice(0, 15).map(([k, o]) => [esc(k), fmtN(o.n), fmtN(100 * o.n / (rs.length || 1), 1) + ' %']));
     T('c5-title', 'По годам'); T('c5-sub', 'Итоги по годам в текущем фильтре.');
     const yy = {}; rs.forEach(r => { const y = r.dep.slice(0, 4); const o = yy[y] = yy[y] || { n: 0, ti: 0, to: 0, hB: [], v: new Set() }; o.n++; o.ti += r.in_teu || 0; o.to += r.out_teu || 0; o.hB.push(r.hB); o.v.add(r.vessel); });
-    document.getElementById('t3').innerHTML = tbl(['Год', 'Отходов', 'Судов', 'ДФЭ выгр.', 'ДФЭ погр.', 'У причала, ч'], Object.entries(yy).map(([y, o]) => [y, fmtN(o.n), o.v.size, fmtN(o.ti), fmtN(o.to), fmtN(med(o.hB), 1)]));
+    document.getElementById('t3').innerHTML = tbl(['Год', 'Судозаходов', 'Судов', 'ДФЭ выгр.', 'ДФЭ погр.', 'У причала, ч'], Object.entries(yy).map(([y, o]) => [y, fmtN(o.n), o.v.size, fmtN(o.ti), fmtN(o.to), fmtN(cen(o.hB), 1)]));
   } else {
     rs.forEach(r => { r.h = hrs(r.b_start, r.b_end); r.sts = r.port.startsWith('STS'); });
     const dt = rs.reduce((a, r) => a + (r.dt || 0), 0), tt = rs.reduce((a, r) => a + (r.tt || 0), 0);
     const ports = [...new Set(rs.map(r => r.port))].sort((a, b) => rs.filter(r => r.port === b).length - rs.filter(r => r.port === a).length);
-    const pk = (p) => { const q = rs.filter(r => r.port === p); return kpi(p, fmtN(q.reduce((a, r) => a + (r.dt || 0), 0)) + ' т', `${q.length} бункеровок · ср. ${fmtN(avg(q.map(r => r.dt)), 1)} т · медиана ${fmtN(med(q.map(r => r.h)), 1)} ч`); };
+    const pk = (p) => { const q = rs.filter(r => r.port === p); return kpi(p, fmtN(q.reduce((a, r) => a + (r.dt || 0), 0)) + ' т', `${q.length} бункеровок · ср. ${fmtN(avg(q.map(r => r.dt)), 1)} т · ${CENL()} ${fmtN(cen(q.map(r => r.h)), 1)} ч`); };
     const stsN = rs.filter(r => r.sts).length, stsT = rs.filter(r => r.sts).reduce((a, r) => a + (r.dt || 0), 0);
     document.getElementById('h-kpis').innerHTML = kpi('Бункеровок всего', fmtN(rs.length), per) + kpi('Дизтоплива всего', fmtN(dt) + ' т', `тяж. топлива ${fmtN(tt)} т · в среднем ${fmtN(avg(rs.map(r => r.dt)), 1)} т`) + kpi('От бункеровщика (порт/рейд)', fmtN(rs.length - stsN), `${fmtN(dt - stsT)} т Д/Т`) + kpi('Ship-to-ship (между судами КМТФ)', fmtN(stsN), `${fmtN(stsT)} т Д/Т · ${fmtN(100 * stsN / (rs.length || 1))} % бункеровок`) + ports.map(pk).join('');
     T('c1-title', 'Бункеровки по месяцам, т дизтоплива'); T('c1-sub', 'По месту бункеровки. Ship-to-ship — только передача топлива между судами КМТФ. ' + per);
@@ -520,9 +532,9 @@ function renderHist() {
     mk('c3', { type: 'bar', data: { labels: mk2.map(mlab), datasets: [['От бункеровщика', false, C[0]], ['Ship-to-ship', true, C[1]]].map(([l, f, c]) => ({ label: l, data: mk2.map(k => rs.filter(r => dateOf(r).startsWith(k) && r.sts === f).length), backgroundColor: c, borderColor: css('--surface'), borderWidth: { bottom: 2 }, borderSkipped: false, barPercentage: .7 })) },
       options: { maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { mode: 'index', callbacks: { label: c => `${c.dataset.label}: ${c.parsed.y}` } } }, scales: { x: { stacked: true, grid: { display: false }, border: g.border, ticks: { maxRotation: 0 } }, y: { stacked: true, grid: g.grid, border: { display: false }, beginAtZero: true } } } });
     T('t1-title', 'По судам'); T('t1-sub', 'STS — бункеровки с другого судна КМТФ.');
-    document.getElementById('t1').innerHTML = tblFold(['Судно', 'Флот', 'Бункеровок', 'из них STS', 'Д/Т, т', 'Ср. приём, т', 'Длит., ч'], vlist.map(([v, o]) => [esc(v), KM.has(v) ? '<span class="pill k">КМТФ</span>' : '', fmtN(o.n), fmtN(o.sts), fmtN(o.dt), fmtN(o.dt / o.n, 1), fmtN(med(o.h), 1)]));
+    document.getElementById('t1').innerHTML = tblFold(['Судно', 'Флот', 'Бункеровок', 'из них STS', 'Д/Т, т', 'Ср. приём, т', 'Длит., ч'], vlist.map(([v, o]) => [esc(v), KM.has(v) ? '<span class="pill k">КМТФ</span>' : '', fmtN(o.n), fmtN(o.sts), fmtN(o.dt), fmtN(o.dt / o.n, 1), fmtN(cen(o.h), 1)]));
     document.getElementById('c4-card').style.display = ''; T('c4-title', 'По местам бункеровки'); T('c4-sub', '146 район — рейд Баку, бункеровка бункеровщиком; STS — передача с судна КМТФ.');
-    document.getElementById('t2').innerHTML = tbl(['Место', 'Бункеровок', 'Д/Т, т', 'Т/Т, т', 'Ср. приём, т', 'Длит., ч'], ports.map(p => { const q = rs.filter(r => r.port === p); return [esc(p), fmtN(q.length), fmtN(q.reduce((a, r) => a + (r.dt || 0), 0)), fmtN(q.reduce((a, r) => a + (r.tt || 0), 0)), fmtN(avg(q.map(r => r.dt)), 1), fmtN(med(q.map(r => r.h)), 1)]; }));
+    document.getElementById('t2').innerHTML = tbl(['Место', 'Бункеровок', 'Д/Т, т', 'Т/Т, т', 'Ср. приём, т', 'Длит., ч'], ports.map(p => { const q = rs.filter(r => r.port === p); return [esc(p), fmtN(q.length), fmtN(q.reduce((a, r) => a + (r.dt || 0), 0)), fmtN(q.reduce((a, r) => a + (r.tt || 0), 0)), fmtN(avg(q.map(r => r.dt)), 1), fmtN(cen(q.map(r => r.h)), 1)]; }));
     T('c5-title', 'По годам'); T('c5-sub', 'Д/Т в тоннах: всего, от бункеровщика, ship-to-ship.');
     const yy = {}; rs.forEach(r => { const y = dateOf(r).slice(0, 4); const o = yy[y] = yy[y] || { n: 0, dt: 0, sn: 0, sdt: 0 }; o.n++; o.dt += r.dt || 0; if (r.sts) { o.sn++; o.sdt += r.dt || 0; } });
     document.getElementById('t3').innerHTML = tbl(['Год', 'Бункеровок', 'Д/Т, т', 'От бункеровщика, т', 'STS, шт', 'STS, т'], Object.entries(yy).map(([y, o]) => [y, fmtN(o.n), fmtN(o.dt), fmtN(o.dt - o.sdt), fmtN(o.sn), fmtN(o.sdt)]));
@@ -576,6 +588,6 @@ function renderRaw() {
   document.querySelectorAll('#raw th.sortable').forEach(th => th.onclick = () => { const kk = th.dataset.k; if (R.sortKey === kk) R.sortDir = -R.sortDir; else { R.sortKey = kk; R.sortDir = NUMK.has(kk) || /dep|arr|start|end|at$/.test(kk) ? -1 : 1; } renderRaw(); });
 }
 
-document.getElementById('src').innerHTML = `Источник: файлы «Дислокация судов» диспетчерской службы КМТФ (${esc(SNAP.file)}); история рейсов собрана из листов «Статистика по танкерам», «Статистика сухогрузов» и «Статистика бункеровки» — ${fmtN(TANK.length)} отходов танкеров, ${fmtN(BULK.length)} отходов сухогрузов, ${fmtN(BUNK.length)} бункеровок с ${TANK[0].dep.slice(0, 7)} по ${TANK[TANK.length - 1].dep.slice(0, 10)}. Статистика включает все суда, заходившие в Актау, не только флот КМТФ — переключатель «Только КМТФ» ограничивает выборку судами из таблицы судовых запасов. Часы у причала считаются от постановки до отхода; записи с пропусками дат в средних не участвуют.`;
+document.getElementById('src').innerHTML = `Источник: файлы «Дислокация судов» диспетчерской службы КМТФ (${esc(SNAP.file)}); история рейсов собрана из листов «Статистика по танкерам», «Статистика сухогрузов» и «Статистика бункеровки» — ${fmtN(TANK.length)} судозаходов танкеров, ${fmtN(BULK.length)} судозаходов сухогрузов, ${fmtN(BUNK.length)} бункеровок с ${TANK[0].dep.slice(0, 7)} по ${TANK[TANK.length - 1].dep.slice(0, 10)}. Статистика включает все суда, заходившие в Актау, не только флот КМТФ — переключатель «Только КМТФ» ограничивает выборку судами из таблицы судовых запасов. Часы у причала считаются от постановки до отхода; записи с пропусками дат в средних не участвуют.`;
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if (!document.getElementById('p-hist').hidden) renderHist(); });
 renderNow();

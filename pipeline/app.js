@@ -290,6 +290,10 @@ function renderVol() {
   document.getElementById('volc2-sub').textContent = Y + ', только маршрут на Баку/Сангачал';
   mk('volc2', { type: 'bar', data: { labels: months.map(mLabel), datasets: CARR.map((cr, i) => ({ label: cr, data: months.map(m => by(T, m, x => x.route === 'Баку' && x.car === cr) / 1000), backgroundColor: [C[0], C[1], css('--ink-3')][i], borderColor: css('--surface'), borderWidth: { bottom: 2 }, borderSkipped: false, barPercentage: .7 })) },
     options: { maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { mode: 'index', callbacks: { label: c => `${c.dataset.label}: ${fmtN(c.parsed.y, 1)} тыс. т` } } }, scales: { x: { stacked: true, grid: { display: false }, border: g.border }, y: { stacked: true, grid: g.grid, border: { display: false } } } } });
+  legend('volc5-leg', CARR.map((c, i) => [c, [C[0], C[1], css('--ink-3')][i]]));
+  document.getElementById('volc5-sub').textContent = Y + ', только маршрут на Махачкалу';
+  mk('volc5', { type: 'bar', data: { labels: months.map(mLabel), datasets: CARR.map((cr, i) => ({ label: cr, data: months.map(m => by(T, m, x => x.route === 'Махачкала' && x.car === cr) / 1000), backgroundColor: [C[0], C[1], css('--ink-3')][i], borderColor: css('--surface'), borderWidth: { bottom: 2 }, borderSkipped: false, barPercentage: .7 })) },
+    options: { maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { mode: 'index', callbacks: { label: c => `${c.dataset.label}: ${fmtN(c.parsed.y, 1)} тыс. т` } } }, scales: { x: { stacked: true, grid: { display: false }, border: g.border }, y: { stacked: true, grid: g.grid, border: { display: false } } } } });
   // table oil
   const cols = [['Всего', r => true], ['Баку всего', r => r.route === 'Баку'], ['Баку КМТФ', r => r.route === 'Баку' && r.car === 'КМТФ'], ['Баку АСКО', r => r.route === 'Баку' && r.car === 'АСКО'], ['Баку прочие', r => r.route === 'Баку' && r.car === 'Прочие'], ['Махачкала всего', r => r.route === 'Махачкала'], ['Махачкала КМТФ', r => r.route === 'Махачкала' && r.car === 'КМТФ'], ['Махачкала прочие', r => r.route === 'Махачкала' && r.car !== 'КМТФ'], ['Не указан', r => r.route === 'не указан'], ['Судозаходов', null]];
   const rowsT = months.map(m => [mLabel(m), ...cols.map(([n, f]) => f ? fmtN(by(T, m, f)) : fmtN(T.filter(r => r.m === m).length))]);
@@ -362,7 +366,42 @@ function filtered() {
   return base().filter(r => { const y = dateOf(r).slice(0, 4); return y >= S.y0 && y <= S.y1 && (S.fleet === 'all' || KM.has(r.vessel)) && (!S.vessel || r.vessel === S.vessel) && (!S.shpr || r.shpr === S.shpr); });
 }
 const charts = {};
-function mk(id, cfg) { if (charts[id]) charts[id].destroy(); const c = document.getElementById(id); charts[id] = new Chart(c, cfg); }
+// Подписи данных на всех графиках: значения сегментов (если сегмент достаточно высокий), итог над стопкой, значения у точек линий.
+const dlFmt = v => v == null || isNaN(v) ? '' : fmtN(v, Math.abs(v) < 10 && v !== Math.round(v) ? 1 : 0);
+const DATALABELS = {
+  id: 'datalabels',
+  afterDatasetsDraw(chart) {
+    const { ctx } = chart, horiz = chart.options.indexAxis === 'y';
+    ctx.save(); ctx.font = '600 10.5px "IBM Plex Sans",system-ui,sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    const inkTop = css('--ink'), inkIn = '#fff';
+    const totals = {}; let stacked = false;
+    chart.data.datasets.forEach((ds, di) => {
+      const meta = chart.getDatasetMeta(di); if (meta.hidden || !chart.isDatasetVisible(di)) return;
+      const isBar = meta.type === 'bar', st = isBar && chart.options.scales && chart.options.scales.y && chart.options.scales.y.stacked;
+      if (st) stacked = true;
+      meta.data.forEach((el, i) => {
+        const v = ds.data[i]; if (v == null || isNaN(v) || v === 0) return;
+        if (isBar) {
+          if (st) { totals[i] = (totals[i] || 0) + v; }
+          const p = el.getProps(['x', 'y', 'base', 'width', 'height'], true);
+          if (horiz) { ctx.fillStyle = inkTop; ctx.textAlign = 'left'; ctx.fillText(dlFmt(v), Math.max(p.x, p.base) + 4, p.y); ctx.textAlign = 'center'; }
+          else if (st) { const h = Math.abs(p.base - p.y); if (h >= 14 && p.width >= 22) { ctx.fillStyle = inkIn; ctx.fillText(dlFmt(v), p.x, (p.y + p.base) / 2); } }
+          else { ctx.fillStyle = inkTop; ctx.fillText(dlFmt(v), p.x, p.y - 7); }
+        } else { const p = el.getProps(['x', 'y'], true); ctx.fillStyle = ds.borderColor || inkTop; ctx.fillText(dlFmt(v), p.x, p.y - 9); }
+      });
+    });
+    if (stacked && !horiz) {
+      ctx.fillStyle = inkTop;
+      Object.entries(totals).forEach(([i, t]) => {
+        let top = null, x = null;
+        chart.data.datasets.forEach((ds, di) => { const m = chart.getDatasetMeta(di); if (!chart.isDatasetVisible(di) || !m.data[i]) return; const p = m.data[i].getProps(['x', 'y'], true); if (ds.data[i]) { if (top == null || p.y < top) top = p.y; x = p.x; } });
+        if (top != null) ctx.fillText(dlFmt(t), x, top - 7);
+      });
+    }
+    ctx.restore();
+  }
+};
+function mk(id, cfg) { if (charts[id]) charts[id].destroy(); const c = document.getElementById(id); cfg.plugins = [...(cfg.plugins || []), DATALABELS]; const ly = cfg.options && cfg.options.scales && cfg.options.scales.y; if (ly && !cfg.options.indexAxis) { ly.grace = ly.grace || '8%'; } charts[id] = new Chart(c, cfg); }
 function chartBase() {
   Chart.defaults.font.family = '"IBM Plex Sans",system-ui,sans-serif'; Chart.defaults.font.size = 12; Chart.defaults.color = css('--ink-2');
   return { grid: { color: css('--line-2') }, border: { color: css('--line') } };

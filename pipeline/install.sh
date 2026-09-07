@@ -25,10 +25,12 @@ cd ..
 git config user.name "dislokacia-bot"; git config user.email "dislokacia@localhost"
 git remote set-url origin git@github.com:anu-rich/dislokacia.git
 chmod +x pipeline/run.sh
-( crontab -l 2>/dev/null | grep -v 'pipeline/run.sh'; echo "*/3 * * * * $(pwd)/pipeline/run.sh" ) | crontab -
+# cron каждые 3 минуты; сам run.sh работает только в окна прихода сводок (08:00–10:00, 14:00–16:00, 17:30–19:30 по Актау)
+RUN="$(pwd)/pipeline/run.sh"
+( crontab -l 2>/dev/null | grep -v 'pipeline/run.sh'; echo "*/3 * * * * $RUN" ) | crontab -
 echo
 echo "ГОТОВО. Осталось одно: добавь этот ключ в GitHub -> репозиторий dislokacia -> Settings -> Deploy keys -> Add deploy key, галочка 'Allow write access':"
 echo
 cat ~/.ssh/id_ed25519.pub
 echo
-echo "После этого проверь: bash pipeline/run.sh && tail -20 pipeline/state/run.log"
+echo "После этого проверь: bash pipeline/run.sh --force && tail -20 pipeline/state/run.log"

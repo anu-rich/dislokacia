@@ -159,7 +159,7 @@ select:focus-visible,input:focus-visible{outline:2px solid var(--s1);outline-off
   <button class="tab" role="tab" aria-selected="false" data-tab="bunk">Бункеровка</button>
   <button class="tab" role="tab" aria-selected="false" data-tab="open">Открытые моря</button>
   <button class="tab" role="tab" aria-selected="false" data-tab="tugs">Буксиры</button>
-  <button class="tab" role="tab" aria-selected="false" data-tab="hist">История рейсов</button>
+  <button class="tab" role="tab" aria-selected="false" data-tab="hist">Статистика</button>
   <button class="tab" role="tab" aria-selected="false" data-tab="raw">Журнал</button>
   <button class="tab" role="tab" aria-selected="false" data-tab="wx">Погода</button>
 </div>
@@ -206,6 +206,18 @@ select:focus-visible,input:focus-visible{outline:2px solid var(--s1);outline-off
     <div class="f" id="shpr-f"><label>Грузоотправитель</label><select id="ssel"><option value="">Все</option></select></div>
   </div>
   <div class="kpis" id="h-kpis"></div>
+  <div class="card" style="margin-bottom:16px" id="ex-card">
+    <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin-bottom:8px">
+      <h2 style="margin:0 8px 0 0">Показатель в разрезе</h2>
+      <div class="f"><label>Показатель</label><select id="ex-m"></select></div>
+      <div class="f"><label>Разрез</label><select id="ex-d"></select></div>
+      <div class="f"><label>Агрегат</label><select id="ex-a"><option value="sum">Сумма</option><option value="avg">Среднее</option><option value="med">Медиана</option><option value="min">Минимум</option><option value="max">Максимум</option><option value="cnt">Количество</option></select></div>
+      <div class="f"><label>График</label><div class="segs" id="ex-c"><button aria-pressed="true" data-v="bar">Столбцы</button><button aria-pressed="false" data-v="line">Линия</button></div></div>
+    </div>
+    <div class="sub" id="ex-sub"></div>
+    <div class="chart tall"><canvas id="exc"></canvas></div>
+    <div class="tw" id="ex-t" style="margin-top:12px"></div>
+  </div>
   <div class="grid2" style="margin-top:0">
     <div class="card" style="grid-column:1/-1"><h2 id="c1-title">Объём по месяцам</h2><div class="sub" id="c1-sub"></div><div class="legend" id="c1-leg"></div><div class="chart tall"><canvas id="c1"></canvas></div></div>
     <div class="card"><h2 id="c2-title">По судам</h2><div class="sub" id="c2-sub"></div><div class="chart tall"><canvas id="c2"></canvas></div></div>

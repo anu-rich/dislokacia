@@ -322,6 +322,7 @@ function renderVol() {
 }
 
 /* ---------- HISTORY ---------- */
+
 const S = { seg: 'tank', fleet: 'all', y0: null, y1: null, vessel: '', shpr: '' };
 const years = [...new Set([...TANK.map(r => r.dep.slice(0, 4)), ...BULK.map(r => r.dep.slice(0, 4))])].sort();
 const y0 = document.getElementById('y0'), y1 = document.getElementById('y1');
@@ -365,7 +366,66 @@ const tblFold = (head, body, n = 20) => body.length <= n ? tbl(head, body) : `<d
 const legend = (el, items) => document.getElementById(el).innerHTML = items.map(([n, c]) => `<span><i style="background:${c}"></i>${esc(n)}</span>`).join('');
 const COLS = () => [css('--s1'), css('--s2'), css('--s3'), css('--s4'), css('--s5')];
 
+
+/* ---------- EXPLORER (показатель в разрезе) ---------- */
+const EX = { m: null, d: 'm', a: null, c: 'bar' };
+const EX_METRICS = {
+  tank: [['n', 'Отходов, шт', 'sum'], ['cargo', 'Груз, т', 'sum'], ['draft', 'Осадка, м', 'avg'], ['hR', 'Ожидание на рейде, ч', 'med'], ['hB', 'У причала (постановка → отход), ч', 'med'], ['hL', 'Чистая погрузка, ч', 'med'], ['hT', 'Оборот в порту (рейд → отход), ч', 'med'], ['hW', 'Постановка → начало погрузки, ч', 'med'], ['hE', 'Окончание погрузки → отход, ч', 'med'], ['rate', 'Темп погрузки, т/ч', 'med']],
+  bulk: [['n', 'Отходов, шт', 'sum'], ['in_teu', 'ДФЭ выгружено', 'sum'], ['out_teu', 'ДФЭ погружено', 'sum'], ['qin', 'Контейнеров выгружено, шт', 'sum'], ['qout', 'Контейнеров погружено, шт', 'sum'], ['hR', 'Ожидание на рейде, ч', 'med'], ['hB', 'У причала, ч', 'med'], ['hU', 'Выгрузка, ч', 'med'], ['hLd', 'Погрузка, ч', 'med'], ['hT', 'Оборот в порту, ч', 'med']],
+  bunk: [['n', 'Бункеровок, шт', 'sum'], ['dt', 'Дизтопливо, т', 'sum'], ['tt', 'Тяжёлое топливо, т', 'sum'], ['h', 'Длительность бункеровки, ч', 'med'], ['hW', 'Ожидание до бункеровки, ч', 'med']],
+};
+const EX_DIMS = {
+  tank: [['m', 'Месяц'], ['y', 'Год'], ['vessel', 'Судно'], ['car', 'Перевозчик'], ['shpr', 'Грузоотправитель'], ['route', 'Маршрут'], ['terminal', 'Терминал'], ['berth', 'Причал'], ['dow', 'День недели отхода'], ['q', 'Квартал']],
+  bulk: [['m', 'Месяц'], ['y', 'Год'], ['vessel', 'Судно'], ['car', 'Перевозчик'], ['berth', 'Причал'], ['kind', 'Груз на выход'], ['kindin', 'Груз на вход'], ['dow', 'День недели отхода'], ['q', 'Квартал']],
+  bunk: [['m', 'Месяц'], ['y', 'Год'], ['vessel', 'Судно'], ['port', 'Место'], ['car', 'Перевозчик'], ['q', 'Квартал']],
+};
+const DOWN = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+function exEnrich(r) {
+  const o = { ...r, n: 1 };
+  if (S.seg === 'tank') { o.hR = hrs(r.arr, r.berth_at); o.hB = hrs(r.berth_at, r.dep); o.hL = hrs(r.load_start, r.load_end); o.hT = hrs(r.arr, r.dep); o.hW = hrs(r.berth_at, r.load_start); o.hE = hrs(r.load_end, r.dep); o.rate = o.hL && r.cargo ? r.cargo / o.hL : null; o.route = routeOf(r.shpr); o.car = carrier(r.vessel); o.shpr = r.shpr || '—'; o.terminal = r.terminal || '—'; }
+  else if (S.seg === 'bulk') { o.hR = hrs(r.arr, r.berth_at); o.hB = hrs(r.berth_at, r.dep); o.hU = hrs(r.unload_start, r.unload_end); o.hLd = hrs(r.load_start, r.load_end); o.hT = hrs(r.arr, r.dep); o.qin = isCont(r.in_kind) ? cntQty(r.in_qty_raw) : 0; o.qout = isCont(r.out_kind) ? cntQty(r.out_qty_raw) : 0; o.car = carrier(r.vessel); o.kind = r.out_kind || '—'; o.kindin = r.in_kind || '—'; }
+  else { o.h = hrs(r.b_start, r.b_end); o.hW = hrs(r.arr, r.b_start); o.car = carrier(r.vessel); }
+  const d = dateOf(r); o.m = d.slice(0, 7); o.y = d.slice(0, 4); o.q = d.slice(0, 4) + ' Q' + (Math.floor((+d.slice(5, 7) - 1) / 3) + 1); o.dow = DOWN[P(d).getDay()]; o.berth = r.berth || '—';
+  return o;
+}
+function fillEx() {
+  const ms = document.getElementById('ex-m'), ds = document.getElementById('ex-d');
+  ms.innerHTML = EX_METRICS[S.seg].map(([k, n]) => `<option value="${k}">${n}</option>`).join('');
+  ds.innerHTML = EX_DIMS[S.seg].map(([k, n]) => `<option value="${k}">${n}</option>`).join('');
+  if (!EX_METRICS[S.seg].some(x => x[0] === EX.m)) { EX.m = EX_METRICS[S.seg][1][0]; EX.a = EX_METRICS[S.seg][1][2]; }
+  if (!EX_DIMS[S.seg].some(x => x[0] === EX.d)) EX.d = 'm';
+  ms.value = EX.m; ds.value = EX.d; document.getElementById('ex-a').value = EX.a;
+}
+document.getElementById('ex-m').onchange = e => { EX.m = e.target.value; EX.a = EX_METRICS[S.seg].find(x => x[0] === EX.m)[2]; document.getElementById('ex-a').value = EX.a; renderEx(); };
+document.getElementById('ex-d').onchange = e => { EX.d = e.target.value; renderEx(); };
+document.getElementById('ex-a').onchange = e => { EX.a = e.target.value; renderEx(); };
+document.getElementById('ex-c').querySelectorAll('button').forEach(b => b.onclick = () => { document.getElementById('ex-c').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); EX.c = b.dataset.v; renderEx(); });
+const AGG = { sum: v => v.reduce((a, x) => a + x, 0), avg, med, min: v => v.length ? Math.min(...v) : null, max: v => v.length ? Math.max(...v) : null, cnt: v => v.length };
+const AGGN = { sum: 'сумма', avg: 'среднее', med: 'медиана', min: 'минимум', max: 'максимум', cnt: 'количество' };
+function renderEx() {
+  fillEx();
+  const rs = filtered().map(exEnrich), g = chartBase(), C = COLS();
+  const mName = EX_METRICS[S.seg].find(x => x[0] === EX.m)[1], dName = EX_DIMS[S.seg].find(x => x[0] === EX.d)[1];
+  const groups = {};
+  rs.forEach(r => { const k = r[EX.d] ?? '—'; (groups[k] = groups[k] || []).push(r[EX.m]); });
+  const isTime = ['m', 'y', 'q'].includes(EX.d);
+  const timeOrder = EX.d === 'm' ? [...new Set(rs.map(r => r.m))].sort() : null;
+  let keys = Object.keys(groups);
+  const val = k => { const v = groups[k].filter(x => x != null && !isNaN(x)); return v.length ? AGG[EX.a](v) : null; };
+  if (isTime) keys.sort(); else if (EX.d === 'dow') keys.sort((a, b) => DOWN.indexOf(a) - DOWN.indexOf(b)); else keys.sort((a, b) => (val(b) ?? -1e18) - (val(a) ?? -1e18));
+  if (EX.d === 'm' && timeOrder) keys = timeOrder;
+  const labels = keys.map(k => EX.d === 'm' ? mlab(k) : k), data = keys.map(val);
+  const shown = isTime || keys.length <= 30 ? keys : keys.slice(0, 30);
+  const dec = EX.m === 'n' || /teu|qin|qout/.test(EX.m) || EX.a === 'cnt' ? 0 : 1;
+  document.getElementById('ex-sub').textContent = `${mName} — ${AGGN[EX.a]} по «${dName}». ${per_()} · ${fmtN(rs.length)} записей${!isTime && keys.length > 30 ? ' · на графике первые 30 групп' : ''}.`;
+  mk('exc', { type: EX.c, data: { labels: shown.map(k => EX.d === 'm' ? mlab(k) : k), datasets: [{ label: mName, data: shown.map(val), backgroundColor: EX.c === 'bar' ? shown.map(k => EX.d === 'vessel' || EX.d === 'car' ? (KM.has(k) || k === 'КМТФ' ? C[0] : k === 'АСКО' || ASCO.has(k) ? C[1] : css('--ink-3')) : C[0]) : C[0] + '22', borderColor: C[0], borderWidth: 2, borderRadius: 3, fill: EX.c === 'line', tension: .25, pointRadius: 2, barPercentage: .7 }] },
+    options: { maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => `${AGGN[EX.a]}: ${fmtN(c.parsed.y, dec)} · записей: ${groups[shown[c.dataIndex]].length}` } } }, scales: { x: { grid: { display: false }, border: g.border, ticks: { maxRotation: isTime ? 0 : 45, autoSkip: true } }, y: { grid: g.grid, border: { display: false }, beginAtZero: true } } } });
+  document.getElementById('ex-t').innerHTML = tblFold([dName, 'Записей', 'Есть значение', 'Сумма', 'Среднее', 'Медиана', 'Мин', 'Макс'], keys.map(k => { const v = groups[k].filter(x => x != null && !isNaN(x)); return [EX.d === 'm' ? mlab(k) : esc(k), fmtN(groups[k].length), fmtN(v.length), fmtN(AGG.sum(v), dec), fmtN(avg(v), dec), fmtN(med(v), dec), fmtN(AGG.min(v), dec), fmtN(AGG.max(v), dec)]; }), 24);
+}
+function per_() { return `${S.y0 === S.y1 ? S.y0 : S.y0 + '–' + S.y1}${S.fleet === 'kmtf' ? ' · флот КМТФ' : ''}${S.vessel ? ' · ' + S.vessel : ''}${S.shpr ? ' · ' + S.shpr : ''}`; }
+
 function renderHist() {
+  renderEx();
   const g = chartBase(), rs = filtered(), C = COLS();
   const T = (id, t) => document.getElementById(id).textContent = t;
   const per = `${S.y0 === S.y1 ? S.y0 : S.y0 + '–' + S.y1}${S.fleet === 'kmtf' ? ' · флот КМТФ' : ''}${S.vessel ? ' · ' + S.vessel : ''}${S.shpr ? ' · ' + S.shpr : ''}`;

@@ -6,10 +6,17 @@ ROOT="$(cd .. && pwd)"          # корень репозитория (там in
 LOG="$PWD/state/run.log"
 mkdir -p state export
 exec >>"$LOG" 2>&1
+# Окна прихода сводок по Актау: 08:00–10:00, 14:00–16:00, 17:30–19:30. Вне окон почту не трогаем (кроме запуска с --force).
+if [ "${1:-}" != "--force" ]; then
+  HM=$(TZ=Asia/Aqtau date +%H%M)
+  if ! { [ "$HM" -ge 0800 ] && [ "$HM" -lt 1000 ] || [ "$HM" -ge 1400 ] && [ "$HM" -lt 1600 ] || [ "$HM" -ge 1730 ] && [ "$HM" -lt 1930 ]; }; then exit 0; fi
+fi
 echo "=== $(date '+%F %T') start"
 # не запускать второй экземпляр параллельно
 exec 9>state/lock; flock -n 9 || { echo "уже работает"; exit 0; }
 source .venv/bin/activate
+# подтягиваем правки пайплайна из репозитория (если есть)
+git -C "$ROOT" pull -q --rebase --autostash origin main 2>/dev/null || true
 
 NEW=$(python fetch_mail.py 2>>"$LOG" | grep -v '^#' || true)
 FORCE=0

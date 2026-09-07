@@ -1,0 +1,9 @@
+config.env
+.venv/
+export/
+state/
+weather.json
+dislokacia.html
+data/snapshot.json
+data/data.json
+__pycache__/

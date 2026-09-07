@@ -42,6 +42,11 @@ since = datetime.datetime.now(tz) - datetime.timedelta(days=DAYS)
 if last and last.tzinfo is None: last = last.replace(tzinfo=tz)
 if last and last > since: since = last
 
+def ews_dt(d):
+    if isinstance(d, EWSDateTime): return d
+    if d.tzinfo is None: d = d.replace(tzinfo=tz)
+    return EWSDateTime.from_datetime(d)
+
 folders = [acc.inbox]
 try:
     folders.append(acc.inbox / "Dispetcher" / "Дислокация")
@@ -51,7 +56,7 @@ except Exception:
 new_files = []; newest = last
 seen = set()
 for folder in folders:
-    q = folder.filter(datetime_received__gt=EWSDateTime.from_datetime(since)).only("subject", "datetime_received", "attachments", "id")
+    q = folder.filter(datetime_received__gt=ews_dt(since)).only("subject", "datetime_received", "attachments", "id")
     for m in q.order_by("datetime_received"):
         if m.id in seen: continue
         seen.add(m.id)

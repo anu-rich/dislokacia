@@ -102,15 +102,16 @@ function renderNow() {
   const supMap = {}; S.sup.forEach(r => { if (r.n) supMap[r.n] = { fuel: numS(r.fuel), water: numS(r.water), food: numS(r.food), oil: numS(r.oil), bw: r.bw, hfo: numS(r.hfo) }; });
   const findIt = v => { const hits = items.filter(x => x.n === v); return hits.find(x => x.sec !== 'departed') || hits[0]; };
   // ---- fleet KPIs + table
-  const km = items.filter(x => KM.has(x.n));
+  const KM_CASP = new Set([...KM_T, ...KM_C, ...KM_B]);
+  const km = items.filter(x => KM_CASP.has(x.n));
   const kmAtBerth = km.filter(x => x.sec === 'berth' && !x.open), kmRoads = km.filter(x => (x.sec === 'roads' || x.sec === 'approach') && !x.open), kmDep = km.filter(x => x.sec === 'departed' && !x.open);
   document.getElementById('now-kpis').innerHTML = kpiHtml([
-    ['Суда КМТФ в сводке', uniq(km), `из ${KM.size} во флоте: ${KM_T.length} танкеров, ${KM_C.length} контейнеровоза, ${KM_B.length} сухогруза, ${KM_A.length} афрамакса, ${KM_TUG.length} буксира`],
+    ['Суда КМТФ на Каспии в сводке', uniq(km), `из ${KM_CASP.size}: ${KM_T.length} танкеров, ${KM_C.length} контейнеровоза, ${KM_B.length} сухогруза`],
     ['У причала (Каспий)', uniq(kmAtBerth), [...new Set(kmAtBerth.map(x => x.n))].join(', ') || '—'],
     ['На рейде / подход', uniq(kmRoads), [...new Set(kmRoads.map(x => x.n))].join(', ') || '—'],
     ['Отошли за сутки', uniq(kmDep), [...new Set(kmDep.map(x => x.n))].join(', ') || '—'],
   ]);
-  const groups = [['Танкеры', KM_T], ['Контейнеровозы', KM_C], ['Сухогрузы', KM_B], ['Афрамаксы (открытые моря)', KM_A], ['Буксиры', KM_TUG]];
+  const groups = [['Танкеры', KM_T], ['Контейнеровозы', KM_C], ['Сухогрузы', KM_B]];
   document.getElementById('fleet').innerHTML = fleetTable(groups.map(([g, vs]) => `<tr><td class="wx-day" colspan="8">${g}</td></tr>` + vs.map(v => fleetRow(v, findIt(v), supMap)).join('')).join(''));
   // ---- ports (Caspian)
   const casp = S.ports.filter(p => p.g !== 'o' && !isOpenPort(p.p));
@@ -469,18 +470,50 @@ function renderHist() {
 }
 
 /* ---------- RAW ---------- */
+const R = { seg: 'tank', fleet: 'all', y0: null, y1: null, vessel: '', shpr: '', sortKey: 'dep', sortDir: -1 };
+const ry0 = document.getElementById('raw-y0'), ry1 = document.getElementById('raw-y1');
+years.forEach(y => { ry0.add(new Option(y, y)); ry1.add(new Option(y, y)); });
+ry0.value = ry1.value = years[years.length - 1]; R.y0 = R.y1 = ry0.value;
+ry0.onchange = () => { R.y0 = ry0.value; if (R.y1 < R.y0) { ry1.value = R.y0; R.y1 = R.y0; } renderRaw(); };
+ry1.onchange = () => { R.y1 = ry1.value; if (R.y1 < R.y0) { ry0.value = R.y1; R.y0 = R.y1; } renderRaw(); };
+document.getElementById('raw-v').onchange = e => { R.vessel = e.target.value; renderRaw(); };
+document.getElementById('raw-s').onchange = e => { R.shpr = e.target.value; renderRaw(); };
+for (const [id, key] of [['raw-seg', 'seg'], ['raw-fleet', 'fleet']]) document.getElementById(id).querySelectorAll('button').forEach(b => b.onclick = () => {
+  document.getElementById(id).querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); R[key] = b.dataset.v;
+  if (key === 'seg') { R.vessel = ''; R.shpr = ''; R.sortKey = R.seg === 'bunk' ? 'b_start' : 'dep'; R.sortDir = -1; fillRawSelects(); }
+  renderRaw();
+});
+function rawBase() { return R.seg === 'tank' ? TANK : R.seg === 'bulk' ? BULK : BUNK; }
+function fillRawSelects() {
+  const vs = document.getElementById('raw-v'); vs.innerHTML = '<option value="">Все суда</option>';
+  const cnt = {}; rawBase().forEach(r => cnt[r.vessel] = (cnt[r.vessel] || 0) + 1);
+  Object.entries(cnt).sort((a, b) => b[1] - a[1]).forEach(([v, n]) => vs.add(new Option(`${v} (${n})`, v)));
+  document.getElementById('raw-shpr-f').style.display = R.seg === 'tank' ? '' : 'none';
+  const ss = document.getElementById('raw-s'); ss.innerHTML = '<option value="">Все</option>';
+  if (R.seg === 'tank') { const c = {}; TANK.forEach(r => { if (r.shpr) c[r.shpr] = (c[r.shpr] || 0) + 1; }); Object.entries(c).sort((a, b) => b[1] - a[1]).forEach(([v, n]) => ss.add(new Option(`${v} (${n})`, v))); }
+}
+fillRawSelects();
 document.getElementById('q').oninput = renderRaw; document.getElementById('rawn').onchange = renderRaw;
+const RAW_COLS = {
+  tank: [['vessel', 'Судно'], ['shpr', 'SHPR'], ['terminal', 'Терминал'], ['berth', 'Причал'], ['arr', 'Приход на рейд'], ['berth_at', 'Постановка'], ['load_start', 'Начало погрузки'], ['load_end', 'Окончание'], ['draft', 'Осадка'], ['cargo', 'Груз, т'], ['dep', 'Отход'], ['hR', 'Рейд, ч'], ['hB', 'У причала, ч']],
+  bulk: [['vessel', 'Судно'], ['berth', 'Причал'], ['arr', 'Приход'], ['berth_at', 'Постановка'], ['unload_start', 'Выгрузка с'], ['unload_end', 'по'], ['in_kind', 'Груз (вход)'], ['in_qty_raw', 'Кол-во'], ['in_teu', 'ДФЭ'], ['load_start', 'Погрузка с'], ['load_end', 'по'], ['out_kind', 'Груз (выход)'], ['out_qty_raw', 'Кол-во'], ['out_teu', 'ДФЭ'], ['dep', 'Отход'], ['hB', 'У причала, ч']],
+  bunk: [['vessel', 'Судно'], ['port', 'Место'], ['arr', 'Приход'], ['b_start', 'Начало'], ['b_end', 'Окончание'], ['dt', 'Д/Т, т'], ['tt', 'Т/Т, т'], ['dep', 'Отход'], ['h', 'Длит., ч']],
+};
+const NUMK = new Set(['draft', 'cargo', 'in_teu', 'out_teu', 'dt', 'tt', 'hR', 'hB', 'h', 'in_qty', 'out_qty']);
+const fmtCell = (k, v) => { if (v == null || v === '') return ''; if (/^(arr|berth_at|load_start|load_end|unload_start|unload_end|dep|b_start|b_end)$/.test(k)) return dmyY(v) + ' ' + String(v).slice(11); if (k === 'draft') return fmtN(v, 2); if (k === 'hR' || k === 'hB' || k === 'h') return fmtN(v, 1); if (NUMK.has(k)) return fmtN(v, k === 'dt' || k === 'tt' ? 1 : 0); return esc(v); };
 function renderRaw() {
   const q = document.getElementById('q').value.trim().toLowerCase(), n = document.getElementById('rawn').value;
-  let rs = filtered().slice().reverse();
+  let rs = rawBase().filter(r => { const y = dateOf(r).slice(0, 4); return y >= R.y0 && y <= R.y1 && (R.fleet === 'all' || (R.fleet === 'kmtf' ? KM.has(r.vessel) : ASCO.has(r.vessel))) && (!R.vessel || r.vessel === R.vessel) && (!R.shpr || r.shpr === R.shpr); });
+  rs = rs.map(r => ({ ...r, hR: hrs(r.arr, r.berth_at), hB: hrs(r.berth_at, r.dep), h: hrs(r.b_start, r.b_end) }));
   if (q) rs = rs.filter(r => Object.values(r).some(v => typeof v === 'string' && v.toLowerCase().includes(q)));
+  const k = R.sortKey, d = R.sortDir;
+  rs.sort((a, b) => { let x = a[k], y = b[k]; const nx = x == null || x === '', ny = y == null || y === ''; if (nx && ny) return 0; if (nx) return 1; if (ny) return -1; if (NUMK.has(k)) { x = +x; y = +y; } else if (k === 'berth') { const px = parseFloat(x), py = parseFloat(y); if (!isNaN(px) && !isNaN(py)) { x = px; y = py; } } return (x < y ? -1 : x > y ? 1 : 0) * d; });
   const total = rs.length; if (n !== 'все') rs = rs.slice(0, +n);
-  document.getElementById('raw-note').textContent = `${fmtN(total)} записей в текущем фильтре (сегмент и период — на вкладке «История»). Показано ${rs.length}.`;
-  let h, b;
-  if (S.seg === 'tank') { h = ['Судно', 'SHPR', 'Терминал', 'Причал', 'Приход на рейд', 'Постановка', 'Начало погрузки', 'Окончание', 'Осадка', 'Груз, т', 'Отход']; b = rs.map(r => [esc(r.vessel), esc(r.shpr), esc(r.terminal), esc(r.berth), dmy(r.arr), dmy(r.berth_at), dmy(r.load_start), dmy(r.load_end), fmtN(r.draft, 2), fmtN(r.cargo), dmy(r.dep)]); }
-  else if (S.seg === 'bulk') { h = ['Судно', 'Причал', 'Приход', 'Постановка', 'Выгрузка', 'Груз (вход)', 'Кол-во', 'ДФЭ', 'Погрузка', 'Груз (выход)', 'Кол-во', 'ДФЭ', 'Отход']; b = rs.map(r => [esc(r.vessel), esc(r.berth), dmy(r.arr), dmy(r.berth_at), dmy(r.unload_start) + '–' + dmy(r.unload_end), esc(r.in_kind), esc(r.in_qty_raw), fmtN(r.in_teu), dmy(r.load_start) + '–' + dmy(r.load_end), esc(r.out_kind), esc(r.out_qty_raw), fmtN(r.out_teu), dmy(r.dep)]); }
-  else { h = ['Судно', 'Порт', 'Приход', 'Начало', 'Окончание', 'Д/Т, т', 'Т/Т, т', 'Отход']; b = rs.map(r => [esc(r.vessel), esc(r.port), dmy(r.arr), dmy(r.b_start), dmy(r.b_end), fmtN(r.dt, 1), fmtN(r.tt, 1), dmy(r.dep)]); }
-  document.getElementById('raw').innerHTML = tbl(h, b);
+  document.getElementById('raw-note').textContent = `${fmtN(total)} записей в фильтре, показано ${rs.length}.`;
+  const cols = RAW_COLS[R.seg];
+  const head = cols.map(([key, name]) => `<th class="sortable${key === k ? ' sorted' : ''}" data-k="${key}">${name}${key === k ? (d > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('');
+  document.getElementById('raw').innerHTML = `<table><thead><tr>${head}</tr></thead><tbody>${rs.map(r => `<tr>${cols.map(([key]) => `<td${key === 'vessel' ? ' style="text-align:left"' : ''}>${fmtCell(key, r[key])}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+  document.querySelectorAll('#raw th.sortable').forEach(th => th.onclick = () => { const kk = th.dataset.k; if (R.sortKey === kk) R.sortDir = -R.sortDir; else { R.sortKey = kk; R.sortDir = NUMK.has(kk) || /dep|arr|start|end|at$/.test(kk) ? -1 : 1; } renderRaw(); });
 }
 
 document.getElementById('src').innerHTML = `Источник: файлы «Дислокация судов» диспетчерской службы КМТФ (${esc(SNAP.file)}); история рейсов собрана из листов «Статистика по танкерам», «Статистика сухогрузов» и «Статистика бункеровки» — ${fmtN(TANK.length)} отходов танкеров, ${fmtN(BULK.length)} отходов сухогрузов, ${fmtN(BUNK.length)} бункеровок с ${TANK[0].dep.slice(0, 7)} по ${TANK[TANK.length - 1].dep.slice(0, 10)}. Статистика включает все суда, заходившие в Актау, не только флот КМТФ — переключатель «Только КМТФ» ограничивает выборку судами из таблицы судовых запасов. Часы у причала считаются от постановки до отхода; записи с пропусками дат в средних не участвуют.`;

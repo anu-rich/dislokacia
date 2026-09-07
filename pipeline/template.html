@@ -110,6 +110,7 @@ td.bar i{position:relative;font-style:normal}
 td.c-warn{background:var(--warn-soft)}td.c-crit{background:var(--crit-soft)}
 .wx-day{background:var(--surface-2);font-weight:600;text-align:left!important;color:var(--ink-2)}
 .tw{overflow-x:auto}
+th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable:hover{color:var(--ink)}th.sorted{color:var(--s1)}
 .fold .more{display:none}.fold.open .more{display:block}.fold .more thead{display:none}.morebtn{margin-top:8px;background:var(--surface-2);border:1px solid var(--line);border-radius:5px;padding:5px 12px;cursor:pointer}.morebtn:focus-visible{outline:2px solid var(--s1)}
 .filters{display:flex;flex-wrap:wrap;gap:10px;align-items:end;background:var(--surface);border:1px solid var(--line-2);border-radius:8px;padding:12px 16px;margin-bottom:16px;box-shadow:var(--shadow)}
 .f{display:flex;flex-direction:column;gap:4px}
@@ -150,7 +151,7 @@ select:focus-visible,input:focus-visible{outline:2px solid var(--s1);outline-off
   <div class="stamp"><span id="stamp-l">Сводка на</span><b id="stamp">—</b></div>
 </div>
 <div class="tabs" role="tablist">
-  <button class="tab" role="tab" aria-selected="true" data-tab="now">Флот КМТФ</button>
+  <button class="tab" role="tab" aria-selected="true" data-tab="now">Флот Каспий</button>
   <button class="tab" role="tab" aria-selected="false" data-tab="ports">Порты</button>
   <button class="tab" role="tab" aria-selected="false" data-tab="oil">Объёмы: нефть</button>
   <button class="tab" role="tab" aria-selected="false" data-tab="cnt">Объёмы: контейнеры</button>
@@ -167,7 +168,7 @@ select:focus-visible,input:focus-visible{outline:2px solid var(--s1);outline-off
 
 <section class="panel" id="p-now">
   <div class="kpis" id="now-kpis"></div>
-  <div class="card"><h2>Флот КМТФ</h2><div class="sub">Все суда компании по выбранной сводке: где, статус, груз и запасы на борту (запасы — только по судам из таблицы «Судовые запасы»).</div><div class="tw" id="fleet"></div></div>
+  <div class="card"><h2>Флот КМТФ на Каспии</h2><div class="sub">Танкеры, контейнеровозы и сухогрузы по выбранной сводке: где, статус, груз и запасы на борту. Афрамаксы — на вкладке «Открытые моря», буксиры — «Буксиры».</div><div class="tw" id="fleet"></div></div>
 </section>
 
 <section class="panel" id="p-ports" hidden>
@@ -243,11 +244,17 @@ select:focus-visible,input:focus-visible{outline:2px solid var(--s1);outline-off
 
 <section class="panel" id="p-raw" hidden>
   <div class="filters">
-    <div class="f"><label>Поиск</label><input type="search" id="q" placeholder="судно, отправитель, причал…"></div>
+    <div class="f"><label>Сегмент</label><div class="segs" id="raw-seg"><button aria-pressed="true" data-v="tank">Танкеры</button><button aria-pressed="false" data-v="bulk">Сухогрузы и контейнеровозы</button><button aria-pressed="false" data-v="bunk">Бункеровки</button></div></div>
+    <div class="f"><label>Флот</label><div class="segs" id="raw-fleet"><button aria-pressed="true" data-v="all">Все</button><button aria-pressed="false" data-v="kmtf">КМТФ</button><button aria-pressed="false" data-v="asco">АСКО</button></div></div>
+    <div class="f"><label>С</label><select id="raw-y0"></select></div>
+    <div class="f"><label>По</label><select id="raw-y1"></select></div>
+    <div class="f"><label>Судно</label><select id="raw-v"><option value="">Все суда</option></select></div>
+    <div class="f" id="raw-shpr-f"><label>Отправитель</label><select id="raw-s"><option value="">Все</option></select></div>
+    <div class="f"><label>Поиск</label><input type="search" id="q" placeholder="судно, отправитель, причал, груз…"></div>
     <div class="f"><label>Показывать</label><select id="rawn"><option>200</option><option>500</option><option>1000</option><option>все</option></select></div>
     <div class="note" id="raw-note" style="align-self:center"></div>
   </div>
-  <div class="card"><div class="tw" id="raw"></div></div>
+  <div class="card"><div class="sub">Клик по заголовку столбца — сортировка (второй клик — в обратную сторону).</div><div class="tw" id="raw"></div></div>
 </section>
 
 <section class="panel" id="p-wx" hidden>

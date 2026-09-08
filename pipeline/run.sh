@@ -5,6 +5,7 @@ cd "$(dirname "$0")"
 ROOT="$(cd .. && pwd)"          # корень репозитория (там index.html)
 LOG="$PWD/state/run.log"
 mkdir -p state export
+[ -x /usr/local/bin/d ] || { chmod +x "$PWD/d" 2>/dev/null; ln -sf "$PWD/d" /usr/local/bin/d 2>/dev/null; }
 exec >>"$LOG" 2>&1
 # Окна прихода сводок по Актау: 08:00–10:00, 14:00–16:00, 17:30–19:30 ежедневно;
 # плюс среда/четверг 15:00–21:00 — письма «Открытые моря» из Лондона. Вне окон почту не трогаем (кроме --force).

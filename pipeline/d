@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Короткая команда для консоли сервера: пересобрать и опубликовать дашборд прямо сейчас.
+bash /root/dislokacia/pipeline/run.sh --force
+tail -12 /root/dislokacia/pipeline/state/run.log

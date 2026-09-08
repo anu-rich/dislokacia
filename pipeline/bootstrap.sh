@@ -13,7 +13,7 @@ echo "== 3/6 python-окружение (1-2 минуты)"
 [ -d .venv ] || python3 -m venv .venv
 . .venv/bin/activate
 pip -q install --upgrade pip >/dev/null
-pip -q install exchangelib requests-ntlm openpyxl pandas >/dev/null
+pip -q install exchangelib requests-ntlm openpyxl pandas python-pptx pdfplumber >/dev/null
 echo "== 4/6 настройки почты"
 if [ ! -f config.env ] || grep -q 'ВПИШИ_ПАРОЛЬ' config.env; then
   cp config.env.example config.env

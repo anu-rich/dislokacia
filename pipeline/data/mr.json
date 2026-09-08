@@ -1,0 +1,9003 @@
+{
+"2026-01": {
+"src": "МР-отчет за январь 2026 года (корр 6).pptx",
+"mtime": 1788847862.350434,
+"m": {
+"oil_total": {
+"fact": 1193.0,
+"plan": 1082.0,
+"plan_year": 13070.0,
+"prev": 1316.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 174.0,
+"plan": 194.0,
+"plan_year": 2335.0,
+"prev": 159.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 122.0,
+"plan": 122.0,
+"plan_year": 1464.0,
+"prev": 111.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 53.0,
+"plan": 72.0,
+"plan_year": 870.0,
+"prev": 48.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 1019.0,
+"plan": 888.0,
+"plan_year": 10735.0,
+"prev": 1157.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 255.0,
+"plan": 320.0,
+"plan_year": 3920.0,
+"prev": 601.0,
+"unit": ""
+},
+"oil_bs_in_kmgt": {
+"fact": 255.0,
+"plan": 320.0,
+"plan_year": 3920.0,
+"prev": 418.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_own": {
+"fact": null,
+"plan": 60.0,
+"plan_year": 720.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_chart": {
+"fact": 255.0,
+"plan": 260.0,
+"plan_year": 3200.0,
+"prev": 418.0,
+"unit": ""
+},
+"oil_bs_in_3rd": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 183.0,
+"unit": ""
+},
+"oil_bs_in_3rd_own": {
+"fact": null,
+"plan": null,
+"plan_year": null,
+"prev": 183.0,
+"unit": ""
+},
+"oil_bs_in_3rd_chart": {
+"fact": null,
+"plan": null,
+"plan_year": null,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 764.0,
+"plan": 568.0,
+"plan_year": 6815.0,
+"prev": 556.0,
+"unit": ""
+},
+"oil_bs_out_kmgt": {
+"fact": 498.0,
+"plan": 483.0,
+"plan_year": 5795.0,
+"prev": 471.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_own": {
+"fact": null,
+"plan": 142.0,
+"plan_year": 1710.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_chart": {
+"fact": 498.0,
+"plan": 341.0,
+"plan_year": 4085.0,
+"prev": 471.0,
+"unit": ""
+},
+"oil_bs_out_3rd": {
+"fact": 266.0,
+"plan": 85.0,
+"plan_year": 1020.0,
+"prev": 85.0,
+"unit": ""
+},
+"oil_bs_out_3rd_own": {
+"fact": 266.0,
+"plan": 85.0,
+"plan_year": 1020.0,
+"prev": 85.0,
+"unit": ""
+},
+"oil_bs_out_3rd_chart": {
+"fact": null,
+"plan": null,
+"plan_year": null,
+"prev": null,
+"unit": ""
+},
+"teu_total": {
+"fact": 3411.0,
+"plan": 5040.0,
+"plan_year": null,
+"prev": 5416.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 2472.0,
+"plan": 2940.0,
+"plan_year": null,
+"prev": 3903.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 854.0,
+"plan": 980.0,
+"plan_year": null,
+"prev": 968.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 869.0,
+"plan": 980.0,
+"plan_year": null,
+"prev": 1326.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 554.0,
+"plan": 980.0,
+"plan_year": null,
+"prev": 1050.0,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": null,
+"plan": null,
+"plan_year": null,
+"prev": 559.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 195.0,
+"plan": null,
+"plan_year": null,
+"prev": null,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 939.0,
+"plan": 2100.0,
+"plan_year": null,
+"prev": 1513.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 282.0,
+"plan": 700.0,
+"plan_year": null,
+"prev": 475.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 213.0,
+"plan": 700.0,
+"plan_year": null,
+"prev": 302.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 175.0,
+"plan": 700.0,
+"plan_year": null,
+"prev": 621.0,
+"unit": "teu"
+},
+"teu_ba_turkestan": {
+"fact": null,
+"plan": null,
+"plan_year": null,
+"prev": 115.0,
+"unit": "teu"
+},
+"teu_ba_beket": {
+"fact": 269.0,
+"plan": null,
+"plan_year": null,
+"prev": null,
+"unit": "teu"
+},
+"teu_ia": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ia_turkestan": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": null,
+"unit": "teu"
+},
+"bulk_total": {
+"fact": 0.0,
+"plan": 28.0,
+"plan_year": null,
+"prev": 9.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_beket": {
+"fact": null,
+"plan": 15.0,
+"plan_year": null,
+"prev": 9.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_turkestan": {
+"fact": null,
+"plan": 13.0,
+"plan_year": null,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"oil_total_alatau": {
+"fact": 0.0,
+"plan": 14.42,
+"plan_year": 14.42,
+"prev": null,
+"unit": "долл.сша"
+},
+"oil_total_altai": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": null,
+"unit": "долл.сша"
+},
+"os_total": {
+"fact": 266.0,
+"plan": 287.0,
+"plan_year": 3450.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in": {
+"fact": 0.0,
+"plan": 60.0,
+"plan_year": 720.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in_alatau": {
+"fact": null,
+"plan": 60.0,
+"plan_year": 720.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in_altai": {
+"fact": null,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out": {
+"fact": 266.0,
+"plan": 227.0,
+"plan_year": 2730.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out_altai": {
+"fact": 79.0,
+"plan": 148.0,
+"plan_year": 1780.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out_alatau": {
+"fact": 187.0,
+"plan": 79.0,
+"plan_year": 950.0,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2026-04": {
+"src": "МР-отчет за январь-апрель 2026 года.pptx",
+"mtime": 1788847862.238434,
+"m": {
+"oil_total": {
+"fact": 4121.0,
+"plan": 4328.0,
+"plan_year": 13070.0,
+"prev": 3814.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 703.0,
+"plan": 776.0,
+"plan_year": 2335.0,
+"prev": 621.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 476.0,
+"plan": 488.0,
+"plan_year": 1464.0,
+"prev": 367.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 227.0,
+"plan": 288.0,
+"plan_year": 870.0,
+"prev": 254.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 3418.0,
+"plan": 3552.0,
+"plan_year": 10735.0,
+"prev": 3193.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 579.0,
+"plan": 1280.0,
+"plan_year": 3920.0,
+"prev": 1861.0,
+"unit": ""
+},
+"oil_bs_in_kmgt": {
+"fact": 579.0,
+"plan": 1280.0,
+"plan_year": 3920.0,
+"prev": 1581.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_own": {
+"fact": 84.0,
+"plan": 240.0,
+"plan_year": 720.0,
+"prev": 578.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_chart": {
+"fact": 495.0,
+"plan": 1040.0,
+"plan_year": 3200.0,
+"prev": 1003.0,
+"unit": ""
+},
+"oil_bs_in_3rd": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 280.0,
+"unit": ""
+},
+"oil_bs_in_3rd_own": {
+"fact": null,
+"plan": null,
+"plan_year": null,
+"prev": 280.0,
+"unit": ""
+},
+"oil_bs_in_3rd_chart": {
+"fact": null,
+"plan": null,
+"plan_year": null,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 2839.0,
+"plan": 2272.0,
+"plan_year": 6815.0,
+"prev": 1332.0,
+"unit": ""
+},
+"oil_bs_out_kmgt": {
+"fact": 2048.0,
+"plan": 1932.0,
+"plan_year": 5795.0,
+"prev": 1247.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_own": {
+"fact": 85.0,
+"plan": 570.0,
+"plan_year": 1710.0,
+"prev": 99.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_chart": {
+"fact": 1963.0,
+"plan": 1362.0,
+"plan_year": 4085.0,
+"prev": 1148.0,
+"unit": ""
+},
+"oil_bs_out_3rd": {
+"fact": 791.0,
+"plan": 340.0,
+"plan_year": 1020.0,
+"prev": 85.0,
+"unit": ""
+},
+"oil_bs_out_3rd_own": {
+"fact": 791.0,
+"plan": 340.0,
+"plan_year": 1020.0,
+"prev": 85.0,
+"unit": ""
+},
+"oil_bs_out_3rd_chart": {
+"fact": null,
+"plan": null,
+"plan_year": null,
+"prev": null,
+"unit": ""
+},
+"teu_total": {
+"fact": 18673.0,
+"plan": 20160.0,
+"plan_year": null,
+"prev": 19781.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 14189.0,
+"plan": 11760.0,
+"plan_year": null,
+"prev": 15704.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 3844.0,
+"plan": 3920.0,
+"plan_year": null,
+"prev": 4344.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 4211.0,
+"plan": 3920.0,
+"plan_year": null,
+"prev": 4318.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 3238.0,
+"plan": 3920.0,
+"plan_year": null,
+"prev": 4395.0,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": 695.0,
+"plan": null,
+"plan_year": null,
+"prev": 1101.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 2201.0,
+"plan": null,
+"plan_year": null,
+"prev": 1546.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 4484.0,
+"plan": 8400.0,
+"plan_year": null,
+"prev": 4077.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 762.0,
+"plan": 2800.0,
+"plan_year": null,
+"prev": 1334.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 592.0,
+"plan": 2800.0,
+"plan_year": null,
+"prev": 1132.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 872.0,
+"plan": 2800.0,
+"plan_year": null,
+"prev": 972.0,
+"unit": "teu"
+},
+"teu_ba_turkestan": {
+"fact": 558.0,
+"plan": null,
+"plan_year": null,
+"prev": 257.0,
+"unit": "teu"
+},
+"teu_ba_beket": {
+"fact": 1700.0,
+"plan": null,
+"plan_year": null,
+"prev": 382.0,
+"unit": "teu"
+},
+"bulk_total": {
+"fact": 0.0,
+"plan": 112.0,
+"plan_year": null,
+"prev": 30.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_beket": {
+"fact": null,
+"plan": 60.0,
+"plan_year": null,
+"prev": 17.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_turkestan": {
+"fact": null,
+"plan": 52.0,
+"plan_year": null,
+"prev": 12.0,
+"unit": "тыс.тонн"
+},
+"oil_total_alatau": {
+"fact": 0.0,
+"plan": 14.42,
+"plan_year": 14.42,
+"prev": 15.58,
+"unit": "долл.сша"
+},
+"oil_total_altai": {
+"fact": 36.64,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 11.76,
+"unit": "долл.сша"
+},
+"os_total": {
+"fact": 960.0,
+"plan": 1150.0,
+"plan_year": 3450.0,
+"prev": 1042.0,
+"unit": "тыс.тонн"
+},
+"os_in": {
+"fact": 84.0,
+"plan": 240.0,
+"plan_year": 720.0,
+"prev": 858.0,
+"unit": "тыс.тонн"
+},
+"os_in_alatau": {
+"fact": null,
+"plan": 240.0,
+"plan_year": 720.0,
+"prev": 503.0,
+"unit": "тыс.тонн"
+},
+"os_in_altai": {
+"fact": 84.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 355.0,
+"unit": "тыс.тонн"
+},
+"os_out": {
+"fact": 876.0,
+"plan": 910.0,
+"plan_year": 2730.0,
+"prev": 184.0,
+"unit": "тыс.тонн"
+},
+"os_out_altai": {
+"fact": 354.0,
+"plan": 593.0,
+"plan_year": 1780.0,
+"prev": 184.0,
+"unit": "тыс.тонн"
+},
+"os_out_alatau": {
+"fact": 522.0,
+"plan": 317.0,
+"plan_year": 950.0,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2026-03": {
+"src": "МР-отчет за январь-март 2026 года.pptx",
+"mtime": 1788847862.118434,
+"m": {
+"oil_total": {
+"fact": 2937.0,
+"plan": 3247.0,
+"plan_year": 13070.0,
+"prev": 3128.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 520.0,
+"plan": 582.0,
+"plan_year": 2335.0,
+"prev": 456.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 345.0,
+"plan": 366.0,
+"plan_year": 1464.0,
+"prev": 285.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 175.0,
+"plan": 216.0,
+"plan_year": 870.0,
+"prev": 171.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 2417.0,
+"plan": 2665.0,
+"plan_year": 10735.0,
+"prev": 2672.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 334.0,
+"plan": 960.0,
+"plan_year": 3920.0,
+"prev": 1534.0,
+"unit": ""
+},
+"oil_bs_in_kmgt": {
+"fact": 334.0,
+"plan": 960.0,
+"plan_year": 3920.0,
+"prev": 1254.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_own": {
+"fact": null,
+"plan": 180.0,
+"plan_year": 720.0,
+"prev": 418.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_chart": {
+"fact": 334.0,
+"plan": 780.0,
+"plan_year": 3200.0,
+"prev": 836.0,
+"unit": ""
+},
+"oil_bs_in_3rd": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 280.0,
+"unit": ""
+},
+"oil_bs_in_3rd_own": {
+"fact": null,
+"plan": null,
+"plan_year": null,
+"prev": 280.0,
+"unit": ""
+},
+"oil_bs_in_3rd_chart": {
+"fact": null,
+"plan": null,
+"plan_year": null,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 2083.0,
+"plan": 1705.0,
+"plan_year": 6815.0,
+"prev": 1138.0,
+"unit": ""
+},
+"oil_bs_out_kmgt": {
+"fact": 1385.0,
+"plan": 1450.0,
+"plan_year": 5795.0,
+"prev": 1053.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_own": {
+"fact": 84.0,
+"plan": 428.0,
+"plan_year": 1710.0,
+"prev": 99.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_chart": {
+"fact": 1301.0,
+"plan": 1022.0,
+"plan_year": 4085.0,
+"prev": 954.0,
+"unit": ""
+},
+"oil_bs_out_3rd": {
+"fact": 698.0,
+"plan": 255.0,
+"plan_year": 1020.0,
+"prev": 85.0,
+"unit": ""
+},
+"oil_bs_out_3rd_own": {
+"fact": 698.0,
+"plan": 255.0,
+"plan_year": 1020.0,
+"prev": 85.0,
+"unit": ""
+},
+"oil_bs_out_3rd_chart": {
+"fact": null,
+"plan": null,
+"plan_year": null,
+"prev": null,
+"unit": ""
+},
+"teu_total": {
+"fact": 13345.0,
+"plan": 15120.0,
+"plan_year": null,
+"prev": 16300.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 10065.0,
+"plan": 8820.0,
+"plan_year": null,
+"prev": 13120.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 2958.0,
+"plan": 2940.0,
+"plan_year": null,
+"prev": 3714.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 3289.0,
+"plan": 2940.0,
+"plan_year": null,
+"prev": 3756.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 2350.0,
+"plan": 2940.0,
+"plan_year": null,
+"prev": 3512.0,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": null,
+"plan": null,
+"plan_year": null,
+"prev": 935.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 1468.0,
+"plan": null,
+"plan_year": null,
+"prev": 1203.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 3280.0,
+"plan": 6300.0,
+"plan_year": null,
+"prev": 3180.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 714.0,
+"plan": 2100.0,
+"plan_year": null,
+"prev": 1002.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 592.0,
+"plan": 2100.0,
+"plan_year": null,
+"prev": 661.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 746.0,
+"plan": 2100.0,
+"plan_year": null,
+"prev": 932.0,
+"unit": "teu"
+},
+"teu_ba_turkestan": {
+"fact": null,
+"plan": null,
+"plan_year": null,
+"prev": 203.0,
+"unit": "teu"
+},
+"teu_ba_beket": {
+"fact": 1228.0,
+"plan": null,
+"plan_year": null,
+"prev": 382.0,
+"unit": "teu"
+},
+"teu_ia": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ia_turkestan": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": null,
+"unit": "teu"
+},
+"bulk_total": {
+"fact": 0.0,
+"plan": 84.0,
+"plan_year": null,
+"prev": 26.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_beket": {
+"fact": null,
+"plan": 45.0,
+"plan_year": null,
+"prev": 17.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_turkestan": {
+"fact": null,
+"plan": 39.0,
+"plan_year": null,
+"prev": 8.0,
+"unit": "тыс.тонн"
+},
+"oil_total_alatau": {
+"fact": 0.0,
+"plan": 14.42,
+"plan_year": 14.42,
+"prev": null,
+"unit": "долл.сша"
+},
+"oil_total_altai": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": null,
+"unit": "долл.сша"
+},
+"os_total": {
+"fact": 782.0,
+"plan": 863.0,
+"plan_year": 3450.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in": {
+"fact": 0.0,
+"plan": 180.0,
+"plan_year": 720.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in_alatau": {
+"fact": null,
+"plan": 180.0,
+"plan_year": 720.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in_altai": {
+"fact": null,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out": {
+"fact": 782.0,
+"plan": 683.0,
+"plan_year": 2730.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out_altai": {
+"fact": 260.0,
+"plan": 445.0,
+"plan_year": 1780.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out_alatau": {
+"fact": 522.0,
+"plan": 238.0,
+"plan_year": 950.0,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2026-02": {
+"src": "МР-отчет за январь-февраль 2026 года.pptx",
+"mtime": 1788847864.010434,
+"m": {
+"oil_total": {
+"fact": 1874.0,
+"plan": 2164.0,
+"plan_year": 13070.0,
+"prev": 2254.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 326.0,
+"plan": 388.0,
+"plan_year": 2335.0,
+"prev": 311.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 221.0,
+"plan": 244.0,
+"plan_year": 1464.0,
+"prev": 205.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 105.0,
+"plan": 144.0,
+"plan_year": 870.0,
+"prev": 106.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 1548.0,
+"plan": 1776.0,
+"plan_year": 10735.0,
+"prev": 1943.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 334.0,
+"plan": 640.0,
+"plan_year": 3920.0,
+"prev": 1197.0,
+"unit": ""
+},
+"oil_bs_in_kmgt": {
+"fact": 334.0,
+"plan": 640.0,
+"plan_year": 3920.0,
+"prev": 1014.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_own": {
+"fact": null,
+"plan": 120.0,
+"plan_year": 720.0,
+"prev": 338.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_chart": {
+"fact": 334.0,
+"plan": 520.0,
+"plan_year": 3200.0,
+"prev": 676.0,
+"unit": ""
+},
+"oil_bs_in_3rd": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 183.0,
+"unit": ""
+},
+"oil_bs_in_3rd_own": {
+"fact": null,
+"plan": null,
+"plan_year": null,
+"prev": 183.0,
+"unit": ""
+},
+"oil_bs_in_3rd_chart": {
+"fact": null,
+"plan": null,
+"plan_year": null,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 1214.0,
+"plan": 1136.0,
+"plan_year": 6815.0,
+"prev": 746.0,
+"unit": ""
+},
+"oil_bs_out_kmgt": {
+"fact": 692.0,
+"plan": 966.0,
+"plan_year": 5795.0,
+"prev": 661.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_own": {
+"fact": null,
+"plan": 285.0,
+"plan_year": 1710.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_chart": {
+"fact": 692.0,
+"plan": 681.0,
+"plan_year": 4085.0,
+"prev": 661.0,
+"unit": ""
+},
+"oil_bs_out_3rd": {
+"fact": 522.0,
+"plan": 170.0,
+"plan_year": 1020.0,
+"prev": 85.0,
+"unit": ""
+},
+"oil_bs_out_3rd_own": {
+"fact": 522.0,
+"plan": 170.0,
+"plan_year": 1020.0,
+"prev": 85.0,
+"unit": ""
+},
+"oil_bs_out_3rd_chart": {
+"fact": null,
+"plan": null,
+"plan_year": null,
+"prev": null,
+"unit": ""
+},
+"teu_total": {
+"fact": 7288.0,
+"plan": 10080.0,
+"plan_year": null,
+"prev": 10254.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 5332.0,
+"plan": 5880.0,
+"plan_year": null,
+"prev": 7896.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 1682.0,
+"plan": 1960.0,
+"plan_year": null,
+"prev": 2314.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 1737.0,
+"plan": 1960.0,
+"plan_year": null,
+"prev": 2378.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 1132.0,
+"plan": 1960.0,
+"plan_year": null,
+"prev": 2456.0,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": null,
+"plan": null,
+"plan_year": null,
+"prev": 559.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 781.0,
+"plan": null,
+"plan_year": null,
+"prev": 189.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 1956.0,
+"plan": 4200.0,
+"plan_year": null,
+"prev": 2358.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 391.0,
+"plan": 1400.0,
+"plan_year": null,
+"prev": 800.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 427.0,
+"plan": 1400.0,
+"plan_year": null,
+"prev": 577.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 406.0,
+"plan": 1400.0,
+"plan_year": null,
+"prev": 705.0,
+"unit": "teu"
+},
+"teu_ba_turkestan": {
+"fact": null,
+"plan": null,
+"plan_year": null,
+"prev": 115.0,
+"unit": "teu"
+},
+"teu_ba_beket": {
+"fact": 732.0,
+"plan": null,
+"plan_year": null,
+"prev": 161.0,
+"unit": "teu"
+},
+"teu_ia": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ia_turkestan": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": null,
+"unit": "teu"
+},
+"bulk_total": {
+"fact": 0.0,
+"plan": 56.0,
+"plan_year": null,
+"prev": 21.0,
+"unit": "тыс.тонн"
+},
+"oil_total_alatau": {
+"fact": 0.0,
+"plan": 14.42,
+"plan_year": 14.42,
+"prev": null,
+"unit": "долл.сша"
+},
+"oil_total_altai": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": null,
+"unit": "долл.сша"
+},
+"os_total": {
+"fact": 522.0,
+"plan": 575.0,
+"plan_year": 3450.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in": {
+"fact": 0.0,
+"plan": 120.0,
+"plan_year": 720.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in_alatau": {
+"fact": null,
+"plan": 120.0,
+"plan_year": 720.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in_altai": {
+"fact": null,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out": {
+"fact": 522.0,
+"plan": 455.0,
+"plan_year": 2730.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out_altai": {
+"fact": 176.0,
+"plan": 297.0,
+"plan_year": 1780.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out_alatau": {
+"fact": 346.0,
+"plan": 158.0,
+"plan_year": 950.0,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2026-05": {
+"src": "Приложение МР-отчет за январь-май 2026 года.pptx",
+"mtime": 1788847636.0384393,
+"m": {
+"oil_total": {
+"fact": 5420.0,
+"plan": 5410.0,
+"plan_year": 13070.0,
+"prev": 4709.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 910.0,
+"plan": 970.0,
+"plan_year": 2335.0,
+"prev": 814.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 613.0,
+"plan": 610.0,
+"plan_year": 1464.0,
+"prev": 496.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 297.0,
+"plan": 360.0,
+"plan_year": 870.0,
+"prev": 318.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 4510.0,
+"plan": 4440.0,
+"plan_year": 10735.0,
+"prev": 3895.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 838.0,
+"plan": 1600.0,
+"plan_year": 3920.0,
+"prev": 2022.0,
+"unit": ""
+},
+"oil_bs_in_kmgt": {
+"fact": 754.0,
+"plan": 1600.0,
+"plan_year": 3920.0,
+"prev": 1823.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_own": {
+"fact": 174.0,
+"plan": 300.0,
+"plan_year": 720.0,
+"prev": 493.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_chart": {
+"fact": 580.0,
+"plan": 1300.0,
+"plan_year": 3200.0,
+"prev": 1330.0,
+"unit": ""
+},
+"oil_bs_in_3rd": {
+"fact": 84.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 199.0,
+"unit": ""
+},
+"oil_bs_in_3rd_own": {
+"fact": 84.0,
+"plan": null,
+"plan_year": null,
+"prev": 199.0,
+"unit": ""
+},
+"oil_bs_in_3rd_chart": {
+"fact": null,
+"plan": null,
+"plan_year": null,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 3672.0,
+"plan": 2840.0,
+"plan_year": 6815.0,
+"prev": 1873.0,
+"unit": ""
+},
+"oil_bs_out_kmgt": {
+"fact": 2702.0,
+"plan": 2415.0,
+"plan_year": 5795.0,
+"prev": 1617.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_own": {
+"fact": 84.0,
+"plan": 713.0,
+"plan_year": 1710.0,
+"prev": 282.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_chart": {
+"fact": 2618.0,
+"plan": 1702.0,
+"plan_year": 4085.0,
+"prev": 1335.0,
+"unit": ""
+},
+"oil_bs_out_3rd": {
+"fact": 970.0,
+"plan": 425.0,
+"plan_year": 1020.0,
+"prev": 256.0,
+"unit": ""
+},
+"oil_bs_out_3rd_own": {
+"fact": 886.0,
+"plan": 425.0,
+"plan_year": 1020.0,
+"prev": 256.0,
+"unit": ""
+},
+"oil_bs_out_3rd_chart": {
+"fact": 84.0,
+"plan": null,
+"plan_year": null,
+"prev": null,
+"unit": ""
+},
+"teu_total": {
+"fact": 26075.0,
+"plan": 25200.0,
+"plan_year": null,
+"prev": 23140.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 19980.0,
+"plan": 14700.0,
+"plan_year": null,
+"prev": 18284.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 5504.0,
+"plan": 4900.0,
+"plan_year": null,
+"prev": 5209.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 5491.0,
+"plan": 4900.0,
+"plan_year": null,
+"prev": 5132.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 4548.0,
+"plan": 4900.0,
+"plan_year": null,
+"prev": 5138.0,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": 1459.0,
+"plan": null,
+"plan_year": null,
+"prev": 1101.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 2978.0,
+"plan": null,
+"plan_year": null,
+"prev": 1704.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 6095.0,
+"plan": 10500.0,
+"plan_year": null,
+"prev": 4856.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 983.0,
+"plan": 3500.0,
+"plan_year": null,
+"prev": 1415.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 766.0,
+"plan": 3500.0,
+"plan_year": null,
+"prev": 1564.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 872.0,
+"plan": 3500.0,
+"plan_year": null,
+"prev": 1238.0,
+"unit": "teu"
+},
+"teu_ba_turkestan": {
+"fact": 1108.0,
+"plan": null,
+"plan_year": null,
+"prev": 257.0,
+"unit": "teu"
+},
+"teu_ba_beket": {
+"fact": 2366.0,
+"plan": null,
+"plan_year": null,
+"prev": 382.0,
+"unit": "teu"
+},
+"teu_ia": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ia_turkestan": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": null,
+"unit": "teu"
+},
+"bulk_total": {
+"fact": 0.0,
+"plan": 140.0,
+"plan_year": null,
+"prev": 30.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_beket": {
+"fact": null,
+"plan": 75.0,
+"plan_year": null,
+"prev": 18.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_turkestan": {
+"fact": null,
+"plan": 65.0,
+"plan_year": null,
+"prev": 12.0,
+"unit": "тыс.тонн"
+},
+"oil_total_alatau": {
+"fact": 32.38,
+"plan": 14.42,
+"plan_year": 14.42,
+"prev": 14.81,
+"unit": "долл.сша"
+},
+"oil_total_altai": {
+"fact": 36.64,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 12.02,
+"unit": "долл.сша"
+},
+"os_total": {
+"fact": 1228.0,
+"plan": 1438.0,
+"plan_year": 3450.0,
+"prev": 1230.0,
+"unit": "тыс.тонн"
+},
+"os_in": {
+"fact": 258.0,
+"plan": 300.0,
+"plan_year": 720.0,
+"prev": 692.0,
+"unit": "тыс.тонн"
+},
+"os_in_alatau": {
+"fact": 174.0,
+"plan": 300.0,
+"plan_year": 720.0,
+"prev": 336.0,
+"unit": "тыс.тонн"
+},
+"os_in_altai": {
+"fact": 84.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 356.0,
+"unit": "тыс.тонн"
+},
+"os_out": {
+"fact": 970.0,
+"plan": 1138.0,
+"plan_year": 2730.0,
+"prev": 538.0,
+"unit": "тыс.тонн"
+},
+"os_out_altai": {
+"fact": 448.0,
+"plan": 742.0,
+"plan_year": 1780.0,
+"prev": 184.0,
+"unit": "тыс.тонн"
+},
+"os_out_alatau": {
+"fact": 522.0,
+"plan": 396.0,
+"plan_year": 950.0,
+"prev": 354.0,
+"unit": "тыс.тонн"
+}
+}
+},
+"2025-08": {
+"src": "МР-отчет за январь-август 2025 корр 7 года.pptx",
+"mtime": 1788847875.4784336,
+"m": {
+"oil_total": {
+"fact": 7307.0,
+"plan": 8498.0,
+"plan_year": 12880.0,
+"prev": 9046.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 1265.0,
+"plan": 1345.0,
+"plan_year": 2164.0,
+"prev": 1474.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 829.0,
+"plan": 828.0,
+"plan_year": 1294.0,
+"prev": 986.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 437.0,
+"plan": 517.0,
+"plan_year": 870.0,
+"prev": 488.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 6042.0,
+"plan": 7153.0,
+"plan_year": 10716.0,
+"prev": 7572.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 3076.0,
+"plan": 2427.0,
+"plan_year": 3280.0,
+"prev": 1991.0,
+"unit": ""
+},
+"oil_bs_in_kmgt": {
+"fact": 2877.0,
+"plan": 2147.0,
+"plan_year": 3000.0,
+"prev": 1991.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_own": {
+"fact": 1060.0,
+"plan": 418.0,
+"plan_year": 418.0,
+"prev": 334.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_chart": {
+"fact": 1817.0,
+"plan": 1729.0,
+"plan_year": 2582.0,
+"prev": 1657.0,
+"unit": ""
+},
+"oil_bs_in_3rd": {
+"fact": 199.0,
+"plan": 280.0,
+"plan_year": 280.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_own": {
+"fact": 199.0,
+"plan": 280.0,
+"plan_year": 280.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 2966.0,
+"plan": 4726.0,
+"plan_year": 7436.0,
+"prev": 5581.0,
+"unit": ""
+},
+"oil_bs_out_kmgt": {
+"fact": 2530.0,
+"plan": 3190.0,
+"plan_year": 4886.0,
+"prev": 4063.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_own": {
+"fact": 464.0,
+"plan": 339.0,
+"plan_year": 499.0,
+"prev": 471.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_chart": {
+"fact": 2066.0,
+"plan": 2851.0,
+"plan_year": 4387.0,
+"prev": 3592.0,
+"unit": ""
+},
+"oil_bs_out_3rd": {
+"fact": 436.0,
+"plan": 1536.0,
+"plan_year": 2550.0,
+"prev": 1518.0,
+"unit": ""
+},
+"oil_bs_out_3rd_own": {
+"fact": 436.0,
+"plan": 1339.0,
+"plan_year": 2353.0,
+"prev": 1088.0,
+"unit": ""
+},
+"oil_bs_out_3rd_chart": {
+"fact": 0.0,
+"plan": 197.0,
+"plan_year": 197.0,
+"prev": 430.0,
+"unit": ""
+},
+"teu_total": {
+"fact": 37778.0,
+"plan": 40584.0,
+"plan_year": null,
+"prev": 32130.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 29249.0,
+"plan": 29676.0,
+"plan_year": null,
+"prev": 24418.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 8666.0,
+"plan": 9233.0,
+"plan_year": null,
+"prev": 4329.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 8562.0,
+"plan": 9275.0,
+"plan_year": null,
+"prev": 9474.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 8908.0,
+"plan": 9031.0,
+"plan_year": null,
+"prev": 8106.0,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": 1409.0,
+"plan": 935.0,
+"plan_year": null,
+"prev": 968.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 1704.0,
+"plan": 1203.0,
+"plan_year": null,
+"prev": 1541.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 8529.0,
+"plan": 10907.0,
+"plan_year": null,
+"prev": 7552.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 2569.0,
+"plan": 3580.0,
+"plan_year": null,
+"prev": 1051.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 3139.0,
+"plan": 3233.0,
+"plan_year": null,
+"prev": 3587.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 2065.0,
+"plan": 3510.0,
+"plan_year": null,
+"prev": 2573.0,
+"unit": "teu"
+},
+"teu_ba_turkestan": {
+"fact": 374.0,
+"plan": 203.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ba_beket": {
+"fact": 382.0,
+"plan": 382.0,
+"plan_year": null,
+"prev": 341.0,
+"unit": "teu"
+},
+"teu_ia": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 160.0,
+"unit": "teu"
+},
+"teu_ia_turkestan": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 160.0,
+"unit": "teu"
+},
+"bulk_total": {
+"fact": 56.0,
+"plan": 139.0,
+"plan_year": null,
+"prev": 89.0,
+"unit": "тыс.тонн"
+},
+"oil_total_alatau": {
+"fact": 14.91,
+"plan": 13.53,
+"plan_year": 13.53,
+"prev": null,
+"unit": "долл.сша"
+},
+"oil_total_altai": {
+"fact": 13.77,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": null,
+"unit": "долл.сша"
+},
+"os_total": {
+"fact": 2159.0,
+"plan": 2376.0,
+"plan_year": 3550.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in": {
+"fact": 1259.0,
+"plan": 698.0,
+"plan_year": 698.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in_alatau": {
+"fact": 579.0,
+"plan": 343.0,
+"plan_year": 343.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in_altai": {
+"fact": 680.0,
+"plan": 355.0,
+"plan_year": 355.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out": {
+"fact": 900.0,
+"plan": 1678.0,
+"plan_year": 2852.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out_altai": {
+"fact": 370.0,
+"plan": 1056.0,
+"plan_year": 1686.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out_alatau": {
+"fact": 530.0,
+"plan": 622.0,
+"plan_year": 1166.0,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2025-04": {
+"src": "МР-отчет за январь-апрель 2025 года.pptx",
+"mtime": 1788847875.8424337,
+"m": {
+"oil_total": {
+"fact": 3814.0,
+"plan": 4293.0,
+"plan_year": 12880.0,
+"prev": 4590.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 621.0,
+"plan": 721.0,
+"plan_year": 2164.0,
+"prev": 749.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 367.0,
+"plan": 431.0,
+"plan_year": 1294.0,
+"prev": 487.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 254.0,
+"plan": 290.0,
+"plan_year": 870.0,
+"prev": 262.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 3193.0,
+"plan": 3572.0,
+"plan_year": 10716.0,
+"prev": 3841.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 1861.0,
+"plan": 1093.0,
+"plan_year": 3280.0,
+"prev": 759.0,
+"unit": ""
+},
+"oil_bs_in_kmgt": {
+"fact": 1861.0,
+"plan": 1093.0,
+"plan_year": 3280.0,
+"prev": 759.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_own": {
+"fact": 858.0,
+"plan": 240.0,
+"plan_year": 720.0,
+"prev": 95.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_chart": {
+"fact": 1003.0,
+"plan": 853.0,
+"plan_year": 2560.0,
+"prev": 664.0,
+"unit": ""
+},
+"oil_bs_in_3rd": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_own": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 1332.0,
+"plan": 2479.0,
+"plan_year": 7436.0,
+"prev": 3082.0,
+"unit": ""
+},
+"oil_bs_out_kmgt": {
+"fact": 1332.0,
+"plan": 1534.0,
+"plan_year": 4606.0,
+"prev": 2238.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_own": {
+"fact": 184.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 386.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_chart": {
+"fact": 1148.0,
+"plan": 1534.0,
+"plan_year": 4606.0,
+"prev": 1852.0,
+"unit": ""
+},
+"oil_bs_out_3rd": {
+"fact": 0.0,
+"plan": 945.0,
+"plan_year": 2830.0,
+"prev": 844.0,
+"unit": ""
+},
+"oil_bs_out_3rd_own": {
+"fact": 0.0,
+"plan": 945.0,
+"plan_year": 2830.0,
+"prev": 597.0,
+"unit": ""
+},
+"oil_bs_out_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 247.0,
+"unit": ""
+},
+"teu_total": {
+"fact": 19781.0,
+"plan": 20160.0,
+"plan_year": null,
+"prev": null,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 15704.0,
+"plan": 11760.0,
+"plan_year": null,
+"prev": null,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 4344.0,
+"plan": 3920.0,
+"plan_year": null,
+"prev": null,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 4318.0,
+"plan": 3920.0,
+"plan_year": null,
+"prev": null,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 4395.0,
+"plan": 3920.0,
+"plan_year": null,
+"prev": null,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": 1101.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": null,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 1546.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": null,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 4077.0,
+"plan": 8400.0,
+"plan_year": null,
+"prev": null,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 1334.0,
+"plan": 2800.0,
+"plan_year": null,
+"prev": null,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 1132.0,
+"plan": 2800.0,
+"plan_year": null,
+"prev": null,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 972.0,
+"plan": 2800.0,
+"plan_year": null,
+"prev": null,
+"unit": "teu"
+},
+"teu_ba_turkestan": {
+"fact": 257.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": null,
+"unit": "teu"
+},
+"teu_ba_beket": {
+"fact": 382.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": null,
+"unit": "teu"
+},
+"bulk_total": {
+"fact": 30.0,
+"plan": 84.0,
+"plan_year": null,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"bulk_total_beket": {
+"fact": 17.0,
+"plan": 21.0,
+"plan_year": null,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"bulk_total_turkestan": {
+"fact": 12.0,
+"plan": 63.0,
+"plan_year": null,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"oil_total_alatau": {
+"fact": 15.58,
+"plan": 13.53,
+"plan_year": 13.53,
+"prev": null,
+"unit": "долл.сша"
+},
+"oil_total_altai": {
+"fact": 11.76,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": null,
+"unit": "долл.сша"
+},
+"os_total": {
+"fact": 1900.0,
+"plan": 1425.0,
+"plan_year": 4270.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in": {
+"fact": 858.0,
+"plan": 240.0,
+"plan_year": 720.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in_alatau": {
+"fact": 503.0,
+"plan": 240.0,
+"plan_year": 720.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in_altai": {
+"fact": 355.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out": {
+"fact": 184.0,
+"plan": 945.0,
+"plan_year": 2830.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out_altai": {
+"fact": 184.0,
+"plan": 632.0,
+"plan_year": 1890.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out_alatau": {
+"fact": 0.0,
+"plan": 313.0,
+"plan_year": 940.0,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2025-12": {
+"src": "МР-отчет за январь-декабрь 2025 года (корр 7).pptx",
+"mtime": 1788847636.570439,
+"m": {
+"oil_total": {
+"fact": 10701.0,
+"plan": 12880.0,
+"plan_year": 12880.0,
+"prev": 13169.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 1949.0,
+"plan": 2164.0,
+"plan_year": 2164.0,
+"prev": 2083.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 1326.0,
+"plan": 1294.0,
+"plan_year": 1294.0,
+"prev": 1379.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 623.0,
+"plan": 870.0,
+"plan_year": 870.0,
+"prev": 704.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 8752.0,
+"plan": 10716.0,
+"plan_year": 10716.0,
+"prev": 11086.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 4208.0,
+"plan": 3280.0,
+"plan_year": 3280.0,
+"prev": 3370.0,
+"unit": ""
+},
+"oil_bs_in_kmgt": {
+"fact": 4009.0,
+"plan": 3000.0,
+"plan_year": 3000.0,
+"prev": 3370.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_own": {
+"fact": 1460.0,
+"plan": 418.0,
+"plan_year": 418.0,
+"prev": 659.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_chart": {
+"fact": 2549.0,
+"plan": 2582.0,
+"plan_year": 2582.0,
+"prev": 2711.0,
+"unit": ""
+},
+"oil_bs_in_3rd": {
+"fact": 199.0,
+"plan": 280.0,
+"plan_year": 280.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_own": {
+"fact": 199.0,
+"plan": 280.0,
+"plan_year": 280.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 4544.0,
+"plan": 7436.0,
+"plan_year": 7436.0,
+"prev": 7716.0,
+"unit": ""
+},
+"oil_bs_out_kmgt": {
+"fact": 3923.0,
+"plan": 4886.0,
+"plan_year": 4886.0,
+"prev": 5395.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_own": {
+"fact": 631.0,
+"plan": 499.0,
+"plan_year": 499.0,
+"prev": 554.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_chart": {
+"fact": 3292.0,
+"plan": 4387.0,
+"plan_year": 4387.0,
+"prev": 4841.0,
+"unit": ""
+},
+"oil_bs_out_3rd": {
+"fact": 621.0,
+"plan": 2550.0,
+"plan_year": 2550.0,
+"prev": 2321.0,
+"unit": ""
+},
+"oil_bs_out_3rd_own": {
+"fact": 621.0,
+"plan": 2353.0,
+"plan_year": 2353.0,
+"prev": 1619.0,
+"unit": ""
+},
+"oil_bs_out_3rd_chart": {
+"fact": 0.0,
+"plan": 197.0,
+"plan_year": 197.0,
+"prev": 702.0,
+"unit": ""
+},
+"teu_total": {
+"fact": 59411.0,
+"plan": 58800.0,
+"plan_year": null,
+"prev": 51545.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 45671.0,
+"plan": 41959.0,
+"plan_year": null,
+"prev": 38486.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 11178.0,
+"plan": 12523.0,
+"plan_year": null,
+"prev": 8619.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 13831.0,
+"plan": 13771.0,
+"plan_year": null,
+"prev": 13662.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 14171.0,
+"plan": 13527.0,
+"plan_year": null,
+"prev": 13023.0,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": 3042.0,
+"plan": 935.0,
+"plan_year": null,
+"prev": 1470.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 3449.0,
+"plan": 1203.0,
+"plan_year": null,
+"prev": 1712.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 13740.0,
+"plan": 16841.0,
+"plan_year": null,
+"prev": 12899.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 3110.0,
+"plan": 5172.0,
+"plan_year": null,
+"prev": 2751.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 4462.0,
+"plan": 5404.0,
+"plan_year": null,
+"prev": 4840.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 3117.0,
+"plan": 5680.0,
+"plan_year": null,
+"prev": 4781.0,
+"unit": "teu"
+},
+"teu_ba_turkestan": {
+"fact": 1692.0,
+"plan": 203.0,
+"plan_year": null,
+"prev": 186.0,
+"unit": "teu"
+},
+"teu_ba_beket": {
+"fact": 1359.0,
+"plan": 382.0,
+"plan_year": null,
+"prev": 341.0,
+"unit": "teu"
+},
+"teu_ia": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 160.0,
+"unit": "teu"
+},
+"teu_ia_turkestan": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 160.0,
+"unit": "teu"
+},
+"bulk_total": {
+"fact": 78.0,
+"plan": 225.0,
+"plan_year": null,
+"prev": 133.0,
+"unit": "тыс.тонн"
+},
+"oil_total_alatau": {
+"fact": 15.47,
+"plan": 13.53,
+"plan_year": 13.53,
+"prev": null,
+"unit": "долл.сша"
+},
+"oil_total_altai": {
+"fact": 14.38,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": null,
+"unit": "долл.сша"
+},
+"os_total": {
+"fact": 2911.0,
+"plan": 3550.0,
+"plan_year": 3550.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in": {
+"fact": 1659.0,
+"plan": 698.0,
+"plan_year": 698.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in_alatau": {
+"fact": 739.0,
+"plan": 343.0,
+"plan_year": 343.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in_altai": {
+"fact": 920.0,
+"plan": 355.0,
+"plan_year": 355.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out": {
+"fact": 1252.0,
+"plan": 2852.0,
+"plan_year": 2852.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out_altai": {
+"fact": 545.0,
+"plan": 1686.0,
+"plan_year": 1686.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out_alatau": {
+"fact": 707.0,
+"plan": 1166.0,
+"plan_year": 1166.0,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2025-07": {
+"src": "МР-отчет за январь-июль 2025г.pptx",
+"mtime": 1788847877.2824337,
+"m": {
+"oil_total": {
+"fact": 6518.0,
+"plan": 7359.0,
+"plan_year": 12880.0,
+"prev": 7949.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 1152.0,
+"plan": 1136.0,
+"plan_year": 2164.0,
+"prev": 1292.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 715.0,
+"plan": 712.0,
+"plan_year": 1294.0,
+"prev": 861.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 437.0,
+"plan": 424.0,
+"plan_year": 870.0,
+"prev": 431.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 5366.0,
+"plan": 6223.0,
+"plan_year": 10716.0,
+"prev": 6657.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 2751.0,
+"plan": 2213.0,
+"plan_year": 3280.0,
+"prev": 1665.0,
+"unit": ""
+},
+"oil_bs_in_kmgt": {
+"fact": 2552.0,
+"plan": 1933.0,
+"plan_year": 3000.0,
+"prev": 1665.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_own": {
+"fact": 895.0,
+"plan": 418.0,
+"plan_year": 418.0,
+"prev": 334.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_chart": {
+"fact": 1657.0,
+"plan": 1515.0,
+"plan_year": 2582.0,
+"prev": 1331.0,
+"unit": ""
+},
+"oil_bs_in_3rd": {
+"fact": 199.0,
+"plan": 280.0,
+"plan_year": 280.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_own": {
+"fact": 199.0,
+"plan": 280.0,
+"plan_year": 280.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 2615.0,
+"plan": 4010.0,
+"plan_year": 7436.0,
+"prev": 4992.0,
+"unit": ""
+},
+"oil_bs_out_kmgt": {
+"fact": 2269.0,
+"plan": 2726.0,
+"plan_year": 4886.0,
+"prev": 3629.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_own": {
+"fact": 464.0,
+"plan": 259.0,
+"plan_year": 499.0,
+"prev": 386.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_chart": {
+"fact": 1805.0,
+"plan": 2467.0,
+"plan_year": 4387.0,
+"prev": 3243.0,
+"unit": ""
+},
+"oil_bs_out_3rd": {
+"fact": 346.0,
+"plan": 1284.0,
+"plan_year": 2550.0,
+"prev": 1363.0,
+"unit": ""
+},
+"oil_bs_out_3rd_own": {
+"fact": 346.0,
+"plan": 1087.0,
+"plan_year": 2353.0,
+"prev": 1022.0,
+"unit": ""
+},
+"oil_bs_out_3rd_chart": {
+"fact": 0.0,
+"plan": 197.0,
+"plan_year": 197.0,
+"prev": 341.0,
+"unit": ""
+},
+"teu_total": {
+"fact": 32533.0,
+"plan": 35666.0,
+"plan_year": null,
+"prev": 25687.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 25098.0,
+"plan": 26365.0,
+"plan_year": null,
+"prev": 18905.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 7541.0,
+"plan": 7634.0,
+"plan_year": null,
+"prev": 2513.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 7294.0,
+"plan": 7676.0,
+"plan_year": null,
+"prev": 7675.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 7320.0,
+"plan": 7432.0,
+"plan_year": null,
+"prev": 6732.0,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": 1239.0,
+"plan": 1306.0,
+"plan_year": null,
+"prev": 633.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 1704.0,
+"plan": 2317.0,
+"plan_year": null,
+"prev": 1352.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 7435.0,
+"plan": 9301.0,
+"plan_year": null,
+"prev": 6622.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 2331.0,
+"plan": 2702.0,
+"plan_year": null,
+"prev": 567.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 2470.0,
+"plan": 2356.0,
+"plan_year": null,
+"prev": 3245.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 1995.0,
+"plan": 2632.0,
+"plan_year": null,
+"prev": 2469.0,
+"unit": "teu"
+},
+"teu_ba_turkestan": {
+"fact": 257.0,
+"plan": 460.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ba_beket": {
+"fact": 382.0,
+"plan": 1152.0,
+"plan_year": null,
+"prev": 341.0,
+"unit": "teu"
+},
+"teu_ia": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 160.0,
+"unit": "teu"
+},
+"teu_ia_turkestan": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 160.0,
+"unit": "teu"
+},
+"bulk_total": {
+"fact": 45.0,
+"plan": 115.0,
+"plan_year": null,
+"prev": 79.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_beket": {
+"fact": 33.0,
+"plan": 33.0,
+"plan_year": null,
+"prev": 26.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_turkestan": {
+"fact": 12.0,
+"plan": 82.0,
+"plan_year": null,
+"prev": 52.0,
+"unit": "тыс.тонн"
+},
+"oil_total_alatau": {
+"fact": 14.91,
+"plan": 13.53,
+"plan_year": 13.53,
+"prev": null,
+"unit": "долл.сша"
+},
+"oil_total_altai": {
+"fact": 13.15,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": null,
+"unit": "долл.сша"
+},
+"os_total": {
+"fact": 1904.0,
+"plan": 2044.0,
+"plan_year": 3550.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in": {
+"fact": 1094.0,
+"plan": 698.0,
+"plan_year": 698.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in_alatau": {
+"fact": 579.0,
+"plan": 343.0,
+"plan_year": 343.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in_altai": {
+"fact": 515.0,
+"plan": 355.0,
+"plan_year": 355.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out": {
+"fact": 810.0,
+"plan": 1346.0,
+"plan_year": 2852.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out_altai": {
+"fact": 370.0,
+"plan": 900.0,
+"plan_year": 1686.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out_alatau": {
+"fact": 440.0,
+"plan": 446.0,
+"plan_year": 1166.0,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2025-06": {
+"src": "МР-отчет за январь-июнь 2025 года.pptx",
+"mtime": 1788847877.6664336,
+"m": {
+"oil_total": {
+"fact": 5584.0,
+"plan": 6440.0,
+"plan_year": 12880.0,
+"prev": 6618.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 982.0,
+"plan": 1082.0,
+"plan_year": 2164.0,
+"prev": 1098.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 618.0,
+"plan": 647.0,
+"plan_year": 1294.0,
+"prev": 733.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 364.0,
+"plan": 435.0,
+"plan_year": 870.0,
+"prev": 365.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 4602.0,
+"plan": 5358.0,
+"plan_year": 10716.0,
+"prev": 5520.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 2344.0,
+"plan": 1640.0,
+"plan_year": 3280.0,
+"prev": 1252.0,
+"unit": ""
+},
+"oil_bs_in_kmgt": {
+"fact": 2344.0,
+"plan": 1640.0,
+"plan_year": 3280.0,
+"prev": 1252.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_own": {
+"fact": 854.0,
+"plan": 360.0,
+"plan_year": 720.0,
+"prev": 175.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_chart": {
+"fact": 1490.0,
+"plan": 1280.0,
+"plan_year": 2560.0,
+"prev": 1077.0,
+"unit": ""
+},
+"oil_bs_in_3rd": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_own": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 2258.0,
+"plan": 3718.0,
+"plan_year": 7436.0,
+"prev": 4268.0,
+"unit": ""
+},
+"oil_bs_out_kmgt": {
+"fact": 2002.0,
+"plan": 2303.0,
+"plan_year": 4606.0,
+"prev": 3164.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_own": {
+"fact": 379.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 386.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_chart": {
+"fact": 1623.0,
+"plan": 2303.0,
+"plan_year": 4606.0,
+"prev": 2778.0,
+"unit": ""
+},
+"oil_bs_out_3rd": {
+"fact": 256.0,
+"plan": 1415.0,
+"plan_year": 2830.0,
+"prev": 1104.0,
+"unit": ""
+},
+"oil_bs_out_3rd_own": {
+"fact": 256.0,
+"plan": 1415.0,
+"plan_year": 2830.0,
+"prev": 763.0,
+"unit": ""
+},
+"oil_bs_out_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 341.0,
+"unit": ""
+},
+"teu_total": {
+"fact": 27266.0,
+"plan": 30240.0,
+"plan_year": null,
+"prev": 19594.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 21097.0,
+"plan": 17640.0,
+"plan_year": null,
+"prev": 14115.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 6223.0,
+"plan": 5880.0,
+"plan_year": null,
+"prev": 1014.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 5868.0,
+"plan": 5880.0,
+"plan_year": null,
+"prev": 6266.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 6063.0,
+"plan": 5880.0,
+"plan_year": null,
+"prev": 5279.0,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": 1239.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 409.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 1704.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 1147.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 6169.0,
+"plan": 12600.0,
+"plan_year": null,
+"prev": 5319.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 1817.0,
+"plan": 4200.0,
+"plan_year": null,
+"prev": 194.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 2192.0,
+"plan": 4200.0,
+"plan_year": null,
+"prev": 2587.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 1521.0,
+"plan": 4200.0,
+"plan_year": null,
+"prev": 2197.0,
+"unit": "teu"
+},
+"teu_ba_turkestan": {
+"fact": 257.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ba_beket": {
+"fact": 382.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 341.0,
+"unit": "teu"
+},
+"teu_ia": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 160.0,
+"unit": "teu"
+},
+"teu_ia_turkestan": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 160.0,
+"unit": "teu"
+},
+"bulk_total": {
+"fact": 40.0,
+"plan": 126.0,
+"plan_year": null,
+"prev": 61.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_beket": {
+"fact": 28.0,
+"plan": 32.0,
+"plan_year": null,
+"prev": 17.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_turkestan": {
+"fact": 12.0,
+"plan": 95.0,
+"plan_year": null,
+"prev": 44.0,
+"unit": "тыс.тонн"
+},
+"oil_total_alatau": {
+"fact": 14.42,
+"plan": 13.53,
+"plan_year": 13.53,
+"prev": null,
+"unit": "долл.сша"
+},
+"oil_total_altai": {
+"fact": 12.58,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": null,
+"unit": "долл.сша"
+},
+"os_total": {
+"fact": 1488.0,
+"plan": 1775.0,
+"plan_year": 3550.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in": {
+"fact": 853.0,
+"plan": 360.0,
+"plan_year": 720.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in_alatau": {
+"fact": 418.0,
+"plan": 360.0,
+"plan_year": 720.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in_altai": {
+"fact": 435.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out": {
+"fact": 635.0,
+"plan": 1415.0,
+"plan_year": 2830.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out_altai": {
+"fact": 280.0,
+"plan": 945.0,
+"plan_year": 1890.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out_alatau": {
+"fact": 355.0,
+"plan": 470.0,
+"plan_year": 940.0,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2025-05": {
+"src": "МР-отчет за январь-май 2025 года.pptx",
+"mtime": 1788847877.8384337,
+"m": {
+"oil_total": {
+"fact": 4709.0,
+"plan": 5367.0,
+"plan_year": 12880.0,
+"prev": 5732.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 814.0,
+"plan": 902.0,
+"plan_year": 2164.0,
+"prev": 911.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 496.0,
+"plan": 539.0,
+"plan_year": 1294.0,
+"prev": 612.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 318.0,
+"plan": 363.0,
+"plan_year": 870.0,
+"prev": 299.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 3895.0,
+"plan": 4465.0,
+"plan_year": 10716.0,
+"prev": 4821.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 2022.0,
+"plan": 1367.0,
+"plan_year": 3280.0,
+"prev": 999.0,
+"unit": ""
+},
+"oil_bs_in_kmgt": {
+"fact": 2022.0,
+"plan": 1367.0,
+"plan_year": 3280.0,
+"prev": 999.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_own": {
+"fact": 692.0,
+"plan": 300.0,
+"plan_year": 720.0,
+"prev": 95.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_chart": {
+"fact": 1330.0,
+"plan": 1067.0,
+"plan_year": 2560.0,
+"prev": 904.0,
+"unit": ""
+},
+"oil_bs_in_3rd": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_own": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 1873.0,
+"plan": 3098.0,
+"plan_year": 7436.0,
+"prev": 3822.0,
+"unit": ""
+},
+"oil_bs_out_kmgt": {
+"fact": 1617.0,
+"plan": 1918.0,
+"plan_year": 4606.0,
+"prev": 2894.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_own": {
+"fact": 282.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 386.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_chart": {
+"fact": 1335.0,
+"plan": 1918.0,
+"plan_year": 4606.0,
+"prev": 2508.0,
+"unit": ""
+},
+"oil_bs_out_3rd": {
+"fact": 256.0,
+"plan": 1180.0,
+"plan_year": 2830.0,
+"prev": 928.0,
+"unit": ""
+},
+"oil_bs_out_3rd_own": {
+"fact": 256.0,
+"plan": 1180.0,
+"plan_year": 2830.0,
+"prev": 681.0,
+"unit": ""
+},
+"oil_bs_out_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 247.0,
+"unit": ""
+},
+"teu_total": {
+"fact": 23140.0,
+"plan": 25200.0,
+"plan_year": null,
+"prev": 14275.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 18284.0,
+"plan": 14700.0,
+"plan_year": null,
+"prev": 9842.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 5209.0,
+"plan": 4900.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 5132.0,
+"plan": 4900.0,
+"plan_year": null,
+"prev": 4790.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 5138.0,
+"plan": 4900.0,
+"plan_year": null,
+"prev": 4101.0,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": 1101.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 192.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 1704.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 759.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 4856.0,
+"plan": 10500.0,
+"plan_year": null,
+"prev": 4433.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 1415.0,
+"plan": 3500.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 1564.0,
+"plan": 3500.0,
+"plan_year": null,
+"prev": 2304.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 1238.0,
+"plan": 3500.0,
+"plan_year": null,
+"prev": 1879.0,
+"unit": "teu"
+},
+"teu_ba_turkestan": {
+"fact": 257.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ba_beket": {
+"fact": 382.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 250.0,
+"unit": "teu"
+},
+"bulk_total": {
+"fact": 30.0,
+"plan": 105.0,
+"plan_year": null,
+"prev": 58.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_beket": {
+"fact": 18.0,
+"plan": 26.0,
+"plan_year": null,
+"prev": 15.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_turkestan": {
+"fact": 12.0,
+"plan": 79.0,
+"plan_year": null,
+"prev": 44.0,
+"unit": "тыс.тонн"
+},
+"oil_total_alatau": {
+"fact": 14.81,
+"plan": 13.53,
+"plan_year": 13.53,
+"prev": null,
+"unit": "долл.сша"
+},
+"oil_total_altai": {
+"fact": 12.02,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": null,
+"unit": "долл.сша"
+},
+"os_total": {
+"fact": 1230.0,
+"plan": 1480.0,
+"plan_year": 3550.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in": {
+"fact": 691.0,
+"plan": 300.0,
+"plan_year": 720.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in_alatau": {
+"fact": 336.0,
+"plan": 300.0,
+"plan_year": 720.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in_altai": {
+"fact": 355.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out": {
+"fact": 539.0,
+"plan": 1180.0,
+"plan_year": 2830.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out_altai": {
+"fact": 184.0,
+"plan": 788.0,
+"plan_year": 1890.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out_alatau": {
+"fact": 355.0,
+"plan": 392.0,
+"plan_year": 940.0,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2025-11": {
+"src": "МР-отчет за январь-ноябрь 2025 года (корр 7).pptx",
+"mtime": 1788847880.8384335,
+"m": {
+"oil_total": {
+"fact": 10176.0,
+"plan": 11740.0,
+"plan_year": 12880.0,
+"prev": 12363.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 1759.0,
+"plan": 1955.0,
+"plan_year": 2164.0,
+"prev": 1962.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 1223.0,
+"plan": 1178.0,
+"plan_year": 1294.0,
+"prev": 1286.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 536.0,
+"plan": 777.0,
+"plan_year": 870.0,
+"prev": 676.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 8417.0,
+"plan": 9785.0,
+"plan_year": 10716.0,
+"prev": 10401.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 3958.0,
+"plan": 3067.0,
+"plan_year": 3280.0,
+"prev": 3130.0,
+"unit": ""
+},
+"oil_bs_in_kmgt": {
+"fact": 3759.0,
+"plan": 2787.0,
+"plan_year": 3000.0,
+"prev": 3130.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_own": {
+"fact": 1460.0,
+"plan": 418.0,
+"plan_year": 418.0,
+"prev": 659.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_chart": {
+"fact": 2299.0,
+"plan": 2369.0,
+"plan_year": 2582.0,
+"prev": 2471.0,
+"unit": ""
+},
+"oil_bs_in_3rd": {
+"fact": 199.0,
+"plan": 280.0,
+"plan_year": 280.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_own": {
+"fact": 199.0,
+"plan": 280.0,
+"plan_year": 280.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 4459.0,
+"plan": 6718.0,
+"plan_year": 7436.0,
+"prev": 7271.0,
+"unit": ""
+},
+"oil_bs_out_kmgt": {
+"fact": 3838.0,
+"plan": 4422.0,
+"plan_year": 4886.0,
+"prev": 5125.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_own": {
+"fact": 546.0,
+"plan": 419.0,
+"plan_year": 499.0,
+"prev": 554.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_chart": {
+"fact": 3292.0,
+"plan": 4003.0,
+"plan_year": 4387.0,
+"prev": 4571.0,
+"unit": ""
+},
+"oil_bs_out_3rd": {
+"fact": 621.0,
+"plan": 2296.0,
+"plan_year": 2550.0,
+"prev": 2146.0,
+"unit": ""
+},
+"oil_bs_out_3rd_own": {
+"fact": 621.0,
+"plan": 2099.0,
+"plan_year": 2353.0,
+"prev": 1529.0,
+"unit": ""
+},
+"oil_bs_out_3rd_chart": {
+"fact": 0.0,
+"plan": 197.0,
+"plan_year": 197.0,
+"prev": 617.0,
+"unit": ""
+},
+"teu_total": {
+"fact": 54139.0,
+"plan": 53882.0,
+"plan_year": null,
+"prev": 46446.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 41813.0,
+"plan": 38648.0,
+"plan_year": null,
+"prev": 35215.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 10210.0,
+"plan": 11296.0,
+"plan_year": null,
+"prev": 7619.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 12895.0,
+"plan": 12544.0,
+"plan_year": null,
+"prev": 12998.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 13263.0,
+"plan": 12300.0,
+"plan_year": null,
+"prev": 11751.0,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": 2731.0,
+"plan": 935.0,
+"plan_year": null,
+"prev": 1135.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 2714.0,
+"plan": 1574.0,
+"plan_year": null,
+"prev": 1712.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 12326.0,
+"plan": 15234.0,
+"plan_year": null,
+"prev": 11071.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 2905.0,
+"plan": 4551.0,
+"plan_year": null,
+"prev": 2242.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 4052.0,
+"plan": 4783.0,
+"plan_year": null,
+"prev": 4237.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 2815.0,
+"plan": 5059.0,
+"plan_year": null,
+"prev": 4251.0,
+"unit": "teu"
+},
+"teu_ba_turkestan": {
+"fact": 1535.0,
+"plan": 203.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ba_beket": {
+"fact": 1019.0,
+"plan": 639.0,
+"plan_year": null,
+"prev": 341.0,
+"unit": "teu"
+},
+"teu_ia": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 160.0,
+"unit": "teu"
+},
+"teu_ia_turkestan": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 160.0,
+"unit": "teu"
+},
+"bulk_total": {
+"fact": 78.0,
+"plan": 205.0,
+"plan_year": null,
+"prev": 120.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_beket": {
+"fact": 64.0,
+"plan": 109.0,
+"plan_year": null,
+"prev": 43.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_turkestan": {
+"fact": 15.0,
+"plan": 96.0,
+"plan_year": null,
+"prev": 77.0,
+"unit": "тыс.тонн"
+},
+"oil_total_alatau": {
+"fact": 15.47,
+"plan": 13.53,
+"plan_year": 13.53,
+"prev": null,
+"unit": "долл.сша"
+},
+"oil_total_altai": {
+"fact": 14.38,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": null,
+"unit": "долл.сша"
+},
+"os_total": {
+"fact": 2826.0,
+"plan": 3216.0,
+"plan_year": 3550.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in": {
+"fact": 1659.0,
+"plan": 698.0,
+"plan_year": 698.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in_alatau": {
+"fact": 739.0,
+"plan": 343.0,
+"plan_year": 343.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in_altai": {
+"fact": 920.0,
+"plan": 355.0,
+"plan_year": 355.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out": {
+"fact": 1167.0,
+"plan": 2518.0,
+"plan_year": 2852.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out_altai": {
+"fact": 460.0,
+"plan": 1528.0,
+"plan_year": 1686.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out_alatau": {
+"fact": 707.0,
+"plan": 990.0,
+"plan_year": 1166.0,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2025-10": {
+"src": "МР-отчет за январь-октябрь 2025 года (корр 7).pptx",
+"mtime": 1788847880.5384336,
+"m": {
+"oil_total": {
+"fact": 9133.0,
+"plan": 10690.0,
+"plan_year": 12880.0,
+"prev": 11430.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 1550.0,
+"plan": 1755.0,
+"plan_year": 2164.0,
+"prev": 1822.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 1086.0,
+"plan": 1061.0,
+"plan_year": 1294.0,
+"prev": 1192.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 464.0,
+"plan": 693.0,
+"plan_year": 870.0,
+"prev": 630.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 7583.0,
+"plan": 8935.0,
+"plan_year": 10716.0,
+"prev": 9608.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 3717.0,
+"plan": 2853.0,
+"plan_year": 3280.0,
+"prev": 2805.0,
+"unit": ""
+},
+"oil_bs_in_kmgt": {
+"fact": 3518.0,
+"plan": 2573.0,
+"plan_year": 3000.0,
+"prev": 2805.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_own": {
+"fact": 1380.0,
+"plan": 418.0,
+"plan_year": 418.0,
+"prev": 414.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_chart": {
+"fact": 2138.0,
+"plan": 2155.0,
+"plan_year": 2582.0,
+"prev": 2391.0,
+"unit": ""
+},
+"oil_bs_in_3rd": {
+"fact": 199.0,
+"plan": 280.0,
+"plan_year": 280.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_own": {
+"fact": 199.0,
+"plan": 280.0,
+"plan_year": 280.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 3866.0,
+"plan": 6082.0,
+"plan_year": 7436.0,
+"prev": 6803.0,
+"unit": ""
+},
+"oil_bs_out_kmgt": {
+"fact": 3245.0,
+"plan": 4038.0,
+"plan_year": 4886.0,
+"prev": 4747.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_own": {
+"fact": 463.0,
+"plan": 419.0,
+"plan_year": 499.0,
+"prev": 554.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_chart": {
+"fact": 2782.0,
+"plan": 3619.0,
+"plan_year": 4387.0,
+"prev": 4193.0,
+"unit": ""
+},
+"oil_bs_out_3rd": {
+"fact": 621.0,
+"plan": 2044.0,
+"plan_year": 2550.0,
+"prev": 2056.0,
+"unit": ""
+},
+"oil_bs_out_3rd_own": {
+"fact": 621.0,
+"plan": 1847.0,
+"plan_year": 2353.0,
+"prev": 1439.0,
+"unit": ""
+},
+"oil_bs_out_3rd_chart": {
+"fact": 0.0,
+"plan": 197.0,
+"plan_year": 197.0,
+"prev": 617.0,
+"unit": ""
+},
+"teu_total": {
+"fact": 47691.0,
+"plan": 48965.0,
+"plan_year": null,
+"prev": 42185.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 37147.0,
+"plan": 35337.0,
+"plan_year": null,
+"prev": 32364.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 10210.0,
+"plan": 10316.0,
+"plan_year": null,
+"prev": 6767.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 11219.0,
+"plan": 11564.0,
+"plan_year": null,
+"prev": 12092.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 11596.0,
+"plan": 11320.0,
+"plan_year": null,
+"prev": 10825.0,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": 2092.0,
+"plan": 935.0,
+"plan_year": null,
+"prev": 968.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 2030.0,
+"plan": 1203.0,
+"plan_year": null,
+"prev": 1712.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 10544.0,
+"plan": 13628.0,
+"plan_year": null,
+"prev": 9661.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 2905.0,
+"plan": 4101.0,
+"plan_year": null,
+"prev": 1726.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 3814.0,
+"plan": 4333.0,
+"plan_year": null,
+"prev": 3980.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 2487.0,
+"plan": 4609.0,
+"plan_year": null,
+"prev": 3614.0,
+"unit": "teu"
+},
+"teu_ba_turkestan": {
+"fact": 854.0,
+"plan": 203.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ba_beket": {
+"fact": 484.0,
+"plan": 382.0,
+"plan_year": null,
+"prev": 341.0,
+"unit": "teu"
+},
+"teu_ia": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 160.0,
+"unit": "teu"
+},
+"teu_ia_turkestan": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 160.0,
+"unit": "teu"
+},
+"bulk_total": {
+"fact": 78.0,
+"plan": 185.0,
+"plan_year": null,
+"prev": 107.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_beket": {
+"fact": 64.0,
+"plan": 89.0,
+"plan_year": null,
+"prev": 34.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_turkestan": {
+"fact": 15.0,
+"plan": 96.0,
+"plan_year": null,
+"prev": 72.0,
+"unit": "тыс.тонн"
+},
+"oil_total_alatau": {
+"fact": 15.14,
+"plan": 13.53,
+"plan_year": 13.53,
+"prev": null,
+"unit": "долл.сша"
+},
+"oil_total_altai": {
+"fact": 14.38,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": null,
+"unit": "долл.сша"
+},
+"os_total": {
+"fact": 2663.0,
+"plan": 2964.0,
+"plan_year": 3550.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in": {
+"fact": 1579.0,
+"plan": 698.0,
+"plan_year": 698.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in_alatau": {
+"fact": 659.0,
+"plan": 343.0,
+"plan_year": 343.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in_altai": {
+"fact": 920.0,
+"plan": 355.0,
+"plan_year": 355.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out": {
+"fact": 1084.0,
+"plan": 2266.0,
+"plan_year": 2852.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out_altai": {
+"fact": 460.0,
+"plan": 1372.0,
+"plan_year": 1686.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out_alatau": {
+"fact": 624.0,
+"plan": 894.0,
+"plan_year": 1166.0,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2025-09": {
+"src": "МР-отчет за январь-сентябрь 2025 года (корр 7).pptx",
+"mtime": 1788847881.9744334,
+"m": {
+"oil_total": {
+"fact": 8257.0,
+"plan": 9558.0,
+"plan_year": 12880.0,
+"prev": 10409.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 1403.0,
+"plan": 1554.0,
+"plan_year": 2164.0,
+"prev": 1633.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 957.0,
+"plan": 945.0,
+"plan_year": 1294.0,
+"prev": 1078.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 446.0,
+"plan": 610.0,
+"plan_year": 870.0,
+"prev": 555.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 6854.0,
+"plan": 8004.0,
+"plan_year": 10716.0,
+"prev": 8776.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 3397.0,
+"plan": 2640.0,
+"plan_year": 3280.0,
+"prev": 2483.0,
+"unit": ""
+},
+"oil_bs_in_kmgt": {
+"fact": 3198.0,
+"plan": 2360.0,
+"plan_year": 3000.0,
+"prev": 2483.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_own": {
+"fact": 1220.0,
+"plan": 418.0,
+"plan_year": 418.0,
+"prev": 334.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_chart": {
+"fact": 1978.0,
+"plan": 1942.0,
+"plan_year": 2582.0,
+"prev": 2149.0,
+"unit": ""
+},
+"oil_bs_in_3rd": {
+"fact": 199.0,
+"plan": 280.0,
+"plan_year": 280.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_own": {
+"fact": 199.0,
+"plan": 280.0,
+"plan_year": 280.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 3457.0,
+"plan": 5364.0,
+"plan_year": 7436.0,
+"prev": 6293.0,
+"unit": ""
+},
+"oil_bs_out_kmgt": {
+"fact": 2926.0,
+"plan": 3574.0,
+"plan_year": 4886.0,
+"prev": 4330.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_own": {
+"fact": 464.0,
+"plan": 339.0,
+"plan_year": 499.0,
+"prev": 471.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_chart": {
+"fact": 2462.0,
+"plan": 3235.0,
+"plan_year": 4387.0,
+"prev": 3859.0,
+"unit": ""
+},
+"oil_bs_out_3rd": {
+"fact": 531.0,
+"plan": 1790.0,
+"plan_year": 2550.0,
+"prev": 1963.0,
+"unit": ""
+},
+"oil_bs_out_3rd_own": {
+"fact": 531.0,
+"plan": 1593.0,
+"plan_year": 2353.0,
+"prev": 1439.0,
+"unit": ""
+},
+"oil_bs_out_3rd_chart": {
+"fact": 0.0,
+"plan": 197.0,
+"plan_year": 197.0,
+"prev": 524.0,
+"unit": ""
+},
+"teu_total": {
+"fact": 42433.0,
+"plan": 45397.0,
+"plan_year": null,
+"prev": 36576.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 33096.0,
+"plan": 32926.0,
+"plan_year": null,
+"prev": 27941.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 9912.0,
+"plan": 10316.0,
+"plan_year": null,
+"prev": 5460.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 10044.0,
+"plan": 10358.0,
+"plan_year": null,
+"prev": 10609.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 10027.0,
+"plan": 10114.0,
+"plan_year": null,
+"prev": 9363.0,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": 1409.0,
+"plan": 935.0,
+"plan_year": null,
+"prev": 968.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 1704.0,
+"plan": 1203.0,
+"plan_year": null,
+"prev": 1541.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 9337.0,
+"plan": 12471.0,
+"plan_year": null,
+"prev": 8475.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 2871.0,
+"plan": 4101.0,
+"plan_year": null,
+"prev": 1375.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 3427.0,
+"plan": 3755.0,
+"plan_year": null,
+"prev": 3741.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 2283.0,
+"plan": 4031.0,
+"plan_year": null,
+"prev": 3018.0,
+"unit": "teu"
+},
+"teu_ba_turkestan": {
+"fact": 374.0,
+"plan": 203.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ba_beket": {
+"fact": 382.0,
+"plan": 382.0,
+"plan_year": null,
+"prev": 341.0,
+"unit": "teu"
+},
+"teu_ia": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 160.0,
+"unit": "teu"
+},
+"teu_ia_turkestan": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 160.0,
+"unit": "teu"
+},
+"bulk_total": {
+"fact": 66.0,
+"plan": 163.0,
+"plan_year": null,
+"prev": 99.0,
+"unit": "тыс.тонн"
+},
+"oil_total_alatau": {
+"fact": 14.91,
+"plan": 13.53,
+"plan_year": 13.53,
+"prev": null,
+"unit": "долл.сша"
+},
+"oil_total_altai": {
+"fact": 14.23,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": null,
+"unit": "долл.сша"
+},
+"os_total": {
+"fact": 2413.0,
+"plan": 2630.0,
+"plan_year": 3550.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in": {
+"fact": 1419.0,
+"plan": 698.0,
+"plan_year": 698.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in_alatau": {
+"fact": 579.0,
+"plan": 343.0,
+"plan_year": 343.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_in_altai": {
+"fact": 840.0,
+"plan": 355.0,
+"plan_year": 355.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out": {
+"fact": 994.0,
+"plan": 1932.0,
+"plan_year": 2852.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out_altai": {
+"fact": 370.0,
+"plan": 1214.0,
+"plan_year": 1686.0,
+"prev": null,
+"unit": "тыс.тонн"
+},
+"os_out_alatau": {
+"fact": 624.0,
+"plan": 718.0,
+"plan_year": 1166.0,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2023-12": {
+"src": "МР-отчет за январь-декабрь 2023г.pdf",
+"mtime": 1788847865.8704338,
+"m": {
+"oil_total": {
+"fact": 10778.0,
+"plan": 8395.0,
+"plan_year": null,
+"prev": 9343.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 733.0,
+"plan": 540.0,
+"plan_year": null,
+"prev": 610.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 205.0,
+"plan": 540.0,
+"plan_year": null,
+"prev": 587.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 528.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 4.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 10045.0,
+"plan": 7855.0,
+"plan_year": null,
+"prev": 8733.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 3605.0,
+"plan": 3520.0,
+"plan_year": null,
+"prev": 3457.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 6440.0,
+"plan": 4335.0,
+"plan_year": null,
+"prev": 5276.0,
+"unit": ""
+},
+"teu_total": {
+"fact": 19868.0,
+"plan": 49563.0,
+"plan_year": null,
+"prev": 20912.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 7381.0,
+"plan": 30355.0,
+"plan_year": null,
+"prev": 15492.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 4588.0,
+"plan": 14040.0,
+"plan_year": null,
+"prev": 11863.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 1629.0,
+"plan": 11050.0,
+"plan_year": null,
+"prev": 1581.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 1115.0,
+"plan": 5265.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 355.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 49.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 1693.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 10167.0,
+"plan": 19208.0,
+"plan_year": null,
+"prev": 4324.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 7251.0,
+"plan": 8775.0,
+"plan_year": null,
+"prev": 3296.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 1728.0,
+"plan": 7800.0,
+"plan_year": null,
+"prev": 733.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 1188.0,
+"plan": 2633.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ba_turkestan": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ba_beket": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 295.0,
+"unit": "teu"
+},
+"teu_ai": {
+"fact": 1369.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 834.0,
+"unit": "teu"
+},
+"teu_ai_sunkar": {
+"fact": 1020.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 834.0,
+"unit": "teu"
+},
+"teu_ai_berkut": {
+"fact": 349.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ia": {
+"fact": 951.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 262.0,
+"unit": "teu"
+},
+"teu_ia_sunkar": {
+"fact": 665.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 262.0,
+"unit": "teu"
+},
+"teu_ia_berkut": {
+"fact": 286.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"cars_total": {
+"fact": 951.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 160.0,
+"unit": "шт"
+},
+"cars_total_sunkar": {
+"fact": 405.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 160.0,
+"unit": "шт"
+},
+"cars_total_berkut": {
+"fact": 265.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "шт"
+},
+"cars_total_turkestan": {
+"fact": 136.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "шт"
+},
+"cars_total_beket": {
+"fact": 145.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "шт"
+},
+"bulk_total": {
+"fact": 134.0,
+"plan": 335.0,
+"plan_year": null,
+"prev": 207.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_turkestan": {
+"fact": 66.0,
+"plan": 155.0,
+"plan_year": null,
+"prev": 127.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_beket": {
+"fact": 66.0,
+"plan": 180.0,
+"plan_year": null,
+"prev": 77.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_barys": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "тыс.тонн"
+},
+"oil_total_alatau": {
+"fact": 37409.0,
+"plan": 39751.0,
+"plan_year": null,
+"prev": null,
+"unit": "тыс.тенге"
+},
+"oil_total_altai": {
+"fact": 133670.0,
+"plan": 143732.0,
+"plan_year": null,
+"prev": null,
+"unit": "тыс.тенге"
+},
+"os_total": {
+"fact": 2955.0,
+"plan": 2970.0,
+"plan_year": null,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2024-03": {
+"src": "МР 3 -отчет за январь-март 2024 года.pdf",
+"mtime": 1788847865.546434,
+"m": {
+"oil_total": {
+"fact": 3460.0,
+"plan": 2424.0,
+"plan_year": 9653.0,
+"prev": 2094.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 563.0,
+"plan": 522.0,
+"plan_year": 2043.0,
+"prev": 30.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 367.0,
+"plan": 335.0,
+"plan_year": 1293.0,
+"prev": 30.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 196.0,
+"plan": 188.0,
+"plan_year": 750.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 2897.0,
+"plan": 1902.0,
+"plan_year": 7610.0,
+"prev": 2064.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 679.0,
+"plan": 840.0,
+"plan_year": 3360.0,
+"prev": 810.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 2218.0,
+"plan": 1062.0,
+"plan_year": 4250.0,
+"prev": 1254.0,
+"unit": ""
+},
+"teu_total": {
+"fact": 6413.0,
+"plan": 9240.0,
+"plan_year": null,
+"prev": 4489.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 3964.0,
+"plan": 4778.0,
+"plan_year": null,
+"prev": 1779.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 0.0,
+"plan": 1890.0,
+"plan_year": null,
+"prev": 1576.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 2073.0,
+"plan": 1575.0,
+"plan_year": null,
+"prev": 154.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 1891.0,
+"plan": 1313.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 49.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 2449.0,
+"plan": 4463.0,
+"plan_year": null,
+"prev": 2094.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 0.0,
+"plan": 1575.0,
+"plan_year": null,
+"prev": 2092.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 1214.0,
+"plan": 1575.0,
+"plan_year": null,
+"prev": 2.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 1235.0,
+"plan": 1313.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ai": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 365.0,
+"unit": "teu"
+},
+"teu_ai_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 365.0,
+"unit": "teu"
+},
+"teu_ia": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 251.0,
+"unit": "teu"
+},
+"teu_ia_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 251.0,
+"unit": "teu"
+},
+"cars_total": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 156.0,
+"unit": "шт"
+},
+"cars_total_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 156.0,
+"unit": "шт"
+},
+"bulk_total": {
+"fact": 29.0,
+"plan": 77.0,
+"plan_year": null,
+"prev": 58.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_beket": {
+"fact": 11.0,
+"plan": 45.0,
+"plan_year": null,
+"prev": 22.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_turkestan": {
+"fact": 18.0,
+"plan": 32.0,
+"plan_year": null,
+"prev": 36.0,
+"unit": "тыс.тонн"
+},
+"os_total": {
+"fact": 800.0,
+"plan": 742.0,
+"plan_year": 2970.0,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2023-10": {
+"src": "МР-отчет за  январь-октябрь 2023г.pdf",
+"mtime": 1788847866.5144339,
+"m": {
+"oil_total": {
+"fact": 8858.0,
+"plan": 6996.0,
+"plan_year": 8395.0,
+"prev": 7622.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 495.0,
+"plan": 450.0,
+"plan_year": 540.0,
+"prev": 522.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 108.0,
+"plan": 450.0,
+"plan_year": 540.0,
+"prev": 518.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 387.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 4.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 8363.0,
+"plan": 6546.0,
+"plan_year": 7855.0,
+"prev": 7100.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 2996.0,
+"plan": 2933.0,
+"plan_year": 3520.0,
+"prev": 2902.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 5367.0,
+"plan": 3613.0,
+"plan_year": 4335.0,
+"prev": 4198.0,
+"unit": ""
+},
+"teu_total": {
+"fact": 17281.0,
+"plan": 40885.0,
+"plan_year": null,
+"prev": 17615.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 6312.0,
+"plan": 25025.0,
+"plan_year": null,
+"prev": 13750.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 4588.0,
+"plan": 11700.0,
+"plan_year": null,
+"prev": 11358.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 1041.0,
+"plan": 9230.0,
+"plan_year": null,
+"prev": 344.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 634.0,
+"plan": 4095.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 355.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 49.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 1693.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 8649.0,
+"plan": 15860.0,
+"plan_year": null,
+"prev": 3145.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 7251.0,
+"plan": 7313.0,
+"plan_year": null,
+"prev": 2793.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 559.0,
+"plan": 6500.0,
+"plan_year": null,
+"prev": 57.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 839.0,
+"plan": 2048.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ba_turkestan": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ba_beket": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 295.0,
+"unit": "teu"
+},
+"teu_ai": {
+"fact": 1369.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 540.0,
+"unit": "teu"
+},
+"teu_ai_sunkar": {
+"fact": 1020.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 540.0,
+"unit": "teu"
+},
+"teu_ai_berkut": {
+"fact": 349.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ia": {
+"fact": 951.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 180.0,
+"unit": "teu"
+},
+"teu_ia_sunkar": {
+"fact": 665.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 180.0,
+"unit": "teu"
+},
+"teu_ia_berkut": {
+"fact": 286.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"cars_total": {
+"fact": 951.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 121.0,
+"unit": "шт"
+},
+"cars_total_sunkar": {
+"fact": 405.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 121.0,
+"unit": "шт"
+},
+"cars_total_berkut": {
+"fact": 265.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "шт"
+},
+"cars_total_turkestan": {
+"fact": 136.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "шт"
+},
+"cars_total_beket": {
+"fact": 145.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "шт"
+},
+"bulk_total": {
+"fact": 117.0,
+"plan": 275.0,
+"plan_year": null,
+"prev": 159.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_turkestan": {
+"fact": 56.0,
+"plan": 125.0,
+"plan_year": null,
+"prev": 97.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_beket": {
+"fact": 59.0,
+"plan": 150.0,
+"plan_year": null,
+"prev": 62.0,
+"unit": "тыс.тонн"
+},
+"oil_total_alatau": {
+"fact": 37339.0,
+"plan": 39751.0,
+"plan_year": 39751.0,
+"prev": null,
+"unit": "тыс.тенге"
+},
+"oil_total_altai": {
+"fact": 133418.0,
+"plan": 143732.0,
+"plan_year": 143732.0,
+"prev": null,
+"unit": "тыс.тенге"
+},
+"os_total": {
+"fact": 2591.0,
+"plan": 2475.0,
+"plan_year": 2970.0,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2024-08": {
+"src": "МР-отчет за январь-август 2024 года.pdf",
+"mtime": 1788847867.918434,
+"m": {
+"oil_total": {
+"fact": 9046.0,
+"plan": 7970.0,
+"plan_year": 11909.0,
+"prev": 7085.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 1474.0,
+"plan": 1393.0,
+"plan_year": 2043.0,
+"prev": 375.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 986.0,
+"plan": 893.0,
+"plan_year": 1293.0,
+"prev": 101.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 488.0,
+"plan": 500.0,
+"plan_year": 750.0,
+"prev": 274.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 7572.0,
+"plan": 6577.0,
+"plan_year": 9866.0,
+"prev": 6710.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 1991.0,
+"plan": 2240.0,
+"plan_year": 3360.0,
+"prev": 2497.0,
+"unit": ""
+},
+"oil_bs_in_kmgt": {
+"fact": 1991.0,
+"plan": 2240.0,
+"plan_year": 3360.0,
+"prev": 2497.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_own": {
+"fact": 334.0,
+"plan": 960.0,
+"plan_year": 1440.0,
+"prev": 421.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_chart": {
+"fact": 1657.0,
+"plan": 1280.0,
+"plan_year": 1920.0,
+"prev": 2076.0,
+"unit": ""
+},
+"oil_bs_in_3rd": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_own": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 5581.0,
+"plan": 4337.0,
+"plan_year": 6506.0,
+"prev": 4213.0,
+"unit": ""
+},
+"oil_bs_out_kmgt": {
+"fact": 4063.0,
+"plan": 2833.0,
+"plan_year": 4250.0,
+"prev": 3024.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_own": {
+"fact": 471.0,
+"plan": 1020.0,
+"plan_year": 1530.0,
+"prev": 615.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_chart": {
+"fact": 3592.0,
+"plan": 1813.0,
+"plan_year": 2720.0,
+"prev": 2409.0,
+"unit": ""
+},
+"oil_bs_out_3rd": {
+"fact": 1518.0,
+"plan": 1504.0,
+"plan_year": 2256.0,
+"prev": 1189.0,
+"unit": ""
+},
+"oil_bs_out_3rd_own": {
+"fact": 1088.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 1015.0,
+"unit": ""
+},
+"oil_bs_out_3rd_chart": {
+"fact": 430.0,
+"plan": 1504.0,
+"plan_year": 2256.0,
+"prev": 174.0,
+"unit": ""
+},
+"teu_total": {
+"fact": 32130.0,
+"plan": 24640.0,
+"plan_year": null,
+"prev": 14161.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 24418.0,
+"plan": 12740.0,
+"plan_year": null,
+"prev": 5435.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 4329.0,
+"plan": 5040.0,
+"plan_year": null,
+"prev": 4039.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 9474.0,
+"plan": 4200.0,
+"plan_year": null,
+"prev": 1041.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 8106.0,
+"plan": 3500.0,
+"plan_year": null,
+"prev": 306.0,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": 968.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 1541.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 49.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 7552.0,
+"plan": 11900.0,
+"plan_year": null,
+"prev": 6900.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 1051.0,
+"plan": 4200.0,
+"plan_year": null,
+"prev": 6341.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 3587.0,
+"plan": 4200.0,
+"plan_year": null,
+"prev": 559.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 2573.0,
+"plan": 3500.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ba_beket": {
+"fact": 341.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": null,
+"unit": "teu"
+},
+"teu_ai": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 1144.0,
+"unit": "teu"
+},
+"teu_ai_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 795.0,
+"unit": "teu"
+},
+"teu_ai_berkut": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 349.0,
+"unit": "teu"
+},
+"teu_ia": {
+"fact": 160.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 682.0,
+"unit": "teu"
+},
+"teu_ia_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 396.0,
+"unit": "teu"
+},
+"teu_ia_berkut": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 286.0,
+"unit": "teu"
+},
+"teu_ia_turkestan": {
+"fact": 160.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"cars_total": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 951.0,
+"unit": "шт"
+},
+"cars_total_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 405.0,
+"unit": "шт"
+},
+"cars_total_berkut": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 265.0,
+"unit": "шт"
+},
+"cars_total_turkestan": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 136.0,
+"unit": "шт"
+},
+"cars_total_beket": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 145.0,
+"unit": "шт"
+},
+"bulk_total": {
+"fact": 89.0,
+"plan": 204.0,
+"plan_year": null,
+"prev": 98.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_beket": {
+"fact": 31.0,
+"plan": 120.0,
+"plan_year": null,
+"prev": 46.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_turkestan": {
+"fact": 57.0,
+"plan": 84.0,
+"plan_year": null,
+"prev": 49.0,
+"unit": "тыс.тонн"
+},
+"os_total": {
+"fact": 1893.0,
+"plan": 1980.0,
+"plan_year": 2970.0,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2024-04": {
+"src": "МР-отчет за январь-апрель 2024 года.pdf",
+"mtime": 1788847869.0704339,
+"m": {
+"oil_total": {
+"fact": 4590.0,
+"plan": 3233.0,
+"plan_year": 9653.0,
+"prev": 3203.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 749.0,
+"plan": 696.0,
+"plan_year": 2043.0,
+"prev": 95.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 487.0,
+"plan": 446.0,
+"plan_year": 1293.0,
+"prev": 30.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 262.0,
+"plan": 250.0,
+"plan_year": 750.0,
+"prev": 65.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 3841.0,
+"plan": 2537.0,
+"plan_year": 7610.0,
+"prev": 3108.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 759.0,
+"plan": 1120.0,
+"plan_year": 3360.0,
+"prev": 1246.0,
+"unit": ""
+},
+"oil_bs_in_kmgt": {
+"fact": 759.0,
+"plan": 1120.0,
+"plan_year": 3360.0,
+"prev": 1246.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_own": {
+"fact": 95.0,
+"plan": 480.0,
+"plan_year": 1440.0,
+"prev": 176.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_chart": {
+"fact": 664.0,
+"plan": 640.0,
+"plan_year": 1920.0,
+"prev": 1070.0,
+"unit": ""
+},
+"oil_bs_in_3rd": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_own": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 3082.0,
+"plan": 1417.0,
+"plan_year": 4250.0,
+"prev": 1862.0,
+"unit": ""
+},
+"oil_bs_out_kmgt": {
+"fact": 2238.0,
+"plan": 1417.0,
+"plan_year": 4250.0,
+"prev": 1278.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_own": {
+"fact": 386.0,
+"plan": 510.0,
+"plan_year": 1530.0,
+"prev": 170.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_chart": {
+"fact": 1852.0,
+"plan": 907.0,
+"plan_year": 2720.0,
+"prev": 1108.0,
+"unit": ""
+},
+"oil_bs_out_3rd": {
+"fact": 844.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 584.0,
+"unit": ""
+},
+"oil_bs_out_3rd_own": {
+"fact": 597.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 584.0,
+"unit": ""
+},
+"oil_bs_out_3rd_chart": {
+"fact": 247.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"teu_total": {
+"fact": 9261.0,
+"plan": 12320.0,
+"plan_year": null,
+"prev": 6394.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 5714.0,
+"plan": 6370.0,
+"plan_year": null,
+"prev": 2602.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 0.0,
+"plan": 2520.0,
+"plan_year": null,
+"prev": 2233.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 3053.0,
+"plan": 2100.0,
+"plan_year": null,
+"prev": 154.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 2661.0,
+"plan": 1750.0,
+"plan_year": null,
+"prev": 166.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 49.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 3547.0,
+"plan": 5950.0,
+"plan_year": null,
+"prev": 2858.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 0.0,
+"plan": 2100.0,
+"plan_year": null,
+"prev": 2856.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 1807.0,
+"plan": 2100.0,
+"plan_year": null,
+"prev": 2.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 1740.0,
+"plan": 1750.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ai": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 585.0,
+"unit": "teu"
+},
+"teu_ai_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 585.0,
+"unit": "teu"
+},
+"teu_ia": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 349.0,
+"unit": "teu"
+},
+"teu_ia_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 313.0,
+"unit": "teu"
+},
+"teu_ia_berkut": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 36.0,
+"unit": "teu"
+},
+"cars_total": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 265.0,
+"unit": "шт"
+},
+"cars_total_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 210.0,
+"unit": "шт"
+},
+"cars_total_berkut": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 55.0,
+"unit": "шт"
+},
+"bulk_total": {
+"fact": 51.0,
+"plan": 102.0,
+"plan_year": null,
+"prev": 73.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_beket": {
+"fact": 15.0,
+"plan": 60.0,
+"plan_year": null,
+"prev": 31.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_turkestan": {
+"fact": 36.0,
+"plan": 42.0,
+"plan_year": null,
+"prev": 39.0,
+"unit": "тыс.тонн"
+},
+"os_total": {
+"fact": 1078.0,
+"plan": 990.0,
+"plan_year": 2970.0,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2024-12": {
+"src": "МР-отчет за январь-декабрь 2024 года.pdf",
+"mtime": 1788847637.8624392,
+"m": {
+"oil_total": {
+"fact": 13169.0,
+"plan": 11909.0,
+"plan_year": null,
+"prev": 10778.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 2083.0,
+"plan": 2043.0,
+"plan_year": null,
+"prev": 733.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 1379.0,
+"plan": 1293.0,
+"plan_year": null,
+"prev": 205.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 704.0,
+"plan": 750.0,
+"plan_year": null,
+"prev": 528.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 11086.0,
+"plan": 9866.0,
+"plan_year": null,
+"prev": 10045.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 3370.0,
+"plan": 3360.0,
+"plan_year": null,
+"prev": 3605.0,
+"unit": ""
+},
+"oil_bs_in_kmgt": {
+"fact": 3370.0,
+"plan": 3360.0,
+"plan_year": null,
+"prev": 3605.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_own": {
+"fact": 659.0,
+"plan": 1440.0,
+"plan_year": null,
+"prev": 506.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_chart": {
+"fact": 2711.0,
+"plan": 1920.0,
+"plan_year": null,
+"prev": 3099.0,
+"unit": ""
+},
+"oil_bs_in_3rd": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_own": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 7716.0,
+"plan": 6506.0,
+"plan_year": null,
+"prev": 6440.0,
+"unit": ""
+},
+"oil_bs_out_kmgt": {
+"fact": 5395.0,
+"plan": 4250.0,
+"plan_year": null,
+"prev": 4599.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_own": {
+"fact": 554.0,
+"plan": 1530.0,
+"plan_year": null,
+"prev": 782.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_chart": {
+"fact": 4841.0,
+"plan": 2720.0,
+"plan_year": null,
+"prev": 3817.0,
+"unit": ""
+},
+"oil_bs_out_3rd": {
+"fact": 2321.0,
+"plan": 2256.0,
+"plan_year": null,
+"prev": 1841.0,
+"unit": ""
+},
+"oil_bs_out_3rd_own": {
+"fact": 1619.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 1667.0,
+"unit": ""
+},
+"oil_bs_out_3rd_chart": {
+"fact": 702.0,
+"plan": 2256.0,
+"plan_year": null,
+"prev": 174.0,
+"unit": ""
+},
+"teu_total": {
+"fact": 51545.0,
+"plan": 36960.0,
+"plan_year": null,
+"prev": 19868.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 38486.0,
+"plan": 19110.0,
+"plan_year": null,
+"prev": 7381.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 8619.0,
+"plan": 7560.0,
+"plan_year": null,
+"prev": 4588.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 13662.0,
+"plan": 6300.0,
+"plan_year": null,
+"prev": 1629.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 13023.0,
+"plan": 5250.0,
+"plan_year": null,
+"prev": 1115.0,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": 1470.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 1712.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 49.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 12899.0,
+"plan": 17850.0,
+"plan_year": null,
+"prev": 10167.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 2751.0,
+"plan": 6300.0,
+"plan_year": null,
+"prev": 7251.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 4840.0,
+"plan": 6300.0,
+"plan_year": null,
+"prev": 1728.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 4781.0,
+"plan": 5250.0,
+"plan_year": null,
+"prev": 1188.0,
+"unit": "teu"
+},
+"teu_ba_turkestan": {
+"fact": 186.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ba_beket": {
+"fact": 341.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ai": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 1369.0,
+"unit": "teu"
+},
+"teu_ai_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 1020.0,
+"unit": "teu"
+},
+"teu_ai_berkut": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 349.0,
+"unit": "teu"
+},
+"teu_ia": {
+"fact": 160.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 951.0,
+"unit": "teu"
+},
+"teu_ia_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 665.0,
+"unit": "teu"
+},
+"teu_ia_berkut": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 286.0,
+"unit": "teu"
+},
+"teu_ia_turkestan": {
+"fact": 160.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"cars_total": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 951.0,
+"unit": "шт"
+},
+"cars_total_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 405.0,
+"unit": "шт"
+},
+"cars_total_berkut": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 265.0,
+"unit": "шт"
+},
+"cars_total_turkestan": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 136.0,
+"unit": "шт"
+},
+"cars_total_beket": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 145.0,
+"unit": "шт"
+},
+"bulk_total": {
+"fact": 133.0,
+"plan": 281.0,
+"plan_year": null,
+"prev": 134.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_beket": {
+"fact": 52.0,
+"plan": 155.0,
+"plan_year": null,
+"prev": 66.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_turkestan": {
+"fact": 81.0,
+"plan": 126.0,
+"plan_year": null,
+"prev": 66.0,
+"unit": "тыс.тонн"
+},
+"os_total": {
+"fact": 2832.0,
+"plan": 2970.0,
+"plan_year": null,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2024-07": {
+"src": "МР-отчет за январь-июль 2024 года.pdf",
+"mtime": 1788847869.7864337,
+"m": {
+"oil_total": {
+"fact": 7949.0,
+"plan": 5657.0,
+"plan_year": 9653.0,
+"prev": 6191.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 1292.0,
+"plan": 1219.0,
+"plan_year": 2043.0,
+"prev": 332.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 861.0,
+"plan": 781.0,
+"plan_year": 1293.0,
+"prev": 86.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 431.0,
+"plan": 438.0,
+"plan_year": 750.0,
+"prev": 246.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 6657.0,
+"plan": 4438.0,
+"plan_year": 7610.0,
+"prev": 5859.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 1665.0,
+"plan": 1960.0,
+"plan_year": 3360.0,
+"prev": 2173.0,
+"unit": ""
+},
+"oil_bs_in_kmgt": {
+"fact": 1665.0,
+"plan": 1960.0,
+"plan_year": 3360.0,
+"prev": 2173.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_own": {
+"fact": 334.0,
+"plan": 840.0,
+"plan_year": 1440.0,
+"prev": 421.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_chart": {
+"fact": 1331.0,
+"plan": 1120.0,
+"plan_year": 1920.0,
+"prev": 1752.0,
+"unit": ""
+},
+"oil_bs_in_3rd": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_own": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 4992.0,
+"plan": 2478.0,
+"plan_year": 4250.0,
+"prev": 3686.0,
+"unit": ""
+},
+"oil_bs_out_kmgt": {
+"fact": 3629.0,
+"plan": 2478.0,
+"plan_year": 4250.0,
+"prev": 2764.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_own": {
+"fact": 386.0,
+"plan": 892.0,
+"plan_year": 1530.0,
+"prev": 531.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_chart": {
+"fact": 3243.0,
+"plan": 1586.0,
+"plan_year": 2720.0,
+"prev": 2233.0,
+"unit": ""
+},
+"oil_bs_out_3rd": {
+"fact": 1363.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 922.0,
+"unit": ""
+},
+"oil_bs_out_3rd_own": {
+"fact": 1022.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 835.0,
+"unit": ""
+},
+"oil_bs_out_3rd_chart": {
+"fact": 341.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 87.0,
+"unit": ""
+},
+"teu_total": {
+"fact": 25687.0,
+"plan": 21560.0,
+"plan_year": null,
+"prev": 12361.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 18905.0,
+"plan": 11148.0,
+"plan_year": null,
+"prev": 4913.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 2513.0,
+"plan": 4410.0,
+"plan_year": null,
+"prev": 3657.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 7675.0,
+"plan": 3675.0,
+"plan_year": null,
+"prev": 1041.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 6732.0,
+"plan": 3063.0,
+"plan_year": null,
+"prev": 166.0,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": 633.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 1352.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 49.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 6622.0,
+"plan": 10413.0,
+"plan_year": null,
+"prev": 5731.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 567.0,
+"plan": 3675.0,
+"plan_year": null,
+"prev": 5172.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 3245.0,
+"plan": 3675.0,
+"plan_year": null,
+"prev": 559.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 2469.0,
+"plan": 3063.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ba_beket": {
+"fact": 341.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": null,
+"unit": "teu"
+},
+"teu_ai": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 1144.0,
+"unit": "teu"
+},
+"teu_ai_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 795.0,
+"unit": "teu"
+},
+"teu_ai_berkut": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 349.0,
+"unit": "teu"
+},
+"teu_ia": {
+"fact": 160.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 573.0,
+"unit": "teu"
+},
+"teu_ia_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 357.0,
+"unit": "teu"
+},
+"teu_ia_berkut": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 216.0,
+"unit": "teu"
+},
+"teu_ia_turkestan": {
+"fact": 160.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"cars_total": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 866.0,
+"unit": "шт"
+},
+"cars_total_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 366.0,
+"unit": "шт"
+},
+"cars_total_berkut": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 219.0,
+"unit": "шт"
+},
+"cars_total_turkestan": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 136.0,
+"unit": "шт"
+},
+"cars_total_beket": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 145.0,
+"unit": "шт"
+},
+"bulk_total": {
+"fact": 79.0,
+"plan": 179.0,
+"plan_year": null,
+"prev": 86.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_beket": {
+"fact": 26.0,
+"plan": 105.0,
+"plan_year": null,
+"prev": 43.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_turkestan": {
+"fact": 52.0,
+"plan": 74.0,
+"plan_year": null,
+"prev": 41.0,
+"unit": "тыс.тонн"
+},
+"os_total": {
+"fact": 1742.0,
+"plan": 1732.0,
+"plan_year": 2970.0,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2024-06": {
+"src": "МР-отчет за январь-июнь 2024 года.pdf",
+"mtime": 1788847870.9304338,
+"m": {
+"oil_total": {
+"fact": 6618.0,
+"plan": 4850.0,
+"plan_year": 9653.0,
+"prev": 5235.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 1098.0,
+"plan": 1045.0,
+"plan_year": 2043.0,
+"prev": 238.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 733.0,
+"plan": 670.0,
+"plan_year": 1293.0,
+"prev": 58.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 365.0,
+"plan": 375.0,
+"plan_year": 750.0,
+"prev": 180.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 5520.0,
+"plan": 3805.0,
+"plan_year": 7610.0,
+"prev": 4997.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 1252.0,
+"plan": 1680.0,
+"plan_year": 3360.0,
+"prev": 1849.0,
+"unit": ""
+},
+"oil_bs_in_kmgt": {
+"fact": 1252.0,
+"plan": 1680.0,
+"plan_year": 3360.0,
+"prev": 1849.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_own": {
+"fact": 175.0,
+"plan": 720.0,
+"plan_year": 1440.0,
+"prev": 337.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_chart": {
+"fact": 1077.0,
+"plan": 960.0,
+"plan_year": 1920.0,
+"prev": 1512.0,
+"unit": ""
+},
+"oil_bs_in_3rd": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_own": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 4268.0,
+"plan": 2125.0,
+"plan_year": 4250.0,
+"prev": 3148.0,
+"unit": ""
+},
+"oil_bs_out_kmgt": {
+"fact": 3164.0,
+"plan": 2125.0,
+"plan_year": 4250.0,
+"prev": 2314.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_own": {
+"fact": 386.0,
+"plan": 765.0,
+"plan_year": 1530.0,
+"prev": 531.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_chart": {
+"fact": 2778.0,
+"plan": 1360.0,
+"plan_year": 2720.0,
+"prev": 1783.0,
+"unit": ""
+},
+"oil_bs_out_3rd": {
+"fact": 1104.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 834.0,
+"unit": ""
+},
+"oil_bs_out_3rd_own": {
+"fact": 763.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 834.0,
+"unit": ""
+},
+"oil_bs_out_3rd_chart": {
+"fact": 341.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"teu_total": {
+"fact": 19594.0,
+"plan": 18480.0,
+"plan_year": null,
+"prev": 10406.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 14115.0,
+"plan": 9555.0,
+"plan_year": null,
+"prev": 4160.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 1014.0,
+"plan": 3780.0,
+"plan_year": null,
+"prev": 3175.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 6266.0,
+"plan": 3150.0,
+"plan_year": null,
+"prev": 770.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 5279.0,
+"plan": 2625.0,
+"plan_year": null,
+"prev": 166.0,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": 409.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 1147.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 49.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 5319.0,
+"plan": 8925.0,
+"plan_year": null,
+"prev": 4951.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 194.0,
+"plan": 3150.0,
+"plan_year": null,
+"prev": 4544.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 2587.0,
+"plan": 3150.0,
+"plan_year": null,
+"prev": 407.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 2197.0,
+"plan": 2625.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ba_beket": {
+"fact": 341.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": null,
+"unit": "teu"
+},
+"teu_ai": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 753.0,
+"unit": "teu"
+},
+"teu_ai_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 585.0,
+"unit": "teu"
+},
+"teu_ai_berkut": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 168.0,
+"unit": "teu"
+},
+"teu_ia": {
+"fact": 160.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 542.0,
+"unit": "teu"
+},
+"teu_ia_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 357.0,
+"unit": "teu"
+},
+"teu_ia_berkut": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 185.0,
+"unit": "teu"
+},
+"teu_ia_turkestan": {
+"fact": 160.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"cars_total": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 827.0,
+"unit": "шт"
+},
+"cars_total_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 335.0,
+"unit": "шт"
+},
+"cars_total_berkut": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 211.0,
+"unit": "шт"
+},
+"cars_total_turkestan": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 136.0,
+"unit": "шт"
+},
+"cars_total_beket": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 145.0,
+"unit": "шт"
+},
+"bulk_total": {
+"fact": 61.0,
+"plan": 153.0,
+"plan_year": null,
+"prev": 83.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_beket": {
+"fact": 17.0,
+"plan": 90.0,
+"plan_year": null,
+"prev": 38.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_turkestan": {
+"fact": 44.0,
+"plan": 63.0,
+"plan_year": null,
+"prev": 43.0,
+"unit": "тыс.тонн"
+},
+"os_total": {
+"fact": 1324.0,
+"plan": 1485.0,
+"plan_year": 2970.0,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2024-05": {
+"src": "МР-отчет за январь-май 2024 года.pdf",
+"mtime": 1788847871.9024339,
+"m": {
+"oil_total": {
+"fact": 5732.0,
+"plan": 4041.0,
+"plan_year": 9653.0,
+"prev": 4247.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 911.0,
+"plan": 871.0,
+"plan_year": 2043.0,
+"prev": 181.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 612.0,
+"plan": 558.0,
+"plan_year": 1293.0,
+"prev": 51.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 299.0,
+"plan": 313.0,
+"plan_year": 750.0,
+"prev": 130.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 4821.0,
+"plan": 3170.0,
+"plan_year": 7610.0,
+"prev": 4066.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 999.0,
+"plan": 1400.0,
+"plan_year": 3360.0,
+"prev": 1507.0,
+"unit": ""
+},
+"oil_bs_in_kmgt": {
+"fact": 999.0,
+"plan": 1400.0,
+"plan_year": 3360.0,
+"prev": 1507.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_own": {
+"fact": 95.0,
+"plan": 600.0,
+"plan_year": 1440.0,
+"prev": 337.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_chart": {
+"fact": 904.0,
+"plan": 800.0,
+"plan_year": 1920.0,
+"prev": 1170.0,
+"unit": ""
+},
+"oil_bs_in_3rd": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_own": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 3822.0,
+"plan": 1770.0,
+"plan_year": 4250.0,
+"prev": 2559.0,
+"unit": ""
+},
+"oil_bs_out_kmgt": {
+"fact": 2894.0,
+"plan": 1770.0,
+"plan_year": 4250.0,
+"prev": 1879.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_own": {
+"fact": 386.0,
+"plan": 637.0,
+"plan_year": 1530.0,
+"prev": 347.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_chart": {
+"fact": 2508.0,
+"plan": 1133.0,
+"plan_year": 2720.0,
+"prev": 1532.0,
+"unit": ""
+},
+"oil_bs_out_3rd": {
+"fact": 928.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 680.0,
+"unit": ""
+},
+"oil_bs_out_3rd_own": {
+"fact": 681.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 680.0,
+"unit": ""
+},
+"oil_bs_out_3rd_chart": {
+"fact": 247.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"teu_total": {
+"fact": 14275.0,
+"plan": 15400.0,
+"plan_year": null,
+"prev": 8736.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 9842.0,
+"plan": 7963.0,
+"plan_year": null,
+"prev": 3652.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 0.0,
+"plan": 3150.0,
+"plan_year": null,
+"prev": 2667.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 4790.0,
+"plan": 2625.0,
+"plan_year": null,
+"prev": 770.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 4101.0,
+"plan": 2188.0,
+"plan_year": null,
+"prev": 166.0,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": 192.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 759.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 49.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 4433.0,
+"plan": 7438.0,
+"plan_year": null,
+"prev": 3977.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 0.0,
+"plan": 2625.0,
+"plan_year": null,
+"prev": 3570.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 2304.0,
+"plan": 2625.0,
+"plan_year": null,
+"prev": 407.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 1879.0,
+"plan": 2188.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ba_beket": {
+"fact": 250.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": null,
+"unit": "teu"
+},
+"teu_ai": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 657.0,
+"unit": "teu"
+},
+"teu_ai_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 585.0,
+"unit": "teu"
+},
+"teu_ai_berkut": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 72.0,
+"unit": "teu"
+},
+"teu_ia": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 450.0,
+"unit": "teu"
+},
+"teu_ia_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 357.0,
+"unit": "teu"
+},
+"teu_ia_berkut": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 93.0,
+"unit": "teu"
+},
+"cars_total": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 715.0,
+"unit": "шт"
+},
+"cars_total_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 265.0,
+"unit": "шт"
+},
+"cars_total_berkut": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 169.0,
+"unit": "шт"
+},
+"cars_total_turkestan": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 136.0,
+"unit": "шт"
+},
+"cars_total_beket": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 145.0,
+"unit": "шт"
+},
+"bulk_total": {
+"fact": 58.0,
+"plan": 128.0,
+"plan_year": null,
+"prev": 80.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_beket": {
+"fact": 15.0,
+"plan": 75.0,
+"plan_year": null,
+"prev": 34.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_turkestan": {
+"fact": 44.0,
+"plan": 53.0,
+"plan_year": null,
+"prev": 43.0,
+"unit": "тыс.тонн"
+},
+"os_total": {
+"fact": 1162.0,
+"plan": 1237.0,
+"plan_year": 2970.0,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2024-11": {
+"src": "МР-отчет за январь-ноябрь 2024 года.pdf",
+"mtime": 1788847872.8824337,
+"m": {
+"oil_total": {
+"fact": 12363.0,
+"plan": 10912.0,
+"plan_year": 11909.0,
+"prev": 9717.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 1962.0,
+"plan": 1869.0,
+"plan_year": 2043.0,
+"prev": 568.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 1286.0,
+"plan": 1181.0,
+"plan_year": 1293.0,
+"prev": 115.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 676.0,
+"plan": 688.0,
+"plan_year": 750.0,
+"prev": 453.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 10401.0,
+"plan": 9043.0,
+"plan_year": 9866.0,
+"prev": 9149.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 3130.0,
+"plan": 3080.0,
+"plan_year": 3360.0,
+"prev": 3156.0,
+"unit": ""
+},
+"oil_bs_in_kmgt": {
+"fact": 3130.0,
+"plan": 3080.0,
+"plan_year": 3360.0,
+"prev": 3156.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_own": {
+"fact": 659.0,
+"plan": 1320.0,
+"plan_year": 1440.0,
+"prev": 507.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_chart": {
+"fact": 2471.0,
+"plan": 1760.0,
+"plan_year": 1920.0,
+"prev": 2649.0,
+"unit": ""
+},
+"oil_bs_in_3rd": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_own": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 7271.0,
+"plan": 5963.0,
+"plan_year": 6506.0,
+"prev": 5993.0,
+"unit": ""
+},
+"oil_bs_out_kmgt": {
+"fact": 5125.0,
+"plan": 3895.0,
+"plan_year": 4250.0,
+"prev": 4283.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_own": {
+"fact": 554.0,
+"plan": 1402.0,
+"plan_year": 1530.0,
+"prev": 781.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_chart": {
+"fact": 4571.0,
+"plan": 2493.0,
+"plan_year": 2720.0,
+"prev": 3502.0,
+"unit": ""
+},
+"oil_bs_out_3rd": {
+"fact": 2146.0,
+"plan": 2068.0,
+"plan_year": 2256.0,
+"prev": 1710.0,
+"unit": ""
+},
+"oil_bs_out_3rd_own": {
+"fact": 1529.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 1536.0,
+"unit": ""
+},
+"oil_bs_out_3rd_chart": {
+"fact": 617.0,
+"plan": 2068.0,
+"plan_year": 2256.0,
+"prev": 174.0,
+"unit": ""
+},
+"teu_total": {
+"fact": 46446.0,
+"plan": 33880.0,
+"plan_year": null,
+"prev": 18483.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 35215.0,
+"plan": 17518.0,
+"plan_year": null,
+"prev": 6833.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 7619.0,
+"plan": 6930.0,
+"plan_year": null,
+"prev": 4588.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 12998.0,
+"plan": 5775.0,
+"plan_year": null,
+"prev": 1275.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 11751.0,
+"plan": 4813.0,
+"plan_year": null,
+"prev": 921.0,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": 1135.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 1712.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 49.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 11071.0,
+"plan": 16363.0,
+"plan_year": null,
+"prev": 9330.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 2242.0,
+"plan": 5775.0,
+"plan_year": null,
+"prev": 7251.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 4237.0,
+"plan": 5775.0,
+"plan_year": null,
+"prev": 891.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 4251.0,
+"plan": 4813.0,
+"plan_year": null,
+"prev": 1188.0,
+"unit": "teu"
+},
+"teu_ba_beket": {
+"fact": 341.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ai": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 1369.0,
+"unit": "teu"
+},
+"teu_ai_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 1020.0,
+"unit": "teu"
+},
+"teu_ai_berkut": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 349.0,
+"unit": "teu"
+},
+"teu_ia": {
+"fact": 160.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 951.0,
+"unit": "teu"
+},
+"teu_ia_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 665.0,
+"unit": "teu"
+},
+"teu_ia_berkut": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 286.0,
+"unit": "teu"
+},
+"teu_ia_turkestan": {
+"fact": 160.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"cars_total": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 951.0,
+"unit": "шт"
+},
+"cars_total_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 405.0,
+"unit": "шт"
+},
+"cars_total_berkut": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 265.0,
+"unit": "шт"
+},
+"cars_total_turkestan": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 136.0,
+"unit": "шт"
+},
+"cars_total_beket": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 145.0,
+"unit": "шт"
+},
+"bulk_total": {
+"fact": 120.0,
+"plan": 256.0,
+"plan_year": null,
+"prev": 124.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_beket": {
+"fact": 43.0,
+"plan": 140.0,
+"plan_year": null,
+"prev": 62.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_turkestan": {
+"fact": 77.0,
+"plan": 116.0,
+"plan_year": null,
+"prev": 59.0,
+"unit": "тыс.тонн"
+},
+"os_total": {
+"fact": 2742.0,
+"plan": 2722.0,
+"plan_year": 2970.0,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2024-10": {
+"src": "МР-отчет за январь-октябрь 2024 года.pdf",
+"mtime": 1788847874.0584338,
+"m": {
+"oil_total": {
+"fact": 11430.0,
+"plan": 9925.0,
+"plan_year": 11909.0,
+"prev": 8858.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 1822.0,
+"plan": 1704.0,
+"plan_year": 2043.0,
+"prev": 495.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 1192.0,
+"plan": 1079.0,
+"plan_year": 1293.0,
+"prev": 108.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 630.0,
+"plan": 625.0,
+"plan_year": 750.0,
+"prev": 387.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 9608.0,
+"plan": 8221.0,
+"plan_year": 9866.0,
+"prev": 8363.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 2805.0,
+"plan": 2800.0,
+"plan_year": 3360.0,
+"prev": 2996.0,
+"unit": ""
+},
+"oil_bs_in_kmgt": {
+"fact": 2805.0,
+"plan": 2800.0,
+"plan_year": 3360.0,
+"prev": 2996.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_own": {
+"fact": 414.0,
+"plan": 1200.0,
+"plan_year": 1440.0,
+"prev": 507.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_chart": {
+"fact": 2391.0,
+"plan": 1600.0,
+"plan_year": 1920.0,
+"prev": 2489.0,
+"unit": ""
+},
+"oil_bs_in_3rd": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_own": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 6803.0,
+"plan": 5421.0,
+"plan_year": 6506.0,
+"prev": 5367.0,
+"unit": ""
+},
+"oil_bs_out_kmgt": {
+"fact": 4747.0,
+"plan": 3541.0,
+"plan_year": 4250.0,
+"prev": 3724.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_own": {
+"fact": 554.0,
+"plan": 1275.0,
+"plan_year": 1530.0,
+"prev": 615.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_chart": {
+"fact": 4193.0,
+"plan": 2266.0,
+"plan_year": 2720.0,
+"prev": 3109.0,
+"unit": ""
+},
+"oil_bs_out_3rd": {
+"fact": 2056.0,
+"plan": 1880.0,
+"plan_year": 2256.0,
+"prev": 1643.0,
+"unit": ""
+},
+"oil_bs_out_3rd_own": {
+"fact": 1439.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 1469.0,
+"unit": ""
+},
+"oil_bs_out_3rd_chart": {
+"fact": 617.0,
+"plan": 1880.0,
+"plan_year": 2256.0,
+"prev": 174.0,
+"unit": ""
+},
+"teu_total": {
+"fact": 42185.0,
+"plan": 30800.0,
+"plan_year": null,
+"prev": 17281.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 32364.0,
+"plan": 15925.0,
+"plan_year": null,
+"prev": 6312.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 6767.0,
+"plan": 6300.0,
+"plan_year": null,
+"prev": 4588.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 12092.0,
+"plan": 5250.0,
+"plan_year": null,
+"prev": 1041.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 10825.0,
+"plan": 4375.0,
+"plan_year": null,
+"prev": 634.0,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": 968.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 1712.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 49.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 9661.0,
+"plan": 14875.0,
+"plan_year": null,
+"prev": 8649.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 1726.0,
+"plan": 5250.0,
+"plan_year": null,
+"prev": 7251.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 3980.0,
+"plan": 5250.0,
+"plan_year": null,
+"prev": 559.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 3614.0,
+"plan": 4375.0,
+"plan_year": null,
+"prev": 839.0,
+"unit": "teu"
+},
+"teu_ba_beket": {
+"fact": 341.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ai": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 1369.0,
+"unit": "teu"
+},
+"teu_ai_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 1020.0,
+"unit": "teu"
+},
+"teu_ai_berkut": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 349.0,
+"unit": "teu"
+},
+"teu_ia": {
+"fact": 160.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 951.0,
+"unit": "teu"
+},
+"teu_ia_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 665.0,
+"unit": "teu"
+},
+"teu_ia_berkut": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 286.0,
+"unit": "teu"
+},
+"teu_ia_turkestan": {
+"fact": 160.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"cars_total": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 951.0,
+"unit": "шт"
+},
+"cars_total_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 405.0,
+"unit": "шт"
+},
+"cars_total_berkut": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 265.0,
+"unit": "шт"
+},
+"cars_total_turkestan": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 136.0,
+"unit": "шт"
+},
+"cars_total_beket": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 145.0,
+"unit": "шт"
+},
+"bulk_total": {
+"fact": 107.0,
+"plan": 240.0,
+"plan_year": null,
+"prev": 117.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_beket": {
+"fact": 34.0,
+"plan": 135.0,
+"plan_year": null,
+"prev": 56.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_turkestan": {
+"fact": 72.0,
+"plan": 105.0,
+"plan_year": null,
+"prev": 59.0,
+"unit": "тыс.тонн"
+},
+"os_total": {
+"fact": 2407.0,
+"plan": 2475.0,
+"plan_year": 2970.0,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2024-09": {
+"src": "МР-отчет за январь-сентябрь 2024 года.pdf",
+"mtime": 1788847875.3744338,
+"m": {
+"oil_total": {
+"fact": 10409.0,
+"plan": 8965.0,
+"plan_year": 11909.0,
+"prev": 8000.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 1633.0,
+"plan": 1567.0,
+"plan_year": 2043.0,
+"prev": 422.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 1078.0,
+"plan": 1004.0,
+"plan_year": 1293.0,
+"prev": 101.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 555.0,
+"plan": 563.0,
+"plan_year": 750.0,
+"prev": 321.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 8776.0,
+"plan": 7398.0,
+"plan_year": 9866.0,
+"prev": 7578.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 2483.0,
+"plan": 2520.0,
+"plan_year": 3360.0,
+"prev": 2742.0,
+"unit": ""
+},
+"oil_bs_in_kmgt": {
+"fact": 2483.0,
+"plan": 2520.0,
+"plan_year": 3360.0,
+"prev": 2742.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_own": {
+"fact": 334.0,
+"plan": 1080.0,
+"plan_year": 1440.0,
+"prev": 506.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_chart": {
+"fact": 2149.0,
+"plan": 1440.0,
+"plan_year": 1920.0,
+"prev": 2236.0,
+"unit": ""
+},
+"oil_bs_in_3rd": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_own": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 6293.0,
+"plan": 4878.0,
+"plan_year": 6506.0,
+"prev": 4836.0,
+"unit": ""
+},
+"oil_bs_out_kmgt": {
+"fact": 4330.0,
+"plan": 3186.0,
+"plan_year": 4250.0,
+"prev": 3467.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_own": {
+"fact": 471.0,
+"plan": 1147.0,
+"plan_year": 1530.0,
+"prev": 615.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_chart": {
+"fact": 3859.0,
+"plan": 2039.0,
+"plan_year": 2720.0,
+"prev": 2852.0,
+"unit": ""
+},
+"oil_bs_out_3rd": {
+"fact": 1963.0,
+"plan": 1692.0,
+"plan_year": 2256.0,
+"prev": 1369.0,
+"unit": ""
+},
+"oil_bs_out_3rd_own": {
+"fact": 1439.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 1195.0,
+"unit": ""
+},
+"oil_bs_out_3rd_chart": {
+"fact": 524.0,
+"plan": 1692.0,
+"plan_year": 2256.0,
+"prev": 174.0,
+"unit": ""
+},
+"teu_total": {
+"fact": 36578.0,
+"plan": 27720.0,
+"plan_year": null,
+"prev": 15915.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 27941.0,
+"plan": 14333.0,
+"plan_year": null,
+"prev": 5903.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 5460.0,
+"plan": 5670.0,
+"plan_year": null,
+"prev": 4507.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 10609.0,
+"plan": 4725.0,
+"plan_year": null,
+"prev": 1041.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 9363.0,
+"plan": 3938.0,
+"plan_year": null,
+"prev": 306.0,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": 968.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 1541.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 49.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 8477.0,
+"plan": 13388.0,
+"plan_year": null,
+"prev": 7810.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 1377.0,
+"plan": 4725.0,
+"plan_year": null,
+"prev": 7251.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 3741.0,
+"plan": 4725.0,
+"plan_year": null,
+"prev": 559.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 3018.0,
+"plan": 3938.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ba_beket": {
+"fact": 341.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ai": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 1369.0,
+"unit": "teu"
+},
+"teu_ai_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 1020.0,
+"unit": "teu"
+},
+"teu_ai_berkut": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 349.0,
+"unit": "teu"
+},
+"teu_ia": {
+"fact": 160.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 833.0,
+"unit": "teu"
+},
+"teu_ia_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 547.0,
+"unit": "teu"
+},
+"teu_ia_berkut": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 286.0,
+"unit": "teu"
+},
+"teu_ia_turkestan": {
+"fact": 160.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"cars_total": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 951.0,
+"unit": "шт"
+},
+"cars_total_sunkar": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 405.0,
+"unit": "шт"
+},
+"cars_total_berkut": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 265.0,
+"unit": "шт"
+},
+"cars_total_turkestan": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 136.0,
+"unit": "шт"
+},
+"cars_total_beket": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 145.0,
+"unit": "шт"
+},
+"bulk_total": {
+"fact": 99.0,
+"plan": 230.0,
+"plan_year": null,
+"prev": 107.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_beket": {
+"fact": 68.0,
+"plan": 135.0,
+"plan_year": null,
+"prev": 53.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_turkestan": {
+"fact": 31.0,
+"plan": 95.0,
+"plan_year": null,
+"prev": 52.0,
+"unit": "тыс.тонн"
+},
+"os_total": {
+"fact": 2244.0,
+"plan": 2227.0,
+"plan_year": 2970.0,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2025-03": {
+"src": "МР-отчет за январь-март 2025 года.pdf",
+"mtime": 1788847879.9104335,
+"m": {
+"oil_total": {
+"fact": 3128.0,
+"plan": 3220.0,
+"plan_year": 12880.0,
+"prev": 3460.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 456.0,
+"plan": 541.0,
+"plan_year": 2164.0,
+"prev": 563.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 285.0,
+"plan": 324.0,
+"plan_year": 1294.0,
+"prev": 367.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 171.0,
+"plan": 218.0,
+"plan_year": 870.0,
+"prev": 196.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 2672.0,
+"plan": 2679.0,
+"plan_year": 10716.0,
+"prev": 2897.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 1534.0,
+"plan": 820.0,
+"plan_year": 3280.0,
+"prev": 679.0,
+"unit": ""
+},
+"oil_bs_in_kmgt": {
+"fact": 1254.0,
+"plan": 820.0,
+"plan_year": 3280.0,
+"prev": 679.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_own": {
+"fact": 418.0,
+"plan": 180.0,
+"plan_year": 720.0,
+"prev": 95.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_chart": {
+"fact": 836.0,
+"plan": 640.0,
+"plan_year": 2560.0,
+"prev": 584.0,
+"unit": ""
+},
+"oil_bs_in_3rd": {
+"fact": 280.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_own": {
+"fact": 280.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 1138.0,
+"plan": 1859.0,
+"plan_year": 7436.0,
+"prev": 2218.0,
+"unit": ""
+},
+"oil_bs_out_kmgt": {
+"fact": 1053.0,
+"plan": 1150.0,
+"plan_year": 4606.0,
+"prev": 1646.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_own": {
+"fact": 99.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 287.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_chart": {
+"fact": 954.0,
+"plan": 1150.0,
+"plan_year": 4606.0,
+"prev": 1359.0,
+"unit": ""
+},
+"oil_bs_out_3rd": {
+"fact": 85.0,
+"plan": 709.0,
+"plan_year": 2830.0,
+"prev": 572.0,
+"unit": ""
+},
+"oil_bs_out_3rd_own": {
+"fact": 85.0,
+"plan": 709.0,
+"plan_year": 2830.0,
+"prev": 418.0,
+"unit": ""
+},
+"oil_bs_out_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 154.0,
+"unit": ""
+},
+"teu_total": {
+"fact": 16300.0,
+"plan": 15120.0,
+"plan_year": null,
+"prev": 6413.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 13120.0,
+"plan": 8820.0,
+"plan_year": null,
+"prev": 3964.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 3714.0,
+"plan": 2940.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 3756.0,
+"plan": 2940.0,
+"plan_year": null,
+"prev": 2073.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 3512.0,
+"plan": 2940.0,
+"plan_year": null,
+"prev": 1891.0,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": 935.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 1203.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 3180.0,
+"plan": 6300.0,
+"plan_year": null,
+"prev": 2449.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 1002.0,
+"plan": 2100.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 661.0,
+"plan": 2100.0,
+"plan_year": null,
+"prev": 1214.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 932.0,
+"plan": 2100.0,
+"plan_year": null,
+"prev": 1235.0,
+"unit": "teu"
+},
+"teu_ba_turkestan": {
+"fact": 203.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ba_beket": {
+"fact": 382.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"bulk_total": {
+"fact": 26.0,
+"plan": 63.0,
+"plan_year": null,
+"prev": 29.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_beket": {
+"fact": 17.0,
+"plan": 16.0,
+"plan_year": null,
+"prev": 11.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_turkestan": {
+"fact": 8.0,
+"plan": 47.0,
+"plan_year": null,
+"prev": 18.0,
+"unit": "тыс.тонн"
+},
+"oil_total_altai": {
+"fact": 13.89,
+"plan": 10.95,
+"plan_year": 10.97,
+"prev": null,
+"unit": "долл.сша"
+},
+"oil_total_alatau": {
+"fact": 0.0,
+"plan": 13.52,
+"plan_year": 13.52,
+"prev": null,
+"unit": "долл.сша"
+},
+"os_total": {
+"fact": 882.0,
+"plan": 889.0,
+"plan_year": 3550.0,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2025-02": {
+"src": "МР-отчет за январь-февраль 2025 года.pdf",
+"mtime": 1788847883.0824335,
+"m": {
+"oil_total": {
+"fact": 2254.0,
+"plan": 2147.0,
+"plan_year": 12880.0,
+"prev": 2586.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 311.0,
+"plan": 361.0,
+"plan_year": 2164.0,
+"prev": 363.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 205.0,
+"plan": 216.0,
+"plan_year": 1294.0,
+"prev": 241.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 106.0,
+"plan": 145.0,
+"plan_year": 870.0,
+"prev": 122.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 1943.0,
+"plan": 1786.0,
+"plan_year": 10716.0,
+"prev": 2223.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 1197.0,
+"plan": 547.0,
+"plan_year": 3280.0,
+"prev": 679.0,
+"unit": ""
+},
+"oil_bs_in_kmgt": {
+"fact": 1014.0,
+"plan": 547.0,
+"plan_year": 3280.0,
+"prev": 679.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_own": {
+"fact": 338.0,
+"plan": 120.0,
+"plan_year": 720.0,
+"prev": 95.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_chart": {
+"fact": 676.0,
+"plan": 427.0,
+"plan_year": 2560.0,
+"prev": 584.0,
+"unit": ""
+},
+"oil_bs_in_3rd": {
+"fact": 183.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_own": {
+"fact": 183.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 746.0,
+"plan": 1239.0,
+"plan_year": 7436.0,
+"prev": 1544.0,
+"unit": ""
+},
+"oil_bs_out_kmgt": {
+"fact": 661.0,
+"plan": 766.0,
+"plan_year": 4606.0,
+"prev": 1132.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_own": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 188.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_chart": {
+"fact": 661.0,
+"plan": 766.0,
+"plan_year": 4606.0,
+"prev": 944.0,
+"unit": ""
+},
+"oil_bs_out_3rd": {
+"fact": 85.0,
+"plan": 473.0,
+"plan_year": 2830.0,
+"prev": 412.0,
+"unit": ""
+},
+"oil_bs_out_3rd_own": {
+"fact": 85.0,
+"plan": 473.0,
+"plan_year": 2830.0,
+"prev": 328.0,
+"unit": ""
+},
+"oil_bs_out_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 84.0,
+"unit": ""
+},
+"teu_total": {
+"fact": 10254.0,
+"plan": 10080.0,
+"plan_year": null,
+"prev": 4409.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 7896.0,
+"plan": 5880.0,
+"plan_year": null,
+"prev": 2608.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 2314.0,
+"plan": 1960.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 2378.0,
+"plan": 1960.0,
+"plan_year": null,
+"prev": 1314.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 2456.0,
+"plan": 1960.0,
+"plan_year": null,
+"prev": 1294.0,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": 559.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ab_beket": {
+"fact": 189.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 2358.0,
+"plan": 4200.0,
+"plan_year": null,
+"prev": 1801.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 800.0,
+"plan": 1400.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 577.0,
+"plan": 1400.0,
+"plan_year": null,
+"prev": 978.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 705.0,
+"plan": 1400.0,
+"plan_year": null,
+"prev": 823.0,
+"unit": "teu"
+},
+"teu_ba_turkestan": {
+"fact": 115.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ba_beket": {
+"fact": 161.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"bulk_total": {
+"fact": 21.0,
+"plan": 42.0,
+"plan_year": null,
+"prev": 11.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_beket": {
+"fact": 17.0,
+"plan": 11.0,
+"plan_year": null,
+"prev": 4.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_turkestan": {
+"fact": 4.0,
+"plan": 32.0,
+"plan_year": null,
+"prev": 6.0,
+"unit": "тыс.тонн"
+},
+"oil_total_altai": {
+"fact": 14.9,
+"plan": 10.94,
+"plan_year": 10.97,
+"prev": null,
+"unit": "долл.сша"
+},
+"oil_total_alatau": {
+"fact": 0.0,
+"plan": 13.52,
+"plan_year": 13.52,
+"prev": null,
+"unit": "долл.сша"
+},
+"os_total": {
+"fact": 606.0,
+"plan": 593.0,
+"plan_year": 3550.0,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+},
+"2025-01": {
+"src": "Приложение МР-отчет за январь 2025 года.pdf",
+"mtime": 1788847884.0584335,
+"m": {
+"oil_total": {
+"fact": 1316.0,
+"plan": 1073.0,
+"plan_year": 12880.0,
+"prev": 1182.0,
+"unit": ""
+},
+"oil_casp": {
+"fact": 159.0,
+"plan": 180.0,
+"plan_year": 2164.0,
+"prev": 179.0,
+"unit": ""
+},
+"oil_makh": {
+"fact": 111.0,
+"plan": 108.0,
+"plan_year": 1294.0,
+"prev": 113.0,
+"unit": ""
+},
+"oil_baku": {
+"fact": 48.0,
+"plan": 73.0,
+"plan_year": 870.0,
+"prev": 66.0,
+"unit": ""
+},
+"oil_open": {
+"fact": 1157.0,
+"plan": 893.0,
+"plan_year": 10716.0,
+"prev": 1003.0,
+"unit": ""
+},
+"oil_bs_in": {
+"fact": 601.0,
+"plan": 273.0,
+"plan_year": 3280.0,
+"prev": 349.0,
+"unit": ""
+},
+"oil_bs_in_kmgt": {
+"fact": 418.0,
+"plan": 273.0,
+"plan_year": 3280.0,
+"prev": 349.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_own": {
+"fact": 0.0,
+"plan": 60.0,
+"plan_year": 720.0,
+"prev": 95.0,
+"unit": ""
+},
+"oil_bs_in_kmgt_chart": {
+"fact": 418.0,
+"plan": 213.0,
+"plan_year": 2560.0,
+"prev": 254.0,
+"unit": ""
+},
+"oil_bs_in_3rd": {
+"fact": 183.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_own": {
+"fact": 183.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_in_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 0.0,
+"unit": ""
+},
+"oil_bs_out": {
+"fact": 556.0,
+"plan": 620.0,
+"plan_year": 7436.0,
+"prev": 654.0,
+"unit": ""
+},
+"oil_bs_out_kmgt": {
+"fact": 471.0,
+"plan": 383.0,
+"plan_year": 4606.0,
+"prev": 487.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_own": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 99.0,
+"unit": ""
+},
+"oil_bs_out_kmgt_chart": {
+"fact": 471.0,
+"plan": 383.0,
+"plan_year": 4606.0,
+"prev": 388.0,
+"unit": ""
+},
+"oil_bs_out_3rd": {
+"fact": 85.0,
+"plan": 237.0,
+"plan_year": 2830.0,
+"prev": 167.0,
+"unit": ""
+},
+"oil_bs_out_3rd_own": {
+"fact": 85.0,
+"plan": 237.0,
+"plan_year": 2830.0,
+"prev": 83.0,
+"unit": ""
+},
+"oil_bs_out_3rd_chart": {
+"fact": 0.0,
+"plan": 0.0,
+"plan_year": 0.0,
+"prev": 84.0,
+"unit": ""
+},
+"teu_total": {
+"fact": 5416.0,
+"plan": 5040.0,
+"plan_year": null,
+"prev": 2087.0,
+"unit": "teu"
+},
+"teu_ab": {
+"fact": 3903.0,
+"plan": 2940.0,
+"plan_year": null,
+"prev": 1064.0,
+"unit": "teu"
+},
+"teu_ab_barys": {
+"fact": 968.0,
+"plan": 980.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ab_sunkar": {
+"fact": 1326.0,
+"plan": 980.0,
+"plan_year": null,
+"prev": 638.0,
+"unit": "teu"
+},
+"teu_ab_berkut": {
+"fact": 1050.0,
+"plan": 980.0,
+"plan_year": null,
+"prev": 426.0,
+"unit": "teu"
+},
+"teu_ab_turkestan": {
+"fact": 559.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ba": {
+"fact": 1513.0,
+"plan": 2100.0,
+"plan_year": null,
+"prev": 1023.0,
+"unit": "teu"
+},
+"teu_ba_barys": {
+"fact": 475.0,
+"plan": 700.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"teu_ba_sunkar": {
+"fact": 302.0,
+"plan": 700.0,
+"plan_year": null,
+"prev": 557.0,
+"unit": "teu"
+},
+"teu_ba_berkut": {
+"fact": 621.0,
+"plan": 700.0,
+"plan_year": null,
+"prev": 466.0,
+"unit": "teu"
+},
+"teu_ba_turkestan": {
+"fact": 115.0,
+"plan": 0.0,
+"plan_year": null,
+"prev": 0.0,
+"unit": "teu"
+},
+"bulk_total": {
+"fact": 9.0,
+"plan": 21.0,
+"plan_year": null,
+"prev": 4.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_beket": {
+"fact": 9.0,
+"plan": 5.0,
+"plan_year": null,
+"prev": 1.0,
+"unit": "тыс.тонн"
+},
+"bulk_total_turkestan": {
+"fact": 0.0,
+"plan": 16.0,
+"plan_year": null,
+"prev": 3.0,
+"unit": "тыс.тонн"
+},
+"oil_total_altai": {
+"fact": 14.9,
+"plan": 10.9,
+"plan_year": 10.97,
+"prev": null,
+"unit": "долл.сша"
+},
+"oil_total_alatau": {
+"fact": 0.0,
+"plan": 13.52,
+"plan_year": 13.52,
+"prev": null,
+"unit": "долл.сша"
+},
+"os_total": {
+"fact": 268.0,
+"plan": 297.0,
+"plan_year": 3550.0,
+"prev": null,
+"unit": "тыс.тонн"
+}
+}
+}
+}

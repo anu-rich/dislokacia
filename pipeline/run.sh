@@ -6,15 +6,20 @@ ROOT="$(cd .. && pwd)"          # корень репозитория (там in
 LOG="$PWD/state/run.log"
 mkdir -p state export
 exec >>"$LOG" 2>&1
-# Окна прихода сводок по Актау: 08:00–10:00, 14:00–16:00, 17:30–19:30. Вне окон почту не трогаем (кроме запуска с --force).
+# Окна прихода сводок по Актау: 08:00–10:00, 14:00–16:00, 17:30–19:30 ежедневно;
+# плюс среда/четверг 15:00–21:00 — письма «Открытые моря» из Лондона. Вне окон почту не трогаем (кроме --force).
 if [ "${1:-}" != "--force" ]; then
-  HM=$(TZ=Asia/Aqtau date +%H%M)
-  if ! { [ "$HM" -ge 0800 ] && [ "$HM" -lt 1000 ] || [ "$HM" -ge 1400 ] && [ "$HM" -lt 1600 ] || [ "$HM" -ge 1730 ] && [ "$HM" -lt 1930 ]; }; then exit 0; fi
+  HM=$(TZ=Asia/Aqtau date +%H%M); DOW=$(TZ=Asia/Aqtau date +%u)
+  OK=0
+  { [ "$HM" -ge 0800 ] && [ "$HM" -lt 1000 ] || [ "$HM" -ge 1400 ] && [ "$HM" -lt 1600 ] || [ "$HM" -ge 1730 ] && [ "$HM" -lt 1930 ]; } && OK=1
+  { [ "$DOW" = 3 ] || [ "$DOW" = 4 ]; } && [ "$HM" -ge 1500 ] && [ "$HM" -lt 2100 ] && OK=1
+  [ "$OK" = 1 ] || exit 0
 fi
 echo "=== $(date '+%F %T') start"
 # не запускать второй экземпляр параллельно
 exec 9>state/lock; flock -n 9 || { echo "уже работает"; exit 0; }
 source .venv/bin/activate
+python -c 'import pptx, pdfplumber' 2>/dev/null || pip -q install python-pptx pdfplumber >/dev/null 2>&1
 # подтягиваем правки пайплайна из репозитория (если есть)
 git -C "$ROOT" pull -q --rebase --autostash origin main 2>/dev/null || true
 
@@ -28,7 +33,7 @@ if [ -z "$NEW" ] && [ "$FORCE" = "0" ]; then echo "новых сводок не�
 
 if [ -z "$NEW" ]; then
   # только погода: пересобираем по последнему файлу
-  NEW=$(ls -1 export/*/*.xlsx 2>/dev/null | sort | tail -1)
+  NEW=$(ls -1 export/20*/*.xlsx 2>/dev/null | sort | tail -1)
   [ -z "$NEW" ] && { echo "нет файлов export"; exit 0; }
 fi
 echo "файлы:"; echo "$NEW"
@@ -42,6 +47,6 @@ WEATHER_JSON="$PWD/weather.json" python update.py "${FILES[@]}" || { echo "updat
   printf '</body></html>'; } > "$ROOT/index.html"
 
 cd "$ROOT"
-git add index.html pipeline/data/*.csv pipeline/data/snapshots.json
+git add index.html pipeline/data/*.csv pipeline/data/snapshots.json pipeline/data/mr.json 2>/dev/null || git add index.html pipeline/data/*.csv pipeline/data/snapshots.json
 if git diff --cached --quiet; then echo "изменений нет"; exit 0; fi
 git commit -q -m "update dashboard $(date -u '+%F %H:%M') UTC" && git push -q origin main && echo "опубликовано"

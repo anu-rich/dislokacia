@@ -123,6 +123,8 @@ select:focus-visible,input:focus-visible{outline:2px solid var(--s1);outline-off
 .chart{position:relative;height:280px}
 .chart.tall{height:360px}
 .note{font-size:12px;color:var(--ink-3);margin-top:8px}
+.subtabs{margin-bottom:14px}.subtabs button{padding:7px 16px;font-size:13px}
+.fold summary{cursor:pointer;color:var(--s1);font-weight:600;font-size:13px;margin:6px 0}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink-2);margin:2px 0 8px}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
 .src{font-size:12px;color:var(--ink-3);margin-top:24px;line-height:1.6}
@@ -155,6 +157,7 @@ select:focus-visible,input:focus-visible{outline:2px solid var(--s1);outline-off
   <button class="tab" role="tab" aria-selected="false" data-tab="ports">Порты</button>
   <button class="tab" role="tab" aria-selected="false" data-tab="oil">Объёмы: нефть</button>
   <button class="tab" role="tab" aria-selected="false" data-tab="cnt">Объёмы: контейнеры</button>
+  <button class="tab" role="tab" aria-selected="false" data-tab="osv">Объёмы: открытые моря</button>
   <button class="tab" role="tab" aria-selected="false" data-tab="sup">Судовые запасы</button>
   <button class="tab" role="tab" aria-selected="false" data-tab="bunk">Бункеровка</button>
   <button class="tab" role="tab" aria-selected="false" data-tab="open">Открытые моря</button>
@@ -230,31 +233,96 @@ select:focus-visible,input:focus-visible{outline:2px solid var(--s1);outline-off
 </section>
 
 <section class="panel" id="p-oil" hidden>
+  <div class="segs subtabs" id="oil-sub"><button aria-pressed="true" data-v="bl">Перевалка по коносаментам</button><button aria-pressed="false" data-v="disp">Сводки диспетчера</button><button aria-pressed="false" data-v="mr">Объёмы по МР</button></div>
   <div class="filters">
     <div class="f"><label>Год</label><select id="vol-year"></select></div>
-    <div class="note" style="align-self:center">Тонны по дате отхода из Актау; маршрут по индексу грузоотправителя (-Б Баку/Сангачал, -М Махачкала). Перевозчик — по судну: КМТФ, АСКО, прочие.</div>
+    <div class="note" style="align-self:center" id="oil-note"></div>
   </div>
-  <div class="kpis" id="vol-oil-kpis"></div>
-  <div class="grid2" style="margin-top:0">
-    <div class="card"><h2>По месяцам и маршрутам, тыс. т</h2><div class="sub" id="volc1-sub"></div><div class="legend" id="volc1-leg"></div><div class="chart tall"><canvas id="volc1"></canvas></div></div>
-    <div class="card"><h2>Баку: КМТФ и АСКО по месяцам, тыс. т</h2><div class="sub" id="volc2-sub"></div><div class="legend" id="volc2-leg"></div><div class="chart tall"><canvas id="volc2"></canvas></div></div>
-    <div class="card"><h2>Махачкала по месяцам, тыс. т</h2><div class="sub" id="volc5-sub"></div><div class="legend" id="volc5-leg"></div><div class="chart tall"><canvas id="volc5"></canvas></div></div>
-    <div class="card" style="grid-column:1/-1"><h2>Нефть по месяцам, т</h2><div class="sub" id="volt1-sub"></div><div class="tw" id="volt1"></div></div>
-    <div class="card" style="grid-column:1/-1"><h2>Прочие судовладельцы</h2><div class="sub" id="volt3-sub"></div><div class="tw" id="volt3"></div></div>
-    <div class="card" style="grid-column:1/-1"><h2>Полнота данных</h2><div id="vol-gaps"></div></div>
+  <div data-sub="bl">
+    <div class="kpis" id="bl-kpis"></div>
+    <div class="grid2" style="margin-top:0">
+      <div class="card"><h2>По месяцам и маршрутам, тыс. т</h2><div class="sub" id="blc1-sub"></div><div class="legend" id="blc1-leg"></div><div class="chart tall"><canvas id="blc1"></canvas></div></div>
+      <div class="card"><h2>Коносаменты vs сводки диспетчера, тыс. т</h2><div class="sub">Итог месяца по коносаментам (учёт переходящих рейсов) и по дате отхода из сводок диспетчера.</div><div class="legend" id="blc4-leg"></div><div class="chart tall"><canvas id="blc4"></canvas></div></div>
+      <div class="card"><h2>Баку/Сангачал по перевозчикам, тыс. т</h2><div class="sub" id="blc2-sub"></div><div class="legend" id="blc2-leg"></div><div class="chart tall"><canvas id="blc2"></canvas></div></div>
+      <div class="card"><h2>Махачкала по перевозчикам, тыс. т</h2><div class="sub" id="blc3-sub"></div><div class="legend" id="blc3-leg"></div><div class="chart tall"><canvas id="blc3"></canvas></div></div>
+      <div class="card" style="grid-column:1/-1"><h2>Нефть по месяцам, т (по коносаментам)</h2><div class="sub" id="blt1-sub"></div><div class="tw" id="blt1"></div></div>
+      <div class="card" style="grid-column:1/-1"><h2>Переходящие рейсы</h2><div class="sub" id="blt2-sub"></div><div class="tw" id="blt2"></div></div>
+      <div class="card" style="grid-column:1/-1"><h2>По судам и судовладельцам</h2><div class="sub" id="blt3-sub"></div><div class="tw" id="blt3"></div></div>
+    </div>
+  </div>
+  <div data-sub="disp" hidden>
+    <div class="kpis" id="vol-oil-kpis"></div>
+    <div class="grid2" style="margin-top:0">
+      <div class="card"><h2>По месяцам и маршрутам, тыс. т</h2><div class="sub" id="volc1-sub"></div><div class="legend" id="volc1-leg"></div><div class="chart tall"><canvas id="volc1"></canvas></div></div>
+      <div class="card"><h2>Баку: КМТФ и АСКО по месяцам, тыс. т</h2><div class="sub" id="volc2-sub"></div><div class="legend" id="volc2-leg"></div><div class="chart tall"><canvas id="volc2"></canvas></div></div>
+      <div class="card"><h2>Махачкала по месяцам, тыс. т</h2><div class="sub" id="volc5-sub"></div><div class="legend" id="volc5-leg"></div><div class="chart tall"><canvas id="volc5"></canvas></div></div>
+      <div class="card" style="grid-column:1/-1"><h2>Нефть по месяцам, т</h2><div class="sub" id="volt1-sub"></div><div class="tw" id="volt1"></div></div>
+      <div class="card" style="grid-column:1/-1"><h2>Прочие судовладельцы</h2><div class="sub" id="volt3-sub"></div><div class="tw" id="volt3"></div></div>
+      <div class="card" style="grid-column:1/-1"><h2>Полнота данных</h2><div id="vol-gaps"></div></div>
+    </div>
+  </div>
+  <div data-sub="mr" hidden>
+    <div class="kpis" id="mr-oil-kpis"></div>
+    <div class="grid2" style="margin-top:0">
+      <div class="card"><h2>Каспий по месяцам, тыс. т (МР)</h2><div class="sub" id="mroc1-sub"></div><div class="legend" id="mroc1-leg"></div><div class="chart tall"><canvas id="mroc1"></canvas></div></div>
+      <div class="card"><h2>План и факт нарастающим итогом, тыс. т</h2><div class="sub" id="mroc2-sub"></div><div class="legend" id="mroc2-leg"></div><div class="chart tall"><canvas id="mroc2"></canvas></div></div>
+      <div class="card" style="grid-column:1/-1"><h2>Помесячно по МР</h2><div class="sub" id="mrot1-sub"></div><div class="tw" id="mrot1"></div></div>
+      <div class="card" style="grid-column:1/-1"><h2>Отчёты нарастающим итогом</h2><div class="sub" id="mrot2-sub"></div><div class="tw" id="mrot2"></div></div>
+    </div>
   </div>
 </section>
 
 <section class="panel" id="p-cnt" hidden>
+  <div class="segs subtabs" id="cnt-sub"><button aria-pressed="true" data-v="disp">Сводки диспетчера</button><button aria-pressed="false" data-v="mr">Объёмы по МР</button></div>
   <div class="filters">
     <div class="f"><label>Год</label><select id="vol-year2"></select></div>
     <div class="note" style="align-self:center">Контейнеры — штуки по сводке диспетчера. Направление: Актау → Баку — погружено в Актау, Баку → Актау — выгружено в Актау (порт отправления/назначения в сводке не указывается, линия Актау–Баку). ДФЭ — где указаны (в основном по судам КМТФ). Перевозчик — по судну.</div>
   </div>
+  <div data-sub="disp">
   <div class="kpis" id="vol-cnt-kpis"></div>
   <div class="grid2" style="margin-top:0">
     <div class="card"><h2>Актау → Баку по месяцам, шт</h2><div class="sub">Погружено в Актау, по перевозчику.</div><div class="legend" id="volc3-leg"></div><div class="chart tall"><canvas id="volc3"></canvas></div></div>
     <div class="card"><h2>Баку → Актау по месяцам, шт</h2><div class="sub">Выгружено в Актау, по перевозчику.</div><div class="legend" id="volc4-leg"></div><div class="chart tall"><canvas id="volc4"></canvas></div></div>
     <div class="card" style="grid-column:1/-1"><h2>Контейнеры по месяцам и направлениям, таблица</h2><div class="sub">шт — по сводке диспетчера; ДФЭ указываются в основном по судам КМТФ.</div><div class="tw" id="volt2"></div></div>
+  </div>
+  </div>
+  <div data-sub="mr" hidden>
+    <div class="kpis" id="mr-cnt-kpis"></div>
+    <div class="grid2" style="margin-top:0">
+      <div class="card"><h2>Контейнеры по месяцам, TEU (МР)</h2><div class="sub" id="mrcc1-sub"></div><div class="legend" id="mrcc1-leg"></div><div class="chart tall"><canvas id="mrcc1"></canvas></div></div>
+      <div class="card"><h2>По судам нарастающим итогом, TEU</h2><div class="sub" id="mrcc2-sub"></div><div class="legend" id="mrcc2-leg"></div><div class="chart tall"><canvas id="mrcc2"></canvas></div></div>
+      <div class="card" style="grid-column:1/-1"><h2>Помесячно по МР</h2><div class="sub" id="mrct1-sub"></div><div class="tw" id="mrct1"></div></div>
+      <div class="card" style="grid-column:1/-1"><h2>Отчёты нарастающим итогом</h2><div class="sub" id="mrct2-sub"></div><div class="tw" id="mrct2"></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="panel" id="p-osv" hidden>
+  <div class="segs subtabs" id="osv-sub"><button aria-pressed="true" data-v="uk">Рейсы (KMTF UK)</button><button aria-pressed="false" data-v="mr">Объёмы по МР</button></div>
+  <div class="filters">
+    <div class="f"><label>Год</label><select id="osv-year"></select></div>
+    <div class="note" style="align-self:center" id="osv-note"></div>
+  </div>
+  <div data-sub="uk">
+    <div class="kpis" id="osv-kpis"></div>
+    <div class="grid2" style="margin-top:0">
+      <div class="card"><h2>Погружено по месяцам, тыс. т</h2><div class="sub" id="osc1-sub"></div><div class="legend" id="osc1-leg"></div><div class="chart tall"><canvas id="osc1"></canvas></div></div>
+      <div class="card"><h2>По регионам маршрута, тыс. т</h2><div class="sub" id="osc2-sub"></div><div class="legend" id="osc2-leg"></div><div class="chart tall"><canvas id="osc2"></canvas></div></div>
+      <div class="card"><h2>Altai и Alatau по месяцам, тыс. т</h2><div class="sub" id="osc3-sub"></div><div class="legend" id="osc3-leg"></div><div class="chart tall"><canvas id="osc3"></canvas></div></div>
+      <div class="card"><h2>По годам, млн т</h2><div class="sub" id="osc4-sub"></div><div class="legend" id="osc4-leg"></div><div class="chart tall"><canvas id="osc4"></canvas></div></div>
+      <div class="card" style="grid-column:1/-1"><h2>Помесячно по флоту</h2><div class="sub" id="ost1-sub"></div><div class="tw" id="ost1"></div></div>
+      <div class="card" style="grid-column:1/-1"><h2>По судам</h2><div class="sub" id="ost2-sub"></div><div class="tw" id="ost2"></div></div>
+      <div class="card" style="grid-column:1/-1"><h2>Рейсы</h2><div class="sub" id="ost3-sub"></div><div class="tw" id="ost3"></div></div>
+    </div>
+  </div>
+  <div data-sub="mr" hidden>
+    <div class="kpis" id="mr-os-kpis"></div>
+    <div class="grid2" style="margin-top:0">
+      <div class="card"><h2>Открытые моря по месяцам, тыс. т (МР)</h2><div class="sub" id="mrsc1-sub"></div><div class="legend" id="mrsc1-leg"></div><div class="chart tall"><canvas id="mrsc1"></canvas></div></div>
+      <div class="card"><h2>Собственный флот: Altai и Alatau, тыс. т (МР)</h2><div class="sub" id="mrsc2-sub"></div><div class="legend" id="mrsc2-leg"></div><div class="chart tall"><canvas id="mrsc2"></canvas></div></div>
+      <div class="card" style="grid-column:1/-1"><h2>Помесячно по МР</h2><div class="sub" id="mrst1-sub"></div><div class="tw" id="mrst1"></div></div>
+      <div class="card" style="grid-column:1/-1"><h2>Отчёты нарастающим итогом</h2><div class="sub" id="mrst2-sub"></div><div class="tw" id="mrst2"></div></div>
+    </div>
   </div>
 </section>
 

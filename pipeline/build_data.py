@@ -195,8 +195,20 @@ for cand in [os.environ.get("NEWS_JSON", ""), os.path.join(os.path.dirname(os.pa
         try: news = json.load(open(cand, encoding="utf-8")); break
         except Exception as e: print("news.json не прочитан:", e)
 
+# ---- внешние данные (market.py на сервере) ----
+market = {}
+for cand in [os.environ.get("MARKET_JSON", ""), os.path.join(os.path.dirname(os.path.abspath(__file__)), "market.json"), "data/market.json"]:
+    if cand and os.path.exists(cand):
+        try: market = json.load(open(cand, encoding="utf-8")); break
+        except Exception as e: print("market.json не прочитан:", e)
+if market:
+    import datetime as _dt
+    cut = (_dt.date.today() - _dt.timedelta(days=750)).isoformat()
+    market["fx"] = {k: v for k, v in market.get("fx", {}).items() if k >= cut}
+    market["oil"] = {k: v for k, v in market.get("oil", {}).items() if k >= cut}
+
 out = {"generated": __import__("datetime").date.today().isoformat(), "snapshot": snap, "weather": wx, "kmtf": {"tankers": kmtf_t, "bulk": kmtf_b, "aframax": KMTF_EXTRA["aframax"], "tugs": KMTF_EXTRA["tugs"], "asco": ASCO, "containers": KMTF_EXTRA["containers"], "owners": OWNERS}, "snapshots": hist,
-       "crude": crude, "crude_cols": crude_cols, "crude_groups": CRUDE_GROUPS, "mr": mr, "openseas": openseas, "openseas_cols": openseas_cols, "openseas_src": openseas_src, "news": news,
+       "crude": crude, "crude_cols": crude_cols, "crude_groups": CRUDE_GROUPS, "mr": mr, "openseas": openseas, "openseas_cols": openseas_cols, "openseas_src": openseas_src, "news": news, "market": market,
        "tank_cols": ["vessel", "shpr", "terminal", "berth", "arr", "berth_at", "load_start", "load_end", "draft", "cargo", "dep"],
        "tank": tank,
        "bulk_cols": ["vessel", "berth", "arr", "berth_at", "unload_start", "unload_end", "in_kind", "in_qty", "in_qty_raw", "in_teu", "load_start", "load_end", "out_kind", "out_qty", "out_qty_raw", "out_teu", "dep"],

@@ -4,6 +4,7 @@ export/
 state/
 weather.json
 news.json
+market.json
 dislokacia.html
 data/snapshot.json
 data/data.json

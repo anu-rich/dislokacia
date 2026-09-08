@@ -64,7 +64,15 @@ main>.content{min-width:0}
 #news .nf button{border:1px solid var(--line);background:var(--surface-2);border-radius:99px;padding:2px 9px;font-size:11px;cursor:pointer}
 #news .nf button[aria-pressed="true"]{background:var(--navy);color:var(--navy-ink);border-color:var(--navy)}
 #news .nl{overflow-y:auto;padding:6px 0}
-#news .ni{padding:8px 14px;border-bottom:1px solid var(--line-2)}
+#news .ind{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px 12px;border-bottom:1px solid var(--line-2)}
+#news .ind div{background:var(--surface-2);border-radius:6px;padding:5px 8px}
+#news .ind .l{font-size:10px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.04em}
+#news .ind .v{font-weight:600;font-size:14px}
+#news .ind .v small{font-weight:500;font-size:11px;margin-left:4px}
+.up{color:var(--s3)}.dn{color:var(--s2)}
+#news .ni,.card .nl .ni{padding:8px 14px;border-bottom:1px solid var(--line-2)}
+.card .nl{max-height:420px;overflow-y:auto}
+.card .nl .ni a{color:var(--ink);text-decoration:none;font-weight:500;font-size:13px;display:block}.card .nl .ni a:hover{color:var(--s1)}.card .nl .ni .m{font-size:11px;color:var(--ink-3);margin-top:3px}
 #news .ni a{color:var(--ink);text-decoration:none;font-weight:500;font-size:13px;line-height:1.35;display:block}
 #news .ni a:hover{color:var(--s1)}
 #news .ni .m{font-size:11px;color:var(--ink-3);margin-top:3px}
@@ -178,12 +186,14 @@ select:focus-visible,input:focus-visible{outline:2px solid var(--s1);outline-off
   <button class="tab" role="tab" aria-selected="false" data-tab="tugs">Буксиры</button>
   <button class="tab" role="tab" aria-selected="false" data-tab="hist">Статистика</button>
   <button class="tab" role="tab" aria-selected="false" data-tab="raw">Журнал</button>
+  <button class="tab" role="tab" aria-selected="false" data-tab="mkt">Рынок и среда</button>
   <button class="tab" role="tab" aria-selected="false" data-tab="wx">Погода</button>
 </div>
 <main>
 <aside id="news">
   <div class="nh"><h2>Отраслевые новости</h2><div class="sub" id="news-sub">Каспий · ТМТМ · порты · флот</div></div>
-  <div class="nf" id="news-f"><button aria-pressed="true" data-v="all">Все</button><button aria-pressed="false" data-v="casp">Каспий</button><button aria-pressed="false" data-v="tmtm">ТМТМ</button><button aria-pressed="false" data-v="ports">Порты</button><button aria-pressed="false" data-v="kmtf">КМТФ / АСКО</button><button aria-pressed="false" data-v="oil">Нефть</button></div>
+  <div class="ind" id="news-ind"></div>
+  <div class="nf" id="news-f"><button aria-pressed="true" data-v="all">Все</button><button aria-pressed="false" data-v="casp">Каспий</button><button aria-pressed="false" data-v="tmtm">ТМТМ</button><button aria-pressed="false" data-v="ports">Порты</button><button aria-pressed="false" data-v="kmtf">КМТФ / АСКО</button><button aria-pressed="false" data-v="oil">Нефть</button><button aria-pressed="false" data-v="frt">Фрахт</button><button aria-pressed="false" data-v="cpc">КТК / БТД</button></div>
   <div class="nl" id="news-l"></div>
 </aside>
 <div class="content">
@@ -359,6 +369,24 @@ select:focus-visible,input:focus-visible{outline:2px solid var(--s1);outline-off
     <div class="note" id="raw-note" style="align-self:center"></div>
   </div>
   <div class="card"><div class="sub">Клик по заголовку столбца — сортировка (второй клик — в обратную сторону).</div><div class="tw" id="raw"></div></div>
+</section>
+
+<section class="panel" id="p-mkt" hidden>
+  <div class="filters"><div class="note" style="align-self:center" id="mkt-note"></div></div>
+  <div class="kpis" id="mkt-kpis"></div>
+  <div class="grid2" style="margin-top:0">
+    <div class="card"><h2>Курсы Нацбанка: USD/KZT и RUB/KZT</h2><div class="sub" id="mkc1-sub"></div><div class="legend" id="mkc1-leg"></div><div class="chart tall"><canvas id="mkc1"></canvas></div></div>
+    <div class="card"><h2>Нефть: Brent и WTI, $/барр.</h2><div class="sub" id="mkc2-sub"></div><div class="legend" id="mkc2-leg"></div><div class="chart tall"><canvas id="mkc2"></canvas></div></div>
+    <div class="card"><h2>Уровень Каспийского моря</h2><div class="sub" id="mkc3-sub"></div><div class="legend" id="mkc3-leg"></div><div class="chart tall"><canvas id="mkc3"></canvas></div></div>
+    <div class="card"><h2>Уровень Каспия за последние 3 года</h2><div class="sub" id="mkc4-sub"></div><div class="legend" id="mkc4-leg"></div><div class="chart tall"><canvas id="mkc4"></canvas></div></div>
+    <div class="card"><h2>Ледовая обстановка и прогноз уровня (Казгидромет)</h2><div id="mk-ice"></div></div>
+    <div class="card"><h2>Бункерное топливо, $/т</h2><div class="sub" id="mkt1-sub"></div><div class="tw" id="mkt1"></div></div>
+    <div class="card" style="grid-column:1/-1"><h2>Санкционные списки: проверка судов и компаний</h2><div class="sub" id="mkt2-sub"></div><div class="tw" id="mkt2"></div></div>
+    <div class="card"><h2>Фрахтовый рынок: обзоры и новости</h2><div class="sub">Ставки афрамаксов/суэцмаксов в Чёрном море и Средиземноморье — из новостных лент (Baltic Exchange платный).</div><div class="nl" id="mk-news-frt"></div></div>
+    <div class="card"><h2>ТМТМ, порты Актау и Курык: статистика в новостях</h2><div class="sub">Объёмы Среднего коридора и грузооборот портов публикуются в пресс-релизах — собираем их сюда.</div><div class="nl" id="mk-news-tmtm"></div></div>
+    <div class="card"><h2>КТК и Баку–Тбилиси–Джейхан</h2><div class="sub">Отгрузки по КТК из Новороссийска и прокачка казахстанской нефти по БТД — из пресс-релизов и новостей.</div><div class="nl" id="mk-news-cpc"></div></div>
+    <div class="card"><h2>Бункерное топливо: новости</h2><div class="sub">Цены и события по бункеровке.</div><div class="nl" id="mk-news-bnk"></div></div>
+  </div>
 </section>
 
 <section class="panel" id="p-wx" hidden>

@@ -33,6 +33,10 @@ FORCE=0
 if [ ! -f weather.json ] || [ -n "$(find weather.json -mmin +180)" ]; then
   python weather.py && FORCE=1
 fi
+# внешние данные (курсы, нефть, уровень Каспия, лёд, бункер, санкции) раз в сутки
+if [ ! -f market.json ] || [ -n "$(find market.json -mmin +1200)" ]; then
+  python market.py && FORCE=1
+fi
 # новости раз в 3 часа
 if [ ! -f news.json ] || [ -n "$(find news.json -mmin +180)" ]; then
   python news.py && FORCE=1
@@ -47,7 +51,7 @@ fi
 echo "файлы:"; echo "$NEW"
 # update.py принимает список файлов; данные лежат в pipeline/data
 mapfile -t FILES <<<"$NEW"
-WEATHER_JSON="$PWD/weather.json" NEWS_JSON="$PWD/news.json" python update.py "${FILES[@]}" || { echo "update.py упал"; exit 1; }
+WEATHER_JSON="$PWD/weather.json" NEWS_JSON="$PWD/news.json" MARKET_JSON="$PWD/market.json" python update.py "${FILES[@]}" || { echo "update.py упал"; exit 1; }
 
 # обёртка в полный документ для GitHub Pages
 { printf '<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0"></head><body>'

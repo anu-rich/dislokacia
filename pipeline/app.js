@@ -25,6 +25,7 @@ document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () =>
   document.getElementById('histnote').hidden = SI === SNAPS.length - 1 || !['now', 'ports', 'open', 'tugs', 'sup'].includes(t);
   if (t === 'oil' || t === 'cnt') renderVol();
   if (t === 'osv') renderOSV();
+  if (t === 'mkt') renderMkt();
   if (t === 'wx' && !wxLoaded) renderWx();
   if (t === 'raw') renderRaw();
 }));

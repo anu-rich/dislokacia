@@ -14,12 +14,17 @@ QUERIES = [
     ("ru", "КазМунайГаз танкеры"), ("ru", "Казахстан экспорт нефти Баку Джейхан"), ("ru", "уровень Каспийского моря обмеление"),
     ("en", "Caspian shipping"), ("en", "Middle Corridor Trans-Caspian route"), ("en", "Aktau port"), ("en", "Kazmortransflot"), ("en", "ASCO Azerbaijan Caspian Shipping"),
     ("en", "Caspian tanker Kazakhstan oil Baku"), ("en", "Caspian Sea level shipping"),
+    ("ru", "ставки фрахта танкеры афрамакс"), ("en", "Aframax freight rates Black Sea Mediterranean"), ("en", "tanker freight market weekly Aframax Suezmax"),
+    ("ru", "ТМТМ объем перевозок тыс тонн TEU"), ("en", "Middle Corridor cargo volume TEU"), ("ru", "порт Актау грузооборот"), ("ru", "порт Курык грузооборот паром"),
+    ("ru", "КТК отгрузка нефти Новороссийск"), ("en", "CPC Blend exports Novorossiysk"), ("ru", "Баку-Тбилиси-Джейхан прокачка нефти Казахстан"), ("en", "BTC pipeline Kazakh oil Ceyhan"),
+    ("ru", "бункерное топливо цены порты"), ("en", "bunker prices VLSFO Istanbul Novorossiysk"),
 ]
 FEEDS = [  # прямые RSS (фильтруются по ключевым словам)
     "https://portnews.ru/rss/", "https://morvesti.ru/rss/", "https://casp-geo.ru/feed/", "https://timesca.com/feed/", "https://astanatimes.com/feed/",
     "https://kapital.kz/rss", "https://www.inform.kz/rss/rus", "https://report.az/rss/", "https://www.trend.az/feeds/index.rss",
 ]
-KEYS = ["каспи", "актау", "курык", "тмтм", "транскаспий", "средний коридор", "казмортрансфлот", "кмтф", "баку", "алят", "сангачал", "махачкала", "танкер", "паром", "аско", "asco",
+KEYS = ["фрахт", "freight", "aframax", "афрамакс", "suezmax", "суэцмакс", "ктк", "cpc", "джейхан", "ceyhan", "btc", "бтд", "бункер", "bunker", "vlsfo", "грузооборот", "teu",
+        "каспи", "актау", "курык", "тмтм", "транскаспий", "средний коридор", "казмортрансфлот", "кмтф", "баку", "алят", "сангачал", "махачкала", "танкер", "паром", "аско", "asco",
         "caspian", "aktau", "kuryk", "middle corridor", "trans-caspian", "kazmortransflot", "kmtf", "baku", "alat", "tanker", "kazmunaygas", "казмунайгаз", "судоходств", "shipping", "бункеров", "туркменбаши", "turkmenbashi", "actau"]
 STRONG = ["каспи", "актау", "курык", "тмтм", "транскаспий", "средний коридор", "казмортрансфлот", "кмтф", "caspian", "aktau", "kuryk", "middle corridor", "trans-caspian", "kazmortransflot", "kmtf", "алят", "alat", "аско", "asco"]
 
@@ -64,6 +69,18 @@ def score(it):
     txt = (it["t"] + " " + it["x"]).lower()
     return sum(2 for k in STRONG if k in txt) + sum(1 for k in KEYS if k in txt)
 
+def is_ru(t): return len(re.findall(r"[а-яА-ЯёЁ]", t)) >= max(3, len(t) // 4)
+def translate(texts):
+    """Заголовки на английском -> русский (Google Translate, публичный endpoint). При ошибке возвращает None."""
+    out = []
+    for t in texts:
+        try:
+            u = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=ru&dt=t&q=" + urllib.parse.quote(t)
+            r = json.loads(fetch(u, timeout=15).decode("utf-8", "ignore"))
+            out.append("".join(seg[0] for seg in r[0] if seg and seg[0]))
+        except Exception: out.append(None)
+    return out
+
 def host(u):
     try: return urllib.parse.urlparse(u).netloc.replace("www.", "")
     except Exception: return ""
@@ -89,7 +106,26 @@ def main():
         seen[key] = 1
         out.append({"t": it["t"], "u": it["u"], "d": d.strftime("%Y-%m-%d %H:%M"), "s": it["s"] or host(it["u"]), "sc": score(it)})
     out.sort(key=lambda x: x["d"], reverse=True)
-    out = [o for o in out if o["sc"] >= 2][:120]
+    out = [o for o in out if o["sc"] >= 2][:140]
+    # перевод не-русских заголовков (кэш из предыдущего news.json, чтобы не переводить повторно)
+    cache = {}
+    if os.path.exists(OUT):
+        try:
+            for it in json.load(open(OUT, encoding="utf-8")).get("items", []):
+                if it.get("t_en"): cache[it["t_en"]] = it["t"]
+        except Exception: pass
+    todo = [o for o in out if not is_ru(o["t"])]
+    need = [o for o in todo if o["t"] not in cache]
+    tr = translate([o["t"] for o in need]) if need else []
+    for o, t in zip(need, tr):
+        if t: cache[o["t"]] = t
+    kept = []
+    for o in out:
+        if not is_ru(o["t"]):
+            if o["t"] in cache: o["t_en"] = o["t"]; o["t"] = cache[o["t"]]
+            else: continue  # перевести не удалось — не показываем
+        kept.append(o)
+    out = kept[:120]
     prev = {}
     if os.path.exists(OUT):
         try: prev = json.load(open(OUT, encoding="utf-8"))

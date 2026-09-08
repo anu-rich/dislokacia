@@ -195,6 +195,43 @@ for cand in [os.environ.get("NEWS_JSON", ""), os.path.join(os.path.dirname(os.pa
         try: news = json.load(open(cand, encoding="utf-8")); break
         except Exception as e: print("news.json не прочитан:", e)
 
+# ---- фактические осадки по портам (проходная осадка «по факту») ----
+def _pnorm(p):
+    q = p.lower().replace("порт", "").replace("п.", "").strip()
+    if "актау" in q: return "Актау"
+    if "алят" in q or "баку" in q: return "Алят/Баку"
+    if "сангачал" in q: return "Сангачал"
+    if "курык" in q: return "Курык"
+    if "махач" in q: return "Махачкала"
+    return None
+_obs = {}  # (port, month) -> list of drafts
+def _add(port, m, d):
+    try: d = float(d)
+    except Exception: return
+    if not port or not m or not (2 <= d <= 8): return
+    _obs.setdefault((port, m), []).append(d)
+for r in t.itertuples():
+    if isinstance(r.dep, str) and r.draft == r.draft: _add("Актау · танкеры" + (f" пр.{int(r.berth)}" if r.berth == r.berth and str(r.berth).replace('.0','').isdigit() else ""), r.dep[:7], r.draft)
+for r in b.itertuples():
+    if isinstance(r.dep, str):
+        if r.out_draft == r.out_draft: _add("Актау · сухогрузы/контейнеровозы", r.dep[:7], r.out_draft)
+        if r.in_draft == r.in_draft: _add("Актау · сухогрузы/контейнеровозы", r.dep[:7], r.in_draft)
+_seen = set()
+for sn in hist:
+    for pt in sn.get("ports", []):
+        port = _pnorm(pt["p"])
+        if not port or port == "Актау": continue
+        for sec, lst in pt["sec"].items():
+            for rec in lst:
+                if "n" in rec and rec.get("r"):
+                    key = (port, rec["n"], str(rec["r"]), sn["ts"][:10])
+                    if key in _seen: continue
+                    _seen.add(key); _add(port + (" · контейнеровозы/сухогрузы" if pt["g"] == "b" else " · танкеры"), sn["ts"][:7], rec["r"])
+drafts = {}
+for (port, m), v in _obs.items():
+    v = sorted(v); n = len(v)
+    drafts.setdefault(port, {})[m] = {"max": v[-1], "p90": v[int(0.9 * (n - 1))], "med": v[n // 2], "n": n}
+
 # ---- внешние данные (market.py на сервере) ----
 market = {}
 for cand in [os.environ.get("MARKET_JSON", ""), os.path.join(os.path.dirname(os.path.abspath(__file__)), "market.json"), "data/market.json"]:
@@ -208,7 +245,7 @@ if market:
     market["oil"] = {k: v for k, v in market.get("oil", {}).items() if k >= cut}
 
 out = {"generated": __import__("datetime").date.today().isoformat(), "snapshot": snap, "weather": wx, "kmtf": {"tankers": kmtf_t, "bulk": kmtf_b, "aframax": KMTF_EXTRA["aframax"], "tugs": KMTF_EXTRA["tugs"], "asco": ASCO, "containers": KMTF_EXTRA["containers"], "owners": OWNERS}, "snapshots": hist,
-       "crude": crude, "crude_cols": crude_cols, "crude_groups": CRUDE_GROUPS, "mr": mr, "openseas": openseas, "openseas_cols": openseas_cols, "openseas_src": openseas_src, "news": news, "market": market,
+       "crude": crude, "crude_cols": crude_cols, "crude_groups": CRUDE_GROUPS, "mr": mr, "openseas": openseas, "openseas_cols": openseas_cols, "openseas_src": openseas_src, "news": news, "market": market, "drafts": drafts,
        "tank_cols": ["vessel", "shpr", "terminal", "berth", "arr", "berth_at", "load_start", "load_end", "draft", "cargo", "dep"],
        "tank": tank,
        "bulk_cols": ["vessel", "berth", "arr", "berth_at", "unload_start", "unload_end", "in_kind", "in_qty", "in_qty_raw", "in_teu", "load_start", "load_end", "out_kind", "out_qty", "out_qty_raw", "out_teu", "dep"],

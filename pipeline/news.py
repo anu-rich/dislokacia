@@ -17,13 +17,15 @@ QUERIES = [
     ("ru", "ставки фрахта танкеры афрамакс"), ("en", "Aframax freight rates Black Sea Mediterranean"), ("en", "tanker freight market weekly Aframax Suezmax"),
     ("ru", "ТМТМ объем перевозок тыс тонн TEU"), ("en", "Middle Corridor cargo volume TEU"), ("ru", "порт Актау грузооборот"), ("ru", "порт Курык грузооборот паром"),
     ("ru", "КТК отгрузка нефти Новороссийск"), ("en", "CPC Blend exports Novorossiysk"), ("ru", "Баку-Тбилиси-Джейхан прокачка нефти Казахстан"), ("en", "BTC pipeline Kazakh oil Ceyhan"),
+    ("ru", "проходная осадка порт Актау дноуглубление"), ("ru", "Волго-Каспийский канал проходная осадка"), ("ru", "обмеление Каспий порт Актау Курык осадка"),
     ("ru", "бункерное топливо цены порты"), ("en", "bunker prices VLSFO Istanbul Novorossiysk"),
 ]
 FEEDS = [  # прямые RSS (фильтруются по ключевым словам)
     "https://portnews.ru/rss/", "https://morvesti.ru/rss/", "https://casp-geo.ru/feed/", "https://timesca.com/feed/", "https://astanatimes.com/feed/",
     "https://kapital.kz/rss", "https://www.inform.kz/rss/rus", "https://report.az/rss/", "https://www.trend.az/feeds/index.rss",
 ]
-KEYS = ["фрахт", "freight", "aframax", "афрамакс", "suezmax", "суэцмакс", "ктк", "cpc", "джейхан", "ceyhan", "btc", "бтд", "бункер", "bunker", "vlsfo", "грузооборот", "teu",
+KEYS = ["осадк", "дноуглуб", "dredg", "draft",
+        "фрахт", "freight", "aframax", "афрамакс", "suezmax", "суэцмакс", "ктк", "cpc", "джейхан", "ceyhan", "btc", "бтд", "бункер", "bunker", "vlsfo", "грузооборот", "teu",
         "каспи", "актау", "курык", "тмтм", "транскаспий", "средний коридор", "казмортрансфлот", "кмтф", "баку", "алят", "сангачал", "махачкала", "танкер", "паром", "аско", "asco",
         "caspian", "aktau", "kuryk", "middle corridor", "trans-caspian", "kazmortransflot", "kmtf", "baku", "alat", "tanker", "kazmunaygas", "казмунайгаз", "судоходств", "shipping", "бункеров", "туркменбаши", "turkmenbashi", "actau"]
 STRONG = ["каспи", "актау", "курык", "тмтм", "транскаспий", "средний коридор", "казмортрансфлот", "кмтф", "caspian", "aktau", "kuryk", "middle corridor", "trans-caspian", "kazmortransflot", "kmtf", "алят", "alat", "аско", "asco"]

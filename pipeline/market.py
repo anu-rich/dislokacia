@@ -121,6 +121,29 @@ def kazhydromet():
             l = links[0]; out["level_forecast"] = {"url": l if l.startswith("http") else "https://www.kazhydromet.kz" + l, "n": len(links)}
     except Exception as e: errors["kazhydromet_level"] = str(e)[:120]
 
+# ---- 3b. Волго-Каспийский канал: проходная осадка (АМП Астрахань, 2 раза в сутки) ----
+def vkk():
+    out = M.setdefault("vkk", {"history": {}})
+    try:
+        pg = fetch("https://ampastra.ru/slujba_kapitana_morskogo_porta_astrahan/109-registratsiya_sudov/109-promeryi.html", timeout=40).decode("utf-8", "ignore")
+        txt = re.sub(r"<[^>]+>", " ", pg); txt = re.sub(r"\s+", " ", txt)
+        md = re.search(r"(\d{2}\.\d{2}\.\d{4})\D{0,40}?(\d{2}[:.]\d{2})", txt)
+        # строки вида «54,6-55,05 км ... 4,8 ... 4,5»
+        rows = re.findall(r"(\d{1,3}[,.]\d{1,2}\s*[-–]\s*\d{1,3}[,.]\d{1,2})\s*км[^\d]{0,40}(\d[,.]\d{1,2})[^\d]{0,40}(\d[,.]\d{1,2})", txt)
+        secs = [{"km": r[0].replace(" ", ""), "depth": float(r[1].replace(",", ".")), "draft": float(r[2].replace(",", "."))} for r in rows][:12]
+        drafts = [x["draft"] for x in secs]
+        if not drafts:
+            m2 = re.findall(r"проходн\w*\s+осадк\w*[^\d]{0,60}(\d[,.]\d{1,2})", txt, re.I)
+            drafts = [float(x.replace(",", ".")) for x in m2]
+        if drafts:
+            d = min(drafts); when = md.group(1) if md else today.strftime("%d.%m.%Y")
+            out["latest"] = {"date": when, "draft": d, "sections": secs, "src": "Служба капитана морского порта Астрахань (ampastra.ru)"}
+            out["history"][today.isoformat()] = d
+            for k in list(out["history"]):
+                if k < (today - datetime.timedelta(days=400)).isoformat(): del out["history"][k]
+        else: errors["vkk"] = "осадка не найдена на странице"
+    except Exception as e: errors["vkk"] = str(e)[:120]
+
 # ---- 4. бункерное топливо (Ship & Bunker, открытые последние значения) ----
 def bunker():
     out = M.setdefault("bunker", {"history": {}})
@@ -151,15 +174,40 @@ def norm(s):
 ALIAS = {"тк актау": ["tk aktau", "aktau"], "лива": ["liwa"], "тараз": ["taraz"], "куруш": ["kurush"], "джульфа": ["julfa", "dzhulfa"], "абай": ["abai", "abay"], "казахстан": ["kazakhstan"], "костанай": ["kostanay", "kostanai"], "караганда": ["karaganda"], "шуша": ["shusha"], "нафталан": ["naftalan"], "азербайджан": ["azerbaijan"], "д.мамедгулузаде": ["jalil mammadguluzadeh", "dzhalil mamedkulizade"], "джаббар гашимов": ["jabbar hashimov", "dzhabbar gashimov"], "пр.гейдар алиев": ["president heydar aliyev", "prezident geydar aliev"], "гахраман халилбейли": ["gahraman khalilbeyli"], "ходжаванд": ["khojavand", "khodzhavend"], "мелиана": ["meliana"], "виктория": ["viktoria", "victoria"]}
 COMPANIES = ["Khazar Shipping", "Khazar Sea Shipping Lines", "Caspiy Shipping", "AB Fleet", "Mobilex", "Titan Oil", "Eurasian Trading", "KMG Trading", "Vector Energy", "Palmali", "Frakhtmortrans", "Фрахтмортранс", "BNT", "Caspian Integrated Maritime Solutions", "Azerbaijan Caspian Shipping", "ASCO", "Kazmortransflot", "Volga Shipping", "V.F. Tanker", "Volgotanker"]
 
+REL = {}  # название -> чем оно для нас является
+def _rel(n, txt):
+    REL.setdefault(n, []); 
+    if txt not in REL[n]: REL[n].append(txt)
 def our_names():
     names = set()
-    for f, col in (("data/crude.csv", "vessel"), ("data/tankers.csv", "vessel"), ("data/openseas.csv", "ship"), ("data/openseas.csv", "charterer")):
+    def rd(f):
         p = os.path.join(HERE, f)
-        if os.path.exists(p):
-            for r in csv.DictReader(open(p, encoding="utf-8")):
-                v = (r.get(col) or "").strip()
-                if v: names.add(v)
-    names.update(COMPANIES)
+        return list(csv.DictReader(open(p, encoding="utf-8"))) if os.path.exists(p) else []
+    cr = rd("data/crude.csv")
+    agg = {}
+    for r in cr:
+        v = r["vessel"].strip(); y = r["month"][:4]
+        a = agg.setdefault(v, {"n": 0, "y0": y, "y1": y, "own": set()}); a["n"] += 1; a["y0"] = min(a["y0"], y); a["y1"] = max(a["y1"], y)
+        if r.get("owner"): a["own"].add(r["owner"].strip())
+    for v, a in agg.items():
+        names.add(v); _rel(v, f"танкер в перевалке через Актау: {a['n']} партий {a['y0']}–{a['y1']}" + (f", судовладелец по файлу: {', '.join(sorted(a['own'])[:3])}" if a["own"] else ""))
+    tk = {}
+    for r in rd("data/tankers.csv"):
+        v = r["vessel"].strip(); tk[v] = tk.get(v, 0) + 1
+    for v, n in tk.items():
+        names.add(v); _rel(v, f"танкер в сводках диспетчера Актау: {n} судозаходов")
+    os_ = {}
+    for r in rd("data/openseas.csv"):
+        sh = r["ship"].strip(); ch = r["charterer"].strip(); y = r["year"]
+        a = os_.setdefault(("ship", sh), {"n": 0, "y0": y, "y1": y, "fleet": r["fleet"], "ch": set()}); a["n"] += 1; a["y0"] = min(a["y0"], y); a["y1"] = max(a["y1"], y); a["ch"].add(ch)
+        b = os_.setdefault(("ch", ch), {"n": 0, "y0": y, "y1": y}); b["n"] += 1; b["y0"] = min(b["y0"], y); b["y1"] = max(b["y1"], y)
+    FL = {"Own fleet": "собственный флот КМТФ", "ADP fleet": "флот AD Ports (СП)", "3rd party": "сторонний танкер, зафрахтованный для наших грузов"}
+    for (kind, n), a in os_.items():
+        if not n: continue
+        names.add(n)
+        if kind == "ship": _rel(n, f"открытые моря: {FL.get(a['fleet'], a['fleet'])}, {a['n']} рейсов {a['y0']}–{a['y1']} (фрахтователи: {', '.join(sorted(a['ch'])[:3])})")
+        else: _rel(n, f"фрахтователь по открытым морям: {a['n']} рейсов {a['y0']}–{a['y1']}")
+    for c in COMPANIES: names.add(c); _rel(c, "контрагент/участник рынка Каспия (проверяем по названию)")
     out = {}
     for n in names:
         keys = {norm(n)}
@@ -179,7 +227,7 @@ def sanctions():
             n += 1
             k = norm(name)
             if k in ours and len(k) >= 4:
-                matches.append({"list": list_name, "name": name, "type": typ, "program": prog[:120], "ours": ours[k]})
+                matches.append({"list": list_name, "name": name, "type": typ, "program": prog[:120], "ours": ours[k], "rel": "; ".join(REL.get(ours[k], []))[:300]})
         lists[list_name] = {"n": n, "date": today.isoformat()}
     try:
         txt = fetch("https://www.treasury.gov/ofac/downloads/sdn.csv", timeout=90).decode("utf-8", "ignore")
@@ -218,7 +266,7 @@ def sanctions():
     except Exception as e: errors["eu"] = str(e)[:120]
     S["checked"] = today.isoformat(); S["lists"] = lists; S["matches"] = matches; S["n_ours"] = len(set(ours.values()))
 
-for step in (nbk, lambda: fred("DCOILBRENTEU", "brent"), lambda: fred("DCOILWTICO", "wti"), dahiti, grealm, kazhydromet, bunker, sanctions):
+for step in (nbk, lambda: fred("DCOILBRENTEU", "brent"), lambda: fred("DCOILWTICO", "wti"), grealm, vkk, kazhydromet, bunker, sanctions):
     try: step()
     except Exception as e: errors[getattr(step, "__name__", "step")] = str(e)[:120]
 M["errors"] = errors; M["fetched"] = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M")

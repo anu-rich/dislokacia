@@ -227,7 +227,7 @@ function renderIndicators() {
   const items = [];
   const [fd, fx] = lastOf(MK.fx); if (fx) { const pv = prevOf(MK.fx, fd) || {}; const dlt = (k) => pv[k] != null ? `<small class="${fx[k] >= pv[k] ? 'up' : 'dn'}">${fx[k] >= pv[k] ? '▲' : '▼'}${fmtN(Math.abs(fx[k] - pv[k]), 2)}</small>` : ''; items.push(['USD/KZT', fmtN(fx.USD, 2) + dlt('USD')]); if (fx.RUB) items.push(['RUB/KZT', fmtN(fx.RUB, 2) + dlt('RUB')]); }
   const [od, oil] = lastOf(MK.oil); if (oil && oil.brent != null) { const pv = prevOf(MK.oil, od) || {}; items.push(['Brent, $', fmtN(oil.brent, 2) + (pv.brent != null ? `<small class="${oil.brent >= pv.brent ? 'up' : 'dn'}">${oil.brent >= pv.brent ? '▲' : '▼'}${fmtN(Math.abs(oil.brent - pv.brent), 2)}</small>` : '')]); }
-  const ss = seaSeries(); if (ss) { const [sd, sv] = lastOf(ss.ser); items.push(['Каспий, ' + (ss.abs ? 'м абс.' : 'м откл.'), fmtN(sv, 2) + ` м<small>${dmy(sd)}</small>`]); }
+  if (MK.vkk && MK.vkk.latest) items.push(['ВКК осадка', fmtN(MK.vkk.latest.draft, 2) + ` м<small>${esc(MK.vkk.latest.date.slice(0, 5))}</small>`]);
   const b = MK.bunker && MK.bunker.latest; if (b && b.ports && b.ports.G20) items.push(['VLSFO G20, $/т', fmtN(b.ports.G20.VLSFO || b.ports.G20.MGO)]);
   const sn = MK.sanctions; if (sn) items.push(['Санкции', (sn.matches || []).length ? `<span class="dn">${sn.matches.length} совп.</span>` : '<span class="up">чисто</span>']);
   el.innerHTML = items.map(([l, v]) => `<div><div class="l">${l}</div><div class="v">${v}</div></div>`).join('');
@@ -245,7 +245,8 @@ function renderMkt() {
   let k = '';
   if (fx) k += kp2('USD/KZT · ' + dmy(fd), fmtN(fx.USD, 2), fx.EUR ? 'EUR ' + fmtN(fx.EUR, 2) + (fx.CNY ? ' · CNY ' + fmtN(fx.CNY, 2) : '') : '') + (fx.RUB ? kp2('RUB/KZT · ' + dmy(fd), fmtN(fx.RUB, 2), '') : '');
   if (oil) k += kp2('Brent · ' + dmy(od), oil.brent != null ? fmtN(oil.brent, 2) + ' $' : '—', oil.wti != null ? 'WTI ' + fmtN(oil.wti, 2) + ' $' : '');
-  if (ss) { const [sd, sv] = lastOf(ss.ser); const ks = Object.keys(ss.ser).sort(); const yago = ks.filter(x => x <= sd.slice(0, 4) - 1 + sd.slice(4)).pop(); k += kp2('Уровень Каспия · ' + dmy(sd), fmtN(sv, 2) + ' м', (yago ? 'год назад ' + fmtN(ss.ser[yago], 2) + ' м (' + (sv - ss.ser[yago] >= 0 ? '+' : '') + fmtN(sv - ss.ser[yago], 2) + ')' : '') + ' · ' + ss.unit); }
+  if (MK.vkk && MK.vkk.latest) k += kp2('ВКК проходная осадка · ' + MK.vkk.latest.date, fmtN(MK.vkk.latest.draft, 2) + ' м', 'Волго-Каспийский канал, АМП Астрахань');
+  { const DR0 = D.drafts || {}; const a5 = DR0['Актау · танкеры пр.5']; if (a5) { const [m5, v5] = lastOf(a5); k += kp2('Актау, танкеры · ' + mlab(m5), fmtN(v5.max, 2) + ' м', `макс. фактическая осадка при отходе (пр.5, ${v5.n} судозаходов)`); } }
   const b = MK.bunker && MK.bunker.latest; if (b && b.ports && b.ports.G20) k += kp2('VLSFO, 20 портов · ' + dmy(b.date), fmtN(b.ports.G20.VLSFO) + ' $/т', 'MGO ' + fmtN(b.ports.G20.MGO) + (b.ports.G20.IFO380 ? ' · IFO380 ' + fmtN(b.ports.G20.IFO380) : ''));
   const sn = MK.sanctions; if (sn) k += kp2('Санкции · ' + dmy(sn.checked), (sn.matches || []).length ? `<span class="dn">${sn.matches.length} совпадений</span>` : '<span class="up">совпадений нет</span>', `проверено ${sn.n_ours || 0} названий по ${Object.keys(sn.lists || {}).length} спискам`);
   document.getElementById('mkt-kpis').innerHTML = k || '<p class="sub">Данных пока нет.</p>';
@@ -260,19 +261,32 @@ function renderMkt() {
   legend('mkc2-leg', [['Brent', C[0]], ['WTI', C[1]]]);
   document.getElementById('mkc2-sub').textContent = oks.length ? `FRED/EIA, дневные цены спот, с ${dmy(oks[0])}` : 'Нет данных';
   mkNoLabels('mkc2', { type: 'line', data: { labels: oks.map(d => d.slice(2)), datasets: [line('Brent', oks.map(d => MK.oil[d].brent), C[0]), line('WTI', oks.map(d => MK.oil[d].wti), C[1])] }, options: lineOpts(g, '$') });
-  if (ss) {
-    const ks = Object.keys(ss.ser).sort(); const yrs = [...new Set(ks.map(x => x.slice(0, 4)))];
-    const yearly = yrs.map(y => { const v = ks.filter(x => x.startsWith(y)).map(x => ss.ser[x]); return v.reduce((a, b) => a + b, 0) / v.length; });
-    legend('mkc3-leg', [['Среднегодовой уровень', C[0]]]); document.getElementById('mkc3-sub').textContent = ss.src + ' · ' + ss.unit;
-    mkNoLabels('mkc3', { type: 'line', data: { labels: yrs, datasets: [Object.assign(line('Среднегодовой', yearly, C[0]), { pointRadius: 3, fill: true, backgroundColor: C[0] + '22' })] }, options: lineOpts(g, 'м', 2) });
-    const k3 = ks.filter(x => x >= (+ks[ks.length - 1].slice(0, 4) - 3) + ks[ks.length - 1].slice(4));
-    legend('mkc4-leg', [['Уровень (спутник)', C[1]]]); document.getElementById('mkc4-sub').textContent = `${k3.length} измерений, ${dmy(k3[0])}.${k3[0].slice(0, 4)} — ${dmy(k3[k3.length - 1])}.${k3[k3.length - 1].slice(0, 4)}`;
-    mkNoLabels('mkc4', { type: 'line', data: { labels: k3.map(x => x.slice(2, 7)), datasets: [Object.assign(line('Уровень', k3.map(x => ss.ser[x]), C[1]), { pointRadius: 2 })] }, options: lineOpts(g, 'м', 2) });
-  } else { document.getElementById('mkc3-sub').textContent = 'Нет данных: нужен ключ DAHITI в config.env на сервере (бесплатная регистрация) либо доступность USDA G-REALM.'; document.getElementById('mkc4-sub').textContent = ''; }
+  // осадки по портам (из наших сводок)
+  const DR = D.drafts || {};
+  const drMonths = [...new Set(Object.values(DR).flatMap(o => Object.keys(o)))].sort();
+  const last24 = drMonths.slice(-24);
+  const drLine = (name, col, key = 'max') => Object.assign(line(name, last24.map(m => DR[name] && DR[name][m] ? DR[name][m][key] : null), col), { pointRadius: 2, spanGaps: true });
+  const akt = Object.keys(DR).filter(k => k.startsWith('Актау') && Object.keys(DR[k]).length > 12);
+  legend('mkc3-leg', akt.map((k, i) => [k.replace('Актау · ', ''), C[i % 5]]));
+  document.getElementById('mkc3-sub').textContent = 'Максимальная осадка судна за месяц по нашим сводкам (танкеры — осадка при отходе по причалам КТО, сухогрузы/контейнеровозы — приход и отход). Показывает, с какой осадкой реально ходят.';
+  mkNoLabels('mkc3', { type: 'line', data: { labels: last24.map(mlab), datasets: akt.map((k, i) => drLine(k, C[i % 5])) }, options: lineOpts(g, 'м', 2) });
+  const oth = Object.keys(DR).filter(k => !k.startsWith('Актау') && Object.keys(DR[k]).length > 3);
+  legend('mkc4-leg', oth.map((k, i) => [k, C[i % 5]]));
+  document.getElementById('mkc4-sub').textContent = 'Максимальная осадка за месяц по судам в сводках (Сангачал — танкеры под погрузкой, Алят/Баку и Курык — контейнеровозы и сухогрузы).';
+  mkNoLabels('mkc4', { type: 'line', data: { labels: last24.map(mlab), datasets: oth.map((k, i) => drLine(k, C[i % 5])) }, options: lineOpts(g, 'м', 2) });
+  const vk = MK.vkk || {};
+  document.getElementById('mk-vkk').innerHTML = vk.latest ? `<p class="sub" style="margin:6px 0">На <b>${esc(vk.latest.date)}</b>: проходная осадка <b>${fmtN(vk.latest.draft, 2)} м</b> (минимум по лимитирующим участкам${vk.latest.sections && vk.latest.sections.length ? ': ' + vk.latest.sections.map(x => `${x.km} км — глубина ${fmtN(x.depth, 2)}, осадка ${fmtN(x.draft, 2)}`).join('; ') : ''}). Источник: <a href="https://ampastra.ru/slujba_kapitana_morskogo_porta_astrahan/109-registratsiya_sudov/109-promeryi.html" target="_blank" rel="noopener">${esc(vk.latest.src)}</a>, публикуется в 08:00 и 20:00.</p>` : '<p class="sub" style="margin:6px 0">Данные АМП Астрахань появятся после сбора на сервере. <a href="https://ampastra.ru/slujba_kapitana_morskogo_porta_astrahan/109-registratsiya_sudov/109-promeryi.html" target="_blank" rel="noopener">Открыть источник</a>.</p>';
+  const vks = Object.keys(vk.history || {}).sort();
+  mkNoLabels('mkc5', { type: 'line', data: { labels: vks.map(d => d.slice(5)), datasets: [Object.assign(line('Проходная осадка ВКК', vks.map(d => vk.history[d]), C[0]), { pointRadius: 2, stepped: true })] }, options: lineOpts(g, 'м', 2) });
+  // таблица осадок: последние 6 месяцев
+  const l6 = drMonths.slice(-6);
+  document.getElementById('mkt3-sub').textContent = 'Макс. / 90-й перцентиль / число наблюдений за месяц.';
+  document.getElementById('mkt3').innerHTML = tbl(['Порт · тип', ...l6.map(mlab)], Object.keys(DR).filter(k => l6.some(m => DR[k][m])).map(k => [esc(k), ...l6.map(m => DR[k][m] ? `<b>${fmtN(DR[k][m].max, 2)}</b> / ${fmtN(DR[k][m].p90, 2)} <span class="sub">(${DR[k][m].n})</span>` : '—')]));
   // ice / kazhydromet
   const kh = MK.kazhydromet || {};
   document.getElementById('mk-ice').innerHTML = `<p class="sub" style="margin:6px 0">${kh.ice ? `Последний обзор ледовой обстановки (Северный Каспий): <b>${dmy(kh.ice.date)}.${kh.ice.date.slice(0, 4)}</b> — <a href="${esc(kh.ice.url)}" target="_blank" rel="noopener">открыть PDF</a> (всего обзоров на сайте: ${kh.ice.n}). Обзоры выходят в ледовый сезон (декабрь–март).` : 'Обзоры ледовой обстановки Казгидромета: ссылка появится после сбора данных.'}</p>
     <p class="sub" style="margin:6px 0">${kh.level_forecast ? `Прогноз уровня Каспийского моря (Казгидромет): <a href="${esc(kh.level_forecast.url)}" target="_blank" rel="noopener">последний PDF</a>.` : ''} Другие источники: <a href="https://www.kazhydromet.kz/ru/kaspiyskoe-more/obzor-ledovoy-obstanovki" target="_blank" rel="noopener">Казгидромет — лёд</a> · <a href="https://data.aari.ru/odata/_f0011_.php" target="_blank" rel="noopener">ААНИИ — ледовые карты</a> · <a href="https://meteoinfo.ru/current-sea-ice" target="_blank" rel="noopener">Гидрометцентр РФ — ледовый покров морей</a> · <a href="https://dahiti.dgfi.tum.de/en/39/" target="_blank" rel="noopener">DAHITI — уровень Каспия</a>.</p>`;
+  if (ss) { const ks = Object.keys(ss.ser).sort().slice(-120); document.getElementById('mkc6-box').hidden = false; mkNoLabels('mkc6', { type: 'line', data: { labels: ks.map(x => x.slice(2, 7)), datasets: [Object.assign(line('Уровень Каспия, ' + ss.unit, ks.map(x => ss.ser[x]), C[1]), { pointRadius: 1 })] }, options: lineOpts(g, 'м', 2) }); } else document.getElementById('mkc6-box').hidden = true;
   // bunker
   if (b && b.ports) {
     const ports = Object.keys(b.ports);
@@ -282,7 +296,7 @@ function renderMkt() {
   // sanctions
   if (sn) {
     document.getElementById('mkt2-sub').textContent = `Сверка названий наших судов, судов-контрагентов по открытым морям, фрахтователей и компаний (Khazar, Caspiy Shipping, AB Fleet, ASCO, KMG Trading, Vector Energy и др.) со списками: ${Object.entries(sn.lists || {}).map(([n, v]) => `${n} (${fmtN(v.n)} записей)`).join(', ')}. Совпадение по имени — повод проверить IMO вручную, а не приговор.`;
-    document.getElementById('mkt2').innerHTML = (sn.matches || []).length ? tbl(['Наше название', 'В списке', 'Список', 'Тип', 'Программа'], sn.matches.map(m => [esc(m.ours), esc(m.name), esc(m.list), esc(m.type), esc(m.program)])) : '<p class="sub">Совпадений нет.</p>';
+    document.getElementById('mkt2').innerHTML = (sn.matches || []).length ? tbl(['Наше название', 'Какое отношение к нам', 'В списке как', 'Список', 'Тип', 'Программа'], sn.matches.map(m => [`<b>${esc(m.ours)}</b>`, esc(m.rel || ''), esc(m.name), esc(m.list), esc(m.type), esc(m.program)])) : '<p class="sub">Совпадений нет.</p>';
   } else { document.getElementById('mkt2-sub').textContent = 'Проверка появится после сбора данных на сервере.'; }
   newsList('mk-news-frt', 'frt'); newsList('mk-news-tmtm', 'tmtm'); newsList('mk-news-cpc', 'cpc'); newsList('mk-news-bnk', 'bnk');
 }

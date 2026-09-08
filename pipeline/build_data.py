@@ -188,8 +188,15 @@ openseas_src = ""
 try: openseas_src = o.src.iloc[0] if len(o) else ""
 except Exception: pass
 
+# ---- отраслевые новости (news.py на сервере) ----
+news = {}
+for cand in [os.environ.get("NEWS_JSON", ""), os.path.join(os.path.dirname(os.path.abspath(__file__)), "news.json"), "data/news.json"]:
+    if cand and os.path.exists(cand):
+        try: news = json.load(open(cand, encoding="utf-8")); break
+        except Exception as e: print("news.json не прочитан:", e)
+
 out = {"generated": __import__("datetime").date.today().isoformat(), "snapshot": snap, "weather": wx, "kmtf": {"tankers": kmtf_t, "bulk": kmtf_b, "aframax": KMTF_EXTRA["aframax"], "tugs": KMTF_EXTRA["tugs"], "asco": ASCO, "containers": KMTF_EXTRA["containers"], "owners": OWNERS}, "snapshots": hist,
-       "crude": crude, "crude_cols": crude_cols, "crude_groups": CRUDE_GROUPS, "mr": mr, "openseas": openseas, "openseas_cols": openseas_cols, "openseas_src": openseas_src,
+       "crude": crude, "crude_cols": crude_cols, "crude_groups": CRUDE_GROUPS, "mr": mr, "openseas": openseas, "openseas_cols": openseas_cols, "openseas_src": openseas_src, "news": news,
        "tank_cols": ["vessel", "shpr", "terminal", "berth", "arr", "berth_at", "load_start", "load_end", "draft", "cargo", "dep"],
        "tank": tank,
        "bulk_cols": ["vessel", "berth", "arr", "berth_at", "unload_start", "unload_end", "in_kind", "in_qty", "in_qty_raw", "in_teu", "load_start", "load_end", "out_kind", "out_qty", "out_qty_raw", "out_teu", "dep"],

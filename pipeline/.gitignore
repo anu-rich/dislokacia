@@ -3,6 +3,7 @@ config.env
 export/
 state/
 weather.json
+news.json
 dislokacia.html
 data/snapshot.json
 data/data.json

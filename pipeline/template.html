@@ -54,7 +54,21 @@ button{font:inherit;color:inherit}
 .tab{background:none;border:0;border-bottom:3px solid transparent;padding:12px 14px;cursor:pointer;font-family:"Barlow Semi Condensed",sans-serif;font-size:16px;font-weight:600;color:var(--ink-2);letter-spacing:.02em}
 .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--s2)}
 .tab:focus-visible{outline:2px solid var(--s1);outline-offset:-2px}
-main{padding:20px 24px 48px;max-width:1500px;margin:0 auto}
+main{padding:20px 24px 48px;max-width:1800px;margin:0 auto;display:grid;grid-template-columns:290px minmax(0,1fr);gap:20px;align-items:start}
+main>.content{min-width:0}
+#news{position:sticky;top:12px;max-height:calc(100vh - 24px);display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line-2);border-radius:10px;box-shadow:var(--shadow);overflow:hidden}
+#news .nh{padding:12px 14px 8px;border-bottom:1px solid var(--line-2)}
+#news .nh h2{margin:0;font-size:14px}
+#news .nh .sub{margin-top:2px}
+#news .nf{display:flex;gap:6px;flex-wrap:wrap;padding:8px 14px;border-bottom:1px solid var(--line-2)}
+#news .nf button{border:1px solid var(--line);background:var(--surface-2);border-radius:99px;padding:2px 9px;font-size:11px;cursor:pointer}
+#news .nf button[aria-pressed="true"]{background:var(--navy);color:var(--navy-ink);border-color:var(--navy)}
+#news .nl{overflow-y:auto;padding:6px 0}
+#news .ni{padding:8px 14px;border-bottom:1px solid var(--line-2)}
+#news .ni a{color:var(--ink);text-decoration:none;font-weight:500;font-size:13px;line-height:1.35;display:block}
+#news .ni a:hover{color:var(--s1)}
+#news .ni .m{font-size:11px;color:var(--ink-3);margin-top:3px}
+@media (max-width:1100px){main{grid-template-columns:1fr}#news{position:static;max-height:360px}}
 .panel[hidden]{display:none}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
 .kpi{background:var(--surface);border:1px solid var(--line-2);border-radius:6px;padding:12px 14px;box-shadow:var(--shadow)}
@@ -167,6 +181,12 @@ select:focus-visible,input:focus-visible{outline:2px solid var(--s1);outline-off
   <button class="tab" role="tab" aria-selected="false" data-tab="wx">Погода</button>
 </div>
 <main>
+<aside id="news">
+  <div class="nh"><h2>Отраслевые новости</h2><div class="sub" id="news-sub">Каспий · ТМТМ · порты · флот</div></div>
+  <div class="nf" id="news-f"><button aria-pressed="true" data-v="all">Все</button><button aria-pressed="false" data-v="casp">Каспий</button><button aria-pressed="false" data-v="tmtm">ТМТМ</button><button aria-pressed="false" data-v="ports">Порты</button><button aria-pressed="false" data-v="kmtf">КМТФ / АСКО</button><button aria-pressed="false" data-v="oil">Нефть</button></div>
+  <div class="nl" id="news-l"></div>
+</aside>
+<div class="content">
 <div class="histnote" id="histnote" hidden></div>
 
 <section class="panel" id="p-now">
@@ -360,6 +380,7 @@ select:focus-visible,input:focus-visible{outline:2px solid var(--s1);outline-off
   </div>
 </section>
 <div class="src" id="src"></div>
+</div>
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script id="data" type="application/json">__DATA__</script>

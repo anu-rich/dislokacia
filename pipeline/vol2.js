@@ -195,3 +195,18 @@ function renderMRos2(Y) {
   document.getElementById('mrsc2-sub').textContent = `Нарастающим итогом по отчёту за ${MRC[last].src.replace(/\.(pptx|pdf)$/i, '')}`;
   mk('mrsc2', { type: 'bar', data: { labels: ['Altai', 'Alatau'], datasets: [stackDs('внутри Чёрного моря', [F.os_in_altai ?? 0, F.os_in_alatau ?? 0], C[0]), stackDs('за пределами Чёрного моря', [F.os_out_altai ?? 0, F.os_out_alatau ?? 0], C[1])] }, options: stackOpts(g, 'тыс. т', 0) });
 }
+
+
+/* ===== отраслевые новости (левый блок) ===== */
+const NEWS = (D.news && D.news.items) || [];
+const NEWS_CAT = { casp: ['каспи', 'caspian'], tmtm: ['тмтм', 'транскаспий', 'средний коридор', 'middle corridor', 'trans-caspian', 'titr'], ports: ['порт', 'port', 'актау', 'курык', 'aktau', 'kuryk', 'алят', 'alat', 'баку', 'baku'], kmtf: ['казмортрансфлот', 'кмтф', 'kazmortransflot', 'kmtf', 'аско', 'asco', 'казмунайгаз', 'kazmunay'], oil: ['нефт', 'oil', 'танкер', 'tanker', 'джейхан', 'ceyhan', 'ктк', 'cpc'] };
+let NF = 'all';
+function renderNews() {
+  const box = document.getElementById('news-l'); if (!box) return;
+  const list = NEWS.filter(n => NF === 'all' || NEWS_CAT[NF].some(k => n.t.toLowerCase().includes(k)));
+  document.getElementById('news-sub').textContent = D.news && D.news.fetched ? `Каспий · ТМТМ · порты · флот · обновлено ${dmy(D.news.fetched)} UTC` : 'Каспий · ТМТМ · порты · флот';
+  if (!list.length) { box.innerHTML = `<div class="ni"><div class="m">${NEWS.length ? 'По этому фильтру новостей нет.' : 'Новости появятся после первого сбора на сервере.'}</div></div>`; return; }
+  box.innerHTML = list.slice(0, 80).map(n => `<div class="ni"><a href="${esc(n.u)}" target="_blank" rel="noopener">${esc(n.t)}</a><div class="m">${dmy(n.d)} · ${esc(n.s)}</div></div>`).join('');
+}
+document.querySelectorAll('#news-f button').forEach(b => b.onclick = () => { document.querySelectorAll('#news-f button').forEach(x => x.setAttribute('aria-pressed', x === b)); NF = b.dataset.v; renderNews(); });
+renderNews();

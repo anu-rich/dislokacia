@@ -37,7 +37,7 @@ mapfile -t FILES <<<"$NEW"
 WEATHER_JSON="$PWD/weather.json" python update.py "${FILES[@]}" || { echo "update.py упал"; exit 1; }
 
 # обёртка в полный документ для GitHub Pages
-{ printf '<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body>'
+{ printf '<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0"></head><body>'
   cat dislokacia.html
   printf '</body></html>'; } > "$ROOT/index.html"
 

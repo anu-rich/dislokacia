@@ -22,7 +22,11 @@ document.querySelectorAll('.subtabs').forEach(box => box.querySelectorAll('butto
 const subOf = id => { const b = document.querySelector(`#${id}-sub button[aria-pressed="true"]`); return b ? b.dataset.v : null; };
 
 /* ===== нефть по коносаментам ===== */
+const BLF = { t1: null, t2: null, t3: null, yr: null };   // фильтры года у таблиц (по умолчанию — год вкладки)
+const blYears = [...new Set(CR.map(r => r.y))].sort();
+const ySel = (key, cur, extraAll) => `<select class="ysel" data-key="${key}" style="margin-left:8px">${(extraAll ? ['all'] : []).concat(blYears).map(y => `<option value="${y}"${y === cur ? ' selected' : ''}>${y === 'all' ? 'Все годы' : y}</option>`).join('')}</select>`;
 function renderOilBL(Y) {
+  if (BLF.yr !== Y) { BLF.t1 = BLF.t2 = BLF.t3 = Y; BLF.yr = Y; }
   const g = chartBase(), GC = GCOL();
   const T = CR.filter(r => r.y === Y);
   const thisM = SNAP.timestamp.slice(0, 7), curYear = Y === thisM.slice(0, 4);
@@ -57,23 +61,34 @@ function renderOilBL(Y) {
     document.getElementById(cid + '-sub').textContent = `${Y}, маршрут ${rt === 'Баку' ? 'Актау → Баку/Сангачал' : 'Актау → Махачкала'}`;
     mk(cid, { type: 'bar', data: { labels: months.map(mlab), datasets: gs.map(gr => stackDs(gr, months.map(m => sum(T, r => r.m === m && r.route === rt && r.g === gr) / 1000), GC[gr])) }, options: stackOpts(g, 'тыс. т') });
   }
-  // t1 monthly table
+  // t1 monthly table (свой фильтр года)
+  const Y1 = BLF.t1, T1 = Y1 === 'all' ? CR : CR.filter(r => r.y === Y1);
+  const months1 = Y1 === 'all' ? [...new Set(T1.map(r => r.m))].sort() : (Y1 === Y ? months : monthsOf(Y1));
   const cols = [['Всего', r => true], ['Баку всего', r => r.route === 'Баку'], ['Баку КМТФ', r => r.route === 'Баку' && r.g === 'КМТФ'], ['Баку CIMS', r => r.route === 'Баку' && r.g === 'CIMS'], ['Баку АСКО', r => r.route === 'Баку' && r.g === 'АСКО'], ['Баку прочие', r => r.route === 'Баку' && !['КМТФ', 'CIMS', 'АСКО'].includes(r.g)],
     ['Махачкала всего', r => r.route === 'Махачкала'], ['Мах. КМТФ', r => r.route === 'Махачкала' && r.g === 'КМТФ'], ['Мах. CIMS', r => r.route === 'Махачкала' && r.g === 'CIMS'], ['Мах. АСКО', r => r.route === 'Махачкала' && r.g === 'АСКО'], ['Мах. AB Fleet', r => r.route === 'Махачкала' && r.g === 'AB Fleet'], ['Мах. прочие', r => r.route === 'Махачкала' && !['КМТФ', 'CIMS', 'АСКО', 'AB Fleet'].includes(r.g)], ['Нефтепродукты', r => r.prod]];
-  const rowsT = months.map(m => { const bl = sum(T, r => r.m === m), dp = disp(m) * 1000; return [mlab(m), ...cols.map(([n, f]) => fmtN(sum(T, r => r.m === m && f(r)))), fmtN(dp), `${dp - bl >= 0 ? '+' : ''}${fmtN(dp - bl)}`]; });
-  rowsT.push([`<b>Итого ${Y}</b>`, ...cols.map(([n, f]) => `<b>${fmtN(sum(T, f))}</b>`), `<b>${fmtN(months.reduce((a, m) => a + disp(m) * 1000, 0))}</b>`, `<b>${fmtN(months.reduce((a, m) => a + disp(m) * 1000, 0) - sum(T))}</b>`]);
-  document.getElementById('blt1-sub').textContent = 'Тонны по месяцу коносамента. Последние две колонки — итог месяца по сводкам диспетчера (дата отхода) и его отклонение от коносаментного учёта.';
+  const rowsT = [];
+  const yrs1 = [...new Set(months1.map(m => m.slice(0, 4)))];
+  for (const yy of yrs1) {
+    const ms = months1.filter(m => m.startsWith(yy));
+    ms.forEach(m => { const bl = sum(T1, r => r.m === m), dp = disp(m) * 1000; rowsT.push([mlab(m), ...cols.map(([n, f]) => fmtN(sum(T1, r => r.m === m && f(r)))), fmtN(dp), `${dp - bl >= 0 ? '+' : ''}${fmtN(dp - bl)}`]); });
+    const Ty = T1.filter(r => r.y === yy), dpy = ms.reduce((a, m) => a + disp(m) * 1000, 0);
+    rowsT.push([`<b>Итого ${yy}</b>`, ...cols.map(([n, f]) => `<b>${fmtN(sum(Ty, f))}</b>`), `<b>${fmtN(dpy)}</b>`, `<b>${fmtN(dpy - sum(Ty))}</b>`]);
+  }
+  document.getElementById('blt1-sub').innerHTML = 'Тонны по месяцу коносамента. Последние две колонки — итог месяца по сводкам диспетчера (дата отхода) и его отклонение от коносаментного учёта. Год:' + ySel('t1', Y1, true);
   document.getElementById('blt1').innerHTML = tbl(['Месяц', ...cols.map(c => c[0]), 'Диспетчер', 'Откл.'], rowsT);
   // t2 transitional voyages: same vessel+arr in two months, or dep month != B/L month
+  const Y2 = BLF.t2, T2 = Y2 === 'all' ? CR : CR.filter(r => r.y === Y2);
   const key = r => r.vessel + '|' + r.arr;
-  const cnt = {}; T.forEach(r => { cnt[key(r)] = (cnt[key(r)] || new Set()).add(r.m); });
-  const tr = T.filter(r => (cnt[key(r)].size > 1) || (r.dep && r.dep.slice(0, 7) !== r.m)).sort((a, b) => (a.arr + a.vessel).localeCompare(b.arr + b.vessel));
-  document.getElementById('blt2-sub').textContent = `${Y}: рейсы, объём которых разнесён на два месяца по датам коносаментов (одно судно, один приход — две партии), либо отход в другом месяце, чем коносамент. Диспетчер относит весь груз к дате отхода.`;
+  const cnt = {}; T2.forEach(r => { cnt[key(r)] = (cnt[key(r)] || new Set()).add(r.m); });
+  const tr = T2.filter(r => (cnt[key(r)].size > 1) || (r.dep && r.dep.slice(0, 7) !== r.m)).sort((a, b) => (a.arr + a.vessel).localeCompare(b.arr + b.vessel));
+  document.getElementById('blt2-sub').innerHTML = `Рейсы, объём которых разнесён на два месяца по датам коносаментов (одно судно, один приход — две партии), либо отход в другом месяце, чем коносамент. Диспетчер относит весь груз к дате отхода. Год:` + ySel('t2', Y2, true);
   document.getElementById('blt2').innerHTML = tr.length ? tblFold(['Судно', 'Перевозчик', 'Приход', 'Отход', 'Учтено в месяце', 'Тонн', 'Маршрут', 'Коносаменты'], tr.map(r => [esc(r.vessel), esc(r.g), r.arr ? dmy(r.arr) : '—', r.dep ? dmy(r.dep) : '—', `<b>${mlab(r.m)}</b>`, fmtN(r.tons), esc(r.route), esc(r.bl)]), 24) : '<p class="sub">Переходящих рейсов нет.</p>';
   // t3 vessels/owners
-  const vv = {}; T.forEach(r => { const o = vv[r.vessel] = vv[r.vessel] || { g: r.g, own: new Set(), n: 0, t: 0, b: 0, m: 0 }; o.n++; o.t += r.tons; if (r.route === 'Баку') o.b += r.tons; if (r.route === 'Махачкала') o.m += r.tons; if (r.owner && r.owner !== 'не указан') o.own.add(r.owner); });
-  document.getElementById('blt3-sub').textContent = `${Y}: все танкеры в файле перевалки. «Судовладелец по файлу» — как записано в графе «Судовладелец» (в 2023 там часто фрахтователь).`;
+  const Y3 = BLF.t3, T3 = Y3 === 'all' ? CR : CR.filter(r => r.y === Y3);
+  const vv = {}; T3.forEach(r => { const o = vv[r.vessel] = vv[r.vessel] || { g: r.g, own: new Set(), n: 0, t: 0, b: 0, m: 0 }; o.n++; o.t += r.tons; if (r.route === 'Баку') o.b += r.tons; if (r.route === 'Махачкала') o.m += r.tons; if (r.owner && r.owner !== 'не указан') o.own.add(r.owner); });
+  document.getElementById('blt3-sub').innerHTML = `Все танкеры в файле перевалки. «Судовладелец по файлу» — как записано в графе «Судовладелец» (в 2023 там часто фрахтователь). Год:` + ySel('t3', Y3, true);
   document.getElementById('blt3').innerHTML = tblFold(['Судно', 'Перевозчик (группа)', 'Судовладелец по файлу', 'Партий', 'Тонн', 'на Баку', 'на Махачкалу'], Object.entries(vv).sort((a, b) => b[1].t - a[1].t).map(([v, o]) => [esc(v), esc(o.g), esc([...o.own].join(', ')), fmtN(o.n), fmtN(o.t), fmtN(o.b), fmtN(o.m)]), 30);
+  document.querySelectorAll('#p-oil .ysel').forEach(sel => sel.onchange = () => { BLF[sel.dataset.key] = sel.value; renderOilBL(Y); });
 }
 
 /* ===== МР ===== */

@@ -144,6 +144,58 @@ def vkk():
         else: errors["vkk"] = "осадка не найдена на странице"
     except Exception as e: errors["vkk"] = str(e)[:120]
 
+# ---- 3b. Махачкала: проходная осадка (служба капитана порта, ampastra.ru; таблица обновляется 2 раза в день) ----
+MONTHS_RU = {"январ": 1, "феврал": 2, "март": 3, "апрел": 4, "ма": 5, "июн": 6, "июл": 7, "август": 8, "сентябр": 9, "октябр": 10, "ноябр": 11, "декабр": 12}
+def makhachkala():
+    out = M.setdefault("makh", {"history": {}})
+    try:
+        pg = fetch("https://ampastra.ru/slujba_kapitana_morskogo_porta_mahachkala/110-navigatsionnaya_obstanovka.html", timeout=40).decode("utf-8", "ignore")
+        txt = re.sub(r"<[^>]+>", " ", pg); txt = re.sub(r"\s+", " ", txt)
+        when = None
+        md = re.search(r"на\s+(\d{1,2})[.:](\d{2})\s+(\d{1,2})\s+([А-Яа-я]+)\s+(\d{4})", txt, re.I)
+        if md:
+            mon = next((v for k, v in MONTHS_RU.items() if md.group(4).lower().startswith(k)), None)
+            if mon: when = f"{int(md.group(3)):02d}.{mon:02d}.{md.group(5)} {md.group(1)}:{md.group(2)}"
+        if not when:
+            md = re.search(r"(\d{2}\.\d{2}\.\d{4})", txt); when = md.group(1) if md else today.strftime("%d.%m.%Y")
+        res = {}
+        for name, key in (("нефтян", "oil"), ("сухогруз", "dry")):
+            m = re.search(r"канал\w*\s+" + name + r"\w*\s+гаван\w*((?:[^\d-]{0,30}-?\d+[,.]?\d*){3,8})", txt, re.I)
+            if m:
+                nums = [float(x.replace(",", ".")) for x in re.findall(r"-?\d+[,.]?\d*", m.group(1))]
+                pos = [x for x in nums if 2 <= x <= 9]
+                if len(pos) >= 3: res[key] = {"min_depth": pos[0], "depth": pos[-2], "draft": pos[-1]}
+                elif pos: res[key] = {"draft": pos[-1]}
+        if not res:
+            m2 = re.findall(r"проходн\w*\s+осадк\w*[^\d]{0,60}(\d[,.]\d{1,2})", txt, re.I)
+            if m2: res["oil"] = {"draft": float(m2[0].replace(",", "."))}
+        if res:
+            out["latest"] = {"date": when, "oil": res.get("oil"), "dry": res.get("dry"), "src": "Служба капитана морского порта Махачкала (ampastra.ru)"}
+            out["history"][today.isoformat()] = {k: v["draft"] for k, v in res.items()}
+            for k in list(out["history"]):
+                if k < (today - datetime.timedelta(days=400)).isoformat(): del out["history"][k]
+        else: errors["makh"] = "осадка не найдена на странице"
+    except Exception as e: errors["makh"] = str(e)[:120]
+
+# ---- 3c. Актау / Курык / Алят: официальной публикации проходной осадки в интернете нет — собираем упоминания из новостей (news.json) ----
+def drafts_from_news():
+    out = M.setdefault("draft_news", [])
+    try:
+        nj = os.path.join(HERE, "news.json")
+        if not os.path.exists(nj): return
+        items = json.load(open(nj, encoding="utf-8")).get("items", [])
+        seen = {x["u"] for x in out}
+        for it in items:
+            t = it.get("t", ""); low = t.lower()
+            if not re.search(r"осадк|глубин|дноуглуб", low): continue
+            port = "Актау" if "актау" in low else "Курык" if "курык" in low else "Алят/Баку" if ("алят" in low or "баку" in low) else "Туркменбаши" if "туркменбаш" in low else None
+            if not port or it["u"] in seen: continue
+            m = re.search(r"(\d[,.]\d{1,2})\s*(?:м\b|метр)", low)
+            out.append({"port": port, "d": it.get("d", "")[:10], "t": t, "u": it["u"], "draft": float(m.group(1).replace(",", ".")) if m else None})
+            seen.add(it["u"])
+        out.sort(key=lambda x: x["d"], reverse=True); del out[60:]
+    except Exception as e: errors["draft_news"] = str(e)[:120]
+
 # ---- 4. бункерное топливо (Ship & Bunker, открытые последние значения) ----
 def bunker():
     out = M.setdefault("bunker", {"history": {}})
@@ -266,7 +318,7 @@ def sanctions():
     except Exception as e: errors["eu"] = str(e)[:120]
     S["checked"] = today.isoformat(); S["lists"] = lists; S["matches"] = matches; S["n_ours"] = len(set(ours.values()))
 
-for step in (nbk, lambda: fred("DCOILBRENTEU", "brent"), lambda: fred("DCOILWTICO", "wti"), grealm, vkk, kazhydromet, bunker, sanctions):
+for step in (nbk, lambda: fred("DCOILBRENTEU", "brent"), lambda: fred("DCOILWTICO", "wti"), grealm, vkk, makhachkala, drafts_from_news, kazhydromet, bunker, sanctions):
     try: step()
     except Exception as e: errors[getattr(step, "__name__", "step")] = str(e)[:120]
 M["errors"] = errors; M["fetched"] = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M")

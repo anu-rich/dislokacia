@@ -80,16 +80,16 @@ const cl = (v, lim) => isNaN(v) ? '' : v <= lim[0] ? 'lvl-crit' : v <= lim[1] ? 
 function fleetRow(v, it, supMap) {
   const s = supMap[v] || {};
   const supCell = s.fuel != null && !isNaN(s.fuel) ? `<td class="${cl(s.fuel, [15, 30])}">${fmtN(s.fuel, 1)}</td><td class="${cl(s.water, [10, 20])}">${fmtN(s.water, 0)}</td><td class="${cl(s.food, [3, 7])}">${fmtN(s.food)}</td>` : '<td>—</td><td>—</td><td>—</td>';
-  if (!it) return `<tr><td><b>${esc(v)}</b></td><td colspan="4" style="text-align:left;color:var(--ink-3)">нет в сводке</td>${supCell}</tr>`;
+  if (!it) return `<tr><td><b>${esc(v)}</b></td><td colspan="4" style="text-align:left;color:var(--ink-3)">нет в сводке</td><td>—</td>${supCell}</tr>`;
   const place = placeOf(it);
   const st = [it.sec === 'departed' ? 'отход' : (it.z && it.z !== it.o ? it.z : SECN[it.sec]), it.o].filter((x, i, arr) => x && arr.indexOf(x) === i).join(' · ');
   const t0 = it.sec === 'berth' ? (it.t || it.a) : it.a;
   const when = it.sec === 'departed' && it.d ? 'отошло ' + dmy(it.d) : (t0 ? (P(t0) > NOW ? 'ETA ' + dmy(t0) : 'с ' + dmy(t0) + ' (' + since(t0) + ')') : '');
   const cg = [it.c ? it.c + (/\d$/.test(it.c) ? ' т' : '') : '', it.k, it.c2 && !it.c ? it.c2 : '', it.k2 && !it.k ? it.k2 : '', it.h].filter(Boolean).join(' · ');
   const stCls = it.sec === 'berth' ? 'ok' : it.sec === 'departed' ? 'warn' : '';
-  return `<tr><td><b>${esc(v)}</b></td><td style="text-align:left">${esc(place)}${it.b ? ', пр. ' + esc(it.b) : ''}${it.e ? ' (' + esc(it.e) + ')' : ''}</td><td style="text-align:left"><span class="st ${stCls}" style="${!stCls ? 'background:var(--s1-soft);color:var(--s1)' : ''}">${esc(st)}</span></td><td style="text-align:left;white-space:normal">${esc(when)}</td><td style="text-align:left;white-space:normal">${esc(cg)}</td>${supCell}</tr>`;
+  return `<tr><td><b>${esc(v)}</b></td><td style="text-align:left">${esc(place)}${it.b ? ', пр. ' + esc(it.b) : ''}${it.e ? ' (' + esc(it.e) + ')' : ''}</td><td style="text-align:left"><span class="st ${stCls}" style="${!stCls ? 'background:var(--s1-soft);color:var(--s1)' : ''}">${esc(st)}</span></td><td style="text-align:left;white-space:normal">${esc(when)}</td><td style="text-align:left;white-space:normal">${esc(cg)}</td><td>${it.r2 || it.r ? fmtN(parseFloat(it.r2 || it.r), 1) : '—'}</td>${supCell}</tr>`;
 }
-const FLEET_HEAD = ['Судно', 'Где', 'Статус', 'С какого времени', 'Груз · отправитель', 'Топливо, т', 'Вода, т', 'Колпит, дн'];
+const FLEET_HEAD = ['Судно', 'Где', 'Статус', 'С какого времени', 'Груз · отправитель', 'Осадка, м', 'Топливо, т', 'Вода, т', 'Колпит, дн'];
 const fleetTable = rows => `<table><thead><tr>${FLEET_HEAD.map((h, i) => `<th${i >= 1 && i <= 4 ? ' style="text-align:left"' : ''}>${h}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>`;
 
 function renderNow() {
@@ -114,7 +114,7 @@ function renderNow() {
     ['Отошли за сутки', uniq(kmDep), [...new Set(kmDep.map(x => x.n))].join(', ') || '—'],
   ]);
   const groups = [['Танкеры', KM_T], ['Контейнеровозы', KM_C], ['Сухогрузы', KM_B]];
-  document.getElementById('fleet').innerHTML = fleetTable(groups.map(([g, vs]) => `<tr><td class="wx-day" colspan="8">${g}</td></tr>` + vs.map(v => fleetRow(v, findIt(v), supMap)).join('')).join(''));
+  document.getElementById('fleet').innerHTML = fleetTable(groups.map(([g, vs]) => `<tr><td class="wx-day" colspan="9">${g}</td></tr>` + vs.map(v => fleetRow(v, findIt(v), supMap)).join('')).join(''));
   // ---- ports (Caspian)
   const casp = S.ports.filter(p => p.g !== 'o' && !isOpenPort(p.p));
   document.getElementById('ports').innerHTML = casp.map(portCard).join('');

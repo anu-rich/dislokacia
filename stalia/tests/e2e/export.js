@@ -107,6 +107,18 @@ const plain = (xml) => xml.replace(/<\/w:p>/g, '\n').replace(/<[^>]+>/g, '').rep
   check('Excel follows the form: a new rate, a new result', /<v>32885\.42<\/v>/.test(textOf(x2.files, 'xl/worksheets/sheet1.xml')) && /<v>20000<\/v>/.test(textOf(x2.files, 'xl/worksheets/sheet1.xml')));
   await page.fill('#f-demurrageRate', '14500');
   await page.waitForFunction(() => /23,841\.93/.test(document.querySelector('#summary').textContent));
+  // so does a notice rule: laytime from 08:00 on the next working day after the notice of Friday 6 March
+  await page.selectOption('#f-ports-0-nor-rule', 'nextday');
+  await page.uncheck('#f-ports-0-nor-unlessSoonerCommenced');
+  await page.waitForFunction(() => /13,080\.21/.test(document.querySelector('#summary').textContent));
+  const wn = await grab(page, '#actions [data-act="word"]'), xn = await grab(page, '#actions [data-act="excel"]');
+  const ruleWords = 'laytime to commence at 08:00 on the next working day after NOR', docN = plain(textOf(wn.files, 'word/document.xml'));
+  check('Word words the next-working-day rule and shows the start it gave', docN.includes('unless used; ' + ruleWords + ' ') && /09 Mar 2026 08:00\s*Laytime commenced/.test(docN) && /Net amount due to Owners\s*USD 13,080\.21/.test(docN.replace(/\n/g, ' ')), docN.slice(0, 900));
+  check('Excel words it too, and its formulas give the same result', textOf(xn.files, 'xl/sharedStrings.xml').includes('unless used; ' + ruleWords + '<') &&
+    /<f>ABS\(ROUND\(.*?\)\)<\/f><v>13080\.21<\/v>/.test(textOf(xn.files, 'xl/worksheets/sheet1.xml')));
+  await page.selectOption('#f-ports-0-nor-rule', 'gencon');
+  await page.check('#f-ports-0-nor-unlessSoonerCommenced');
+  await page.waitForFunction(() => /23,841\.93/.test(document.querySelector('#summary').textContent));
 
   console.log('from the statement, in its language');
   await page.click('#actions [data-act="statement"]');

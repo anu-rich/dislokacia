@@ -294,6 +294,56 @@ function countPlainRows(r, calc, lang) {
   return 1 + fixture + facts + summary + 1;
 }
 
+test('the next-working-day notice rule: worded in Word and Excel, and the sheet counts from the start it gives', () => {
+  // notice on Friday 6 March 09:00 at the first port: laytime from Monday 08:00, or from the start of loading if that is sooner
+  for (const sooner of [false, true]) {
+    for (const lang of ['en', 'ru', 'zh']) {
+      const calc = ex('bulk', lang);
+      Object.assign(calc.ports[0].nor, { rule: 'nextday', nextDayStart: '08:00', unlessSoonerCommenced: sooner });
+      const r = E.compute(calc), label = lang + (sooner ? ' sooner' : ' strict');
+      assert.equal(E.fmtDT(r.ports[0].start), sooner ? '2026-03-06T14:10' : '2026-03-09T08:00', label);
+      const wording = I.t(lang, 'st.term.nor.nextday', { at: '08:00' }) + (sooner ? ', ' + I.t(lang, 'st.term.sooner') : '');
+      assert.ok(V.portTermsText(calc.ports[0], lang).endsWith('; ' + wording), label);
+      // Word: the terms of the port, and the moment laytime commenced among its facts
+      const doc = textOf(unzip(X.docx(calc, r, lang, OPTS)), 'word/document.xml').replace(/<\/w:p>/g, '\n').replace(/<[^>]+>/g, '');
+      assert.ok(doc.includes(V.portTermsText(calc.ports[0], lang)), label + ': Word has the terms of the port');
+      assert.ok(doc.includes(V.fmtDT(r.ports[0].start, lang) + '\n' + I.t(lang, sooner ? 's.fact.startSooner' : 's.fact.start')), label + ': Word has the commencement');
+      // Excel: the same sentence in a cell, and formulas that give the engine's figures
+      const model = X.xlsxModel(calc, r, lang, OPTS);
+      assert.ok(Object.values(model.cells).some((c) => c.v === V.portTermsText(calc.ports[0], lang)), label + ': Excel has the terms of the port');
+      agree(model, calc, label);
+      const P = model.refs.ports[0];
+      near(model.cells['A' + P.first].v + model.cells['C' + P.first].v, serial(r.ports[0].start), 1e-9, label + ': the first row of the sheet starts where laytime does');
+      const strings = textOf(unzip(X.xlsx(calc, r, lang, OPTS)), 'xl/sharedStrings.xml');
+      assert.ok(strings.includes(wording.replace(/&/g, '&amp;')), label + ': the file has the wording');
+    }
+  }
+  // English, word for word
+  const calc = ex('bulk');
+  Object.assign(calc.ports[0].nor, { rule: 'nextday', nextDayStart: '06:00', unlessSoonerCommenced: false });
+  const r = E.compute(calc);
+  assert.match(textOf(unzip(X.docx(calc, r, 'en', OPTS)), 'word/document.xml'), /unless used; laytime to commence at 06:00 on the next working day after NOR </);
+  assert.match(textOf(unzip(X.xlsx(calc, r, 'en', OPTS)), 'xl/sharedStrings.xml'), /unless used; laytime to commence at 06:00 on the next working day after NOR</);
+  // reversible laytime, notices on Thursday 2 and Thursday 9 April: the time from notice to Friday 08:00 at the second port
+  // is notice time, which counts only if the vessel is already on demurrage when she gets there
+  const pooled = (hours, atNextPort) => {
+    const c = ex('tanker');
+    c.ports.forEach((p) => { p.calendar.preset = 'SSHEX'; Object.assign(p.nor, { rule: 'nextday', nextDayStart: '08:00', unlessSoonerCommenced: false }); });
+    c.ports[0].allowed.hours = hours; c.demurrageAtNextPort = atNextPort;
+    return c;
+  };
+  const inTime = pooled('72', 'nor'), onDem = pooled('6', 'nor'), onDemLate = pooled('6', 'laytimeStart');
+  const starts = (c) => { const res = E.compute(c); assert.ok(res.ok, JSON.stringify(res.errors)); return res.ports.map((p) => E.fmtDT(p.start) + (p.arrivedOnDemurrage ? ' on demurrage' : '')); };
+  assert.deepEqual(starts(inTime), ['2026-04-03T08:00', '2026-04-10T08:00']);
+  assert.deepEqual(starts(onDem), ['2026-04-03T08:00', '2026-04-09T08:00 on demurrage'], 'demurrage runs from the notice itself');
+  assert.deepEqual(starts(onDemLate), ['2026-04-03T08:00', '2026-04-10T08:00 on demurrage'], 'or from the start the rule gives, when the terms say so');
+  for (const [c, label] of [[inTime, 'in time'], [onDem, 'on demurrage from notice'], [onDemLate, 'on demurrage from the rule’s start']]) {
+    const model = X.xlsxModel(c, E.compute(c), 'en', OPTS);
+    agree(model, c, 'reversible, next working day, ' + label);
+    assert.ok(Object.values(model.cells).some((cell) => typeof cell.v === 'string' && cell.v.indexOf(I.t('en', 'x.notice')) === 0) === (c.demurrageAtNextPort === 'nor'), label + ': the notice time has its own rows');
+  }
+});
+
 test('exports refuse a calculation that is not complete', () => {
   const calc = M.blankCalc(), r = E.compute(calc);
   assert.equal(r.ok, false);

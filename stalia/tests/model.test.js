@@ -129,6 +129,33 @@ test('normalizeCalc: hostile and broken input becomes a safe, well-typed calcula
   assert.equal(M.normalizeCalc({ ports: new Array(50).fill({}) }).ports.length, M.LIMITS.ports);
 });
 
+test('notice rule “next working day”: its default time, and what survives normalisation', () => {
+  assert.equal(M.blankPort().nor.nextDayStart, '08:00');
+  assert.equal(M.blankPort().nor.rule, 'turn', 'a new port still starts with the turn-time rule');
+  const nor = (over) => M.normalizeCalc({ ports: [{ nor: Object.assign({ tendered: '2026-03-03T10:00', rule: 'nextday' }, over) }] }).ports[0].nor;
+  assert.deepEqual([nor({ nextDayStart: '07:30' }).rule, nor({ nextDayStart: '07:30' }).nextDayStart], ['nextday', '07:30']);
+  assert.equal(nor({ nextDayStart: '7:05' }).nextDayStart, '07:05', 'written the way a time field writes it');
+  for (const junk of [undefined, null, '', 'eight', '25:00', 8, {}, ['08:00', '09:00']]) assert.equal(nor({ nextDayStart: junk }).nextDayStart, '08:00', JSON.stringify(junk));
+  // a calculation saved before the rule existed gets the field, and its own rule is left alone
+  const old = JSON.parse(JSON.stringify(M.examples('en')[0].calc));
+  old.ports.forEach((p) => { delete p.nor.nextDayStart; });
+  const now = M.normalizeCalc(old);
+  assert.deepEqual(now.ports.map((p) => [p.nor.rule, p.nor.amStart, p.nor.pmStart, p.nor.nextDayStart]), [['gencon', '13:00', '08:00', '08:00'], ['gencon', '13:00', '08:00', '08:00']]);
+  assert.equal(E.compute(now).totals.net, 23841.93);
+  // the rule round-trips through a saved or shared calculation and computes
+  const calc = M.normalizeCalc({
+    demurrageRate: '12000', ports: [{
+      allowed: { type: 'fixed', hours: '24' }, calendar: { preset: 'SSHEX' },
+      nor: { tendered: '2026-03-06T15:00', rule: 'nextday', nextDayStart: '08:00', unlessSoonerCommenced: false }, completed: '2026-03-10T20:00',
+    }],
+  });
+  assert.deepEqual(M.normalizeCalc(JSON.parse(JSON.stringify(calc))), calc, 'normalisation is idempotent');
+  const r = E.compute(calc);
+  assert.ok(r.ok, JSON.stringify(r.errors));
+  assert.equal(E.fmtDT(r.ports[0].start), '2026-03-09T08:00');
+  assert.equal(r.totals.demurrage, 6000);
+});
+
 test('i18n: every language defines exactly the same keys and placeholders as English', () => {
   const en = I.STRINGS.en;
   assert.deepEqual(I.LANGS, ['en', 'zh', 'ru', 'kk', 'uk', 'tr', 'el']);

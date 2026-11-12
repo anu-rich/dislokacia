@@ -128,6 +128,41 @@ test('statement: complete document, free footer vs Pro letterhead', () => {
   assert.match(text(V.statementHTML(ex('bulk', 'ru'), r, 'ru', { today: '2026-11-12' })), /Gencon 1994 от 20\.02\.2026/);
 });
 
+test('statement: each notice rule in words; the next-working-day rule with its time, in every language', () => {
+  const p = (nor) => M.normalizeCalc({ ports: [{ calendar: { preset: 'SSHEX' }, nor }] }).ports[0];
+  const words = (nor, lang) => V.portTermsText(p(nor), lang || 'en');
+  const head = 'SSHEX — Saturdays, Sundays and holidays excepted, even if used; ';
+  assert.equal(words({ rule: 'nextday', nextDayStart: '08:00' }), head + 'laytime to commence at 08:00 on the next working day after NOR, unless sooner commenced');
+  assert.equal(words({ rule: 'nextday', nextDayStart: '06:30', unlessSoonerCommenced: false }), head + 'laytime to commence at 06:30 on the next working day after NOR');
+  assert.equal(words({ rule: 'nextday' }), head + 'laytime to commence at 08:00 on the next working day after NOR, unless sooner commenced', 'no time given: 08:00, as the engine counts');
+  assert.equal(V.portTermsText({ nor: { rule: 'nextday', nextDayStart: '' } }, 'en'), 'SHINC — Sundays and holidays included; laytime to commence at 08:00 on the next working day after NOR, unless sooner commenced');
+  // the other rules read as before
+  assert.equal(words({ rule: 'turn', turnHours: '6' }), head + 'laytime to commence 6 hours after NOR, unless sooner commenced');
+  assert.equal(words({ rule: 'gencon', amStart: '13:00', pmStart: '08:00' }), head + 'NOR by 12:00 — laytime from 13:00; after 12:00 — from 08:00 next working day, unless sooner commenced');
+  assert.equal(words({ rule: 'manual', manualStart: '2026-03-09T08:00' }), head + 'laytime commencement as stated');
+  // every language names the rule in its own words, with the time filled in
+  const seen = new Set();
+  for (const lang of I.LANGS) {
+    const w = words({ rule: 'nextday', nextDayStart: '07:45', unlessSoonerCommenced: false }, lang).split('; ').pop();
+    assert.ok(w.includes('07:45') && !/[{}]/.test(w), lang + ': ' + w);
+    assert.notEqual(w, words({ rule: 'gencon', unlessSoonerCommenced: false }, lang).split('; ').pop(), lang);
+    seen.add(w);
+    for (const k of ['n.rule.nextday', 'n.nextDayStart']) assert.ok(I.STRINGS[lang][k] && (lang === 'en' || I.STRINGS[lang][k] !== I.STRINGS.en[k]), lang + ' ' + k);
+  }
+  assert.equal(seen.size, I.LANGS.length, 'seven wordings for seven languages');
+  assert.equal(words({ rule: 'nextday', nextDayStart: '08:00', unlessSoonerCommenced: false }, 'ru').split('; ').pop(), 'сталия начинается в 08:00 следующего рабочего дня после нотиса');
+
+  // on the statement itself: the port's terms, and the moment laytime commenced among the facts
+  const calc = ex('bulk');
+  Object.assign(calc.ports[0].nor, { rule: 'nextday', nextDayStart: '08:00', unlessSoonerCommenced: false });
+  const r = E.compute(calc);
+  assert.ok(r.ok, JSON.stringify(r.errors));
+  const st = text(V.statementHTML(calc, r, 'en', { today: '2026-11-12' }));
+  assert.match(st, /SSHEX — Saturdays, Sundays and holidays excepted, unless used; laytime to commence at 08:00 on the next working day after NOR Laytime allowed/);
+  assert.match(st, /06 Mar 2026 09:00 NOR tendered .*09 Mar 2026 08:00 Laytime commenced/); // notice on Friday, laytime from Monday
+  assert.match(st, /NOR by 12:00 — laytime from 13:00; after 12:00 — from 08:00 next working day, unless sooner commenced/, 'the second port keeps its noon rule');
+});
+
 test('nothing a user types can break out of the markup', () => {
   const calc = ex('bulk');
   const bad = '"><img src=x onerror=alert(1)><script>alert(2)</script>';

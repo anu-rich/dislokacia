@@ -79,6 +79,11 @@ function serveSite(configFor) {
       a.ports.push(p);
       return { text: JSON.stringify(a) };
     },
+    nextDay() { // the same voyage under a recap whose laytime always starts at 08:00 on the next working day after notice
+      const a = extractionOf(bulk);
+      a.ports.forEach((p) => Object.assign(p.notice, { rule: 'next_working_day', noon_rule_morning_start: '', noon_rule_afternoon_start: '', next_working_day_start: '08:00' }));
+      return { text: JSON.stringify(a) };
+    },
     refusal: () => ({ text: '', stop: 'refusal' }),
     nothing: () => ({ text: JSON.stringify(Object.assign(X.blankExtraction(), { notes: [{ field: 'other', port: 0, status: 'not_found', comment: 'These pages are not shipping documents.' }] })) }),
   };
@@ -434,6 +439,25 @@ function serveSite(configFor) {
   await off.click('[data-act="imp-read"]');
   await off.waitForSelector('.imp-h', { timeout: 30000 });
   check('the other model can be chosen', mock.requests[n].body.model === 'claude-sonnet-5-5' && mock.requests[n].body.fallbacks === 'default');
+  // a notice rule the noon rule cannot express, read by the reader that is bundled for the browser
+  scenario.name = 'nextDay';
+  await off.click('[data-act="imp-back"]');
+  n = mock.requests.length;
+  await off.click('[data-act="imp-read"]');
+  await off.waitForSelector('.imp-h', { timeout: 30000 });
+  const nextDay = await text(off, '#imp-body');
+  check('the reader is told about the next-working-day rule, and its answer is shown in words for checking',
+    /next working day at a set time/.test(mock.requests[n].body.system) && /"next_working_day_start":/.test(mock.requests[n].body.system) &&
+    (nextDay.match(/laytime to commence at 08:00 on the next working day after NOR, unless sooner commenced/g) || []).length === 2 && /Nothing to flag/.test(nextDay), nextDay);
+  await off.click('[data-act="imp-apply"]');
+  // notices on Friday 6 and Sunday 15 March: loading began the same Friday, discharging after Monday 08:00
+  const applied = await off.evaluate(() => window.__stalia.state.calc.ports.map((p) => [p.nor.rule, p.nor.nextDayStart, p.nor.unlessSoonerCommenced].join()).join(' | '));
+  check('it arrives in the form as that rule with its start time', applied === 'nextday,08:00,true | nextday,08:00,true' &&
+    (await off.inputValue('#f-ports-1-nor-rule')) === 'nextday' && (await off.inputValue('#f-ports-1-nor-nextDayStart')) === '08:00', applied);
+  check('and laytime is counted from the next working day', /16 Mar 2026 08:00 Laytime commenced/.test(await text(off, '#sheet')) &&
+    /06 Mar 2026 14:10 Laytime commenced \(operations started before notice time ran out\)/.test(await text(off, '#sheet')) && /USD 13,277\.82/.test(await text(off, '#summary')), await text(off, '#summary'));
+  scenario.name = 'full';
+  await off.click('.bar [data-act="imp-open"]');
   await off.click('[data-act="imp-close"]');
   await off.reload({ waitUntil: 'networkidle' });
   await off.click('.bar [data-act="imp-open"]');

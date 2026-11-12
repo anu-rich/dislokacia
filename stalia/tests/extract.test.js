@@ -189,6 +189,135 @@ test('“08:00 on the next working day after notice” is its own rule, there an
   assert.equal(M.normalizeCalc(old).ports[0].nor.nextDayStart, '08:00');
 });
 
+test('the next-working-day rule read from a recap: the count starts where the clause says', () => {
+  const S = require('../app/schema.js');
+  const nt = X.SCHEMA.properties.ports.items.properties.notice.properties;
+  assert.ok(nt.rule.enum.includes('next_working_day') && nt.next_working_day_start.type === 'string', 'the schema has the rule and its time');
+  // a recap read the way the instruction asks: notice on Tuesday 3 March 10:00, completed on Friday
+  const a = X.blankExtraction();
+  a.documents = { charter_party: 'read', statement_of_facts: 'read' };
+  a.money.demurrage_per_day = '12000';
+  const p = X.blankExtractionPort('load');
+  p.name = 'Constanta';
+  p.allowed = Object.assign(p.allowed, { basis: 'fixed_time', hours: '48' });
+  p.working_time = Object.assign(p.working_time, { regime: 'SSHEX', holidays_excepted: 'yes', work_in_excepted_time: 'does_not_count' });
+  p.notice = Object.assign(p.notice, { tendered: '2026-03-03T10:00', rule: 'next_working_day', next_working_day_start: '0800', unless_sooner_commenced: 'yes' });
+  p.operations_commenced = '2026-03-04T09:15';
+  p.operations_completed = '2026-03-06T20:00';
+  a.ports.push(p);
+  assert.equal(X.shapeError(a, X.SCHEMA), '');
+  assert.deepEqual(S.conform(JSON.parse(JSON.stringify(a)), S.SCHEMA), a, 'the answer is in shape as it is: nothing is dropped or reset');
+  const r = X.toCalc(a), port = r.calc.ports[0];
+  assert.deepEqual([port.nor.rule, port.nor.nextDayStart, port.nor.unlessSoonerCommenced, port.nor.tendered], ['nextday', '08:00', true, '2026-03-03T10:00']);
+  assert.deepEqual(r.notes, [], 'a rule read in full leaves nothing to flag');
+  const res = E.compute(r.calc);
+  assert.equal(res.ok, true, JSON.stringify(res.errors));
+  assert.equal(E.fmtDT(res.ports[0].start), '2026-03-04T08:00', 'Wednesday 08:00, not the Tuesday of the notice');
+  assert.equal(E.fmtDT(res.ports[0].expiry), '2026-03-06T08:00');
+  assert.equal(res.totals.demurrage, 6000); // 12 hours over
+  // what the reader had to answer before — the noon rule with both times at 08:00 — starts the count on the day of the notice
+  const before = JSON.parse(JSON.stringify(a));
+  Object.assign(before.ports[0].notice, { rule: 'noon_rule', noon_rule_morning_start: '08:00', noon_rule_afternoon_start: '08:00', next_working_day_start: '' });
+  assert.equal(E.fmtDT(E.compute(X.toCalc(before).calc).ports[0].start), '2026-03-03T10:00');
+
+  // operations that began before that moment start laytime, unless the charter party says otherwise
+  p.operations_commenced = '2026-03-03T15:30';
+  assert.equal(E.fmtDT(E.compute(X.toCalc(a).calc).ports[0].start), '2026-03-03T15:30');
+  p.notice.unless_sooner_commenced = 'no';
+  assert.deepEqual([X.toCalc(a).calc.ports[0].nor.unlessSoonerCommenced, E.fmtDT(E.compute(X.toCalc(a).calc).ports[0].start)], [false, '2026-03-04T08:00']);
+  // office hours travel with it: a notice at 19:00 is deemed tendered the next morning, and laytime starts the working day after that
+  Object.assign(p.notice, { tendered: '2026-03-03T19:00', office_hours_only: 'yes', office_from: '08:00', office_to: '17:00' });
+  assert.equal(E.fmtDT(E.compute(X.toCalc(a).calc).ports[0].start), '2026-03-05T08:00');
+  Object.assign(p.notice, { tendered: '2026-03-03T10:00', office_hours_only: 'unknown', office_from: '', office_to: '' });
+
+  // another time is kept as written; times of the other rules do not leak in
+  Object.assign(p.notice, { next_working_day_start: '06:30', noon_rule_morning_start: '13:00', noon_rule_afternoon_start: '06:00', hours_after_notice: '12' });
+  const other = X.toCalc(a).calc.ports[0];
+  assert.deepEqual([other.nor.rule, other.nor.nextDayStart], ['nextday', '06:30']);
+  assert.equal(E.fmtDT(E.compute(X.toCalc(a).calc).ports[0].start), '2026-03-04T06:30');
+  Object.assign(p.notice, { noon_rule_morning_start: '', noon_rule_afternoon_start: '', hours_after_notice: '' });
+
+  // an answer that is a little out of shape keeps the rule; a word that is not a rule is not taken for one
+  const rough = JSON.parse(JSON.stringify(a));
+  delete rough.ports[0].notice.laytime_commenced_at; rough.ports[0].notice.next_working_day_start = 800; rough.ports[0].notice.extra = 'x';
+  const fixed = S.conform(rough, S.SCHEMA);
+  assert.equal(S.shapeError(fixed, S.SCHEMA), '');
+  assert.deepEqual([fixed.ports[0].notice.rule, fixed.ports[0].notice.next_working_day_start], ['next_working_day', '800']);
+  const odd = JSON.parse(JSON.stringify(a)); odd.ports[0].notice.rule = 'next_day';
+  assert.equal(S.conform(odd, S.SCHEMA).ports[0].notice.rule, 'unknown');
+  assert.match(X.shapeError(odd, X.SCHEMA), /ports\[0\]\.notice\.rule has an unexpected value/);
+  const lost = JSON.parse(JSON.stringify(a)); delete lost.ports[0].notice.next_working_day_start;
+  assert.match(X.shapeError(lost, X.SCHEMA), /notice\.next_working_day_start is missing/);
+});
+
+test('the next-working-day rule typed into the form reads back exactly: every example, with and without “unless sooner commenced”', () => {
+  const incomplete = [];
+  for (const ex of examples()) {
+    for (const sooner of [true, false]) {
+      const calc = JSON.parse(JSON.stringify(ex.calc));
+      calc.ports.forEach((p, i) => { p.calendar.preset = 'SSHEX'; Object.assign(p.nor, { rule: 'nextday', nextDayStart: i ? '06:00' : '08:00', unlessSoonerCommenced: sooner }); });
+      const answer = extractionOf(calc), label = ex.id + (sooner ? ' sooner' : ' strict');
+      assert.equal(X.shapeError(answer, X.SCHEMA), '', label);
+      assert.deepEqual(answer.ports.map((p) => [p.notice.rule, p.notice.next_working_day_start, p.notice.noon_rule_morning_start, p.notice.hours_after_notice]),
+        [['next_working_day', '08:00', '', ''], ['next_working_day', '06:00', '', '']], label);
+      const read = X.toCalc(answer);
+      assert.deepEqual(read.notes, [], label + ': nothing to flag');
+      assert.deepEqual(read.calc.ports.map((p) => [p.nor.rule, p.nor.nextDayStart, p.nor.unlessSoonerCommenced]), calc.ports.map((p) => ['nextday', p.nor.nextDayStart, sooner]), label);
+      const a = E.compute(calc), b = E.compute(read.calc);
+      assert.deepEqual([b.ok, b.errors], [a.ok, a.errors], label);
+      if (!a.ok) { incomplete.push(label + ': ' + a.errors.map((e) => e.code + '/' + e.port).join()); continue; }
+      assert.deepEqual(b.ports.map((p) => E.fmtDT(p.start)), a.ports.map((p) => E.fmtDT(p.start)), label + ' start');
+      for (const k of ['allowedMin', 'usedMin', 'demMin', 'desMin', 'demurrage', 'despatch', 'commission', 'net', 'outcome', 'mode']) assert.equal(b.totals[k], a.totals[k], label + ' ' + k);
+    }
+  }
+  // Baku: notice on Friday night, discharge completed on Sunday. Without “unless sooner commenced” laytime would start on
+  // Monday, after completion — typed or read, the calculator says so instead of counting.
+  assert.deepEqual(incomplete, ['caspian strict: end_before_start/1']);
+});
+
+test('one document only: the next-working-day rule is a term — kept with the terms, replaced with the charter party', () => {
+  const base = JSON.parse(JSON.stringify(examples()[0].calc));
+  base.ports.forEach((p) => Object.assign(p.nor, { rule: 'nextday', nextDayStart: '07:00' }));
+  // a statement of facts for a new voyage: the rule and its time stay, the new notice is counted by them
+  const sof = X.blankExtraction();
+  sof.documents = { charter_party: 'absent', statement_of_facts: 'read' };
+  const load = X.blankExtractionPort('load');
+  load.name = 'Novorossiysk';
+  load.notice.tendered = '2026-06-02T11:00'; // a Tuesday
+  load.operations_commenced = '2026-06-03T09:00';
+  load.operations_completed = '2026-06-05T03:00';
+  sof.ports.push(load);
+  const dis = X.blankExtractionPort('discharge');
+  dis.name = 'Alexandria';
+  dis.notice.tendered = '2026-06-09T16:00';
+  dis.operations_completed = '2026-06-12T10:00';
+  sof.ports.push(dis);
+  const kept = X.merge(base, X.toCalc(sof), 'terms');
+  assert.deepEqual(kept.calc.ports.map((p) => [p.nor.rule, p.nor.nextDayStart, p.nor.tendered]), [['nextday', '07:00', '2026-06-02T11:00'], ['nextday', '07:00', '2026-06-09T16:00']]);
+  assert.deepEqual(kept.notes, []);
+  const r = E.compute(kept.calc);
+  assert.equal(r.ok, true, JSON.stringify(r.errors));
+  assert.equal(E.fmtDT(r.ports[0].start), '2026-06-03T07:00');
+  // a port the calculation did not have yet takes the rule of the port before it, as with “Add port”
+  const one = M.normalizeCalc(Object.assign({}, base, { ports: [base.ports[0]] }));
+  const added = X.merge(one, X.toCalc(sof), 'terms');
+  assert.deepEqual(added.calc.ports.map((p) => [p.name, p.nor.rule, p.nor.nextDayStart]), [['Novorossiysk', 'nextday', '07:00'], ['Alexandria', 'nextday', '07:00']]);
+  // a charter party read on its own brings the rule; the times already entered stay and are counted by it
+  const cp = extractionOf(examples()[0].calc);
+  cp.documents = { charter_party: 'read', statement_of_facts: 'absent' };
+  for (const p of cp.ports) {
+    p.notice = Object.assign(X.blankExtractionPort().notice, { rule: 'next_working_day', next_working_day_start: '08:00', unless_sooner_commenced: 'no' });
+    p.operations_commenced = ''; p.operations_completed = ''; p.events = [];
+  }
+  const typed = examples()[0].calc;
+  const m = X.merge(typed, X.toCalc(cp), 'facts');
+  assert.deepEqual(m.calc.ports.map((p) => [p.nor.rule, p.nor.nextDayStart, p.nor.tendered]), [['nextday', '08:00', '2026-03-06T09:00'], ['nextday', '08:00', '2026-03-15T10:00']]);
+  assert.deepEqual(m.notes, []);
+  const rm = E.compute(m.calc);
+  assert.equal(rm.ok, true, JSON.stringify(rm.errors));
+  assert.deepEqual(rm.ports.map((p) => E.fmtDT(p.start)), ['2026-03-09T08:00', '2026-03-16T08:00']); // Friday -> Monday; Sunday -> Monday
+});
+
 test('“72 hours in total” for two ports reads as reversible; separate allowances read as separate', () => {
   const tanker = extractionOf(examples()[1].calc);
   tanker.laytime.between_ports = 'unknown';

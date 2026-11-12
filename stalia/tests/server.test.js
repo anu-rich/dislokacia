@@ -291,6 +291,34 @@ serverTest('a reply that is nearly right is accepted: fenced, with a sentence ar
   } finally { await s.mock.close(); }
 });
 
+serverTest('the next-working-day notice rule: the reader is told when to use it, and its answer comes back as given', async () => {
+  const { prompt } = await load();
+  // the instruction names the rule where it lists the notice rules, and sets it apart from the noon rule;
+  // the value and its time field are in the schema that follows
+  const about = prompt.SYSTEM_PROMPT.split('\n').find((line) => line.startsWith('- Notice of readiness:'));
+  assert.match(about, /the next working day at a set time \("[^"]*08:00 on the next working day after NOR"\), which is its own rule and not the noon rule/);
+  const sent = prompt.systemPrompt();
+  assert.ok(sent.includes('"enum":["hours_after_notice","noon_rule","next_working_day","stated_time","unknown"]') && sent.includes('"next_working_day_start":{"type":"string"'));
+  // a reply that uses it passes through the service untouched and becomes that rule in the calculator
+  const good = answer();
+  good.ports.forEach((p) => Object.assign(p.notice, { rule: 'next_working_day', noon_rule_morning_start: '', noon_rule_afternoon_start: '', next_working_day_start: '08:00' }));
+  const older = JSON.parse(JSON.stringify(good)); // a reply that leaves the new field out altogether
+  older.ports.forEach((p) => { delete p.notice.next_working_day_start; });
+  const replies = [JSON.stringify(good), JSON.stringify(older)];
+  const s = await service((req) => ({ text: replies[req.n - 1] }), { FREE_PER_DAY: '9' });
+  try {
+    const r = await s.post(twoPages());
+    assert.equal(r.status, 200);
+    assert.deepEqual(r.json.extraction, good);
+    assert.deepEqual(X.toCalc(r.json.extraction).calc.ports.map((p) => [p.nor.rule, p.nor.nextDayStart]), [['nextday', '08:00'], ['nextday', '08:00']]);
+    assert.deepEqual(X.toCalc(r.json.extraction).notes, []);
+    const partial = (await s.post(twoPages())).json.extraction;
+    assert.equal(X.shapeError(partial, X.SCHEMA), '');
+    assert.deepEqual(partial.ports.map((p) => [p.notice.rule, p.notice.next_working_day_start]), [['next_working_day', ''], ['next_working_day', '']]);
+    assert.deepEqual(X.toCalc(partial).calc.ports.map((p) => [p.nor.rule, p.nor.nextDayStart]), [['nextday', '08:00'], ['nextday', '08:00']], 'the form shows the usual 08:00');
+  } finally { await s.mock.close(); }
+});
+
 serverTest('other sites cannot use the service from a browser; the site and the mobile apps can', async () => {
   const s = await service(null, { ALLOWED_ORIGINS: 'https://stalia.example/, https://www.stalia.example' });
   try {

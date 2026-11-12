@@ -129,6 +129,45 @@ const norm = (s) => String(s).replace(/[  ]/g, ' ').replace(/\s+/g, ' ').trim
   check('markup typed by the user stays text', (await page.evaluate(() => window.__xss)) === undefined);
   await page.fill('#f-meta-vessel', 'MV EXAMPLE TRADER');
 
+  console.log('notice rule: the next working day');
+  // The example's first port: notice on Friday 6 March 09:00, Saturdays and Sundays excepted, loading began Friday 14:10.
+  const rule = '#f-ports-0-nor-rule', startTime = '#f-ports-0-nor-nextDayStart', sooner = '#f-ports-0-nor-unlessSoonerCommenced';
+  const facts = () => text(page, '#sheet .tsp .facts');
+  check('the selector offers the rule between the noon rule and a time entered by hand',
+    (await page.locator(rule + ' option').evaluateAll((os) => os.map((o) => o.value).join())) === 'turn,gencon,nextday,manual' &&
+    norm(await page.locator(rule + ' option[value="nextday"]').textContent()) === I.t('en', 'n.rule.nextday') && I.t('en', 'n.rule.nextday') !== 'n.rule.nextday');
+  check('as shipped, the noon rule starts laytime on the day of the notice', (await page.inputValue(rule)) === 'gencon' && /06 Mar 2026 13:00 Laytime commenced/.test(await facts()), await facts());
+  await page.selectOption(rule, 'nextday');
+  check('choosing it shows one time field in place of the two of the noon rule',
+    await page.locator(startTime).isVisible() && (await page.getAttribute(startTime, 'type')) === 'time' &&
+    norm(await page.locator('label[for="f-ports-0-nor-nextDayStart"]').innerText()) === I.t('en', 'n.nextDayStart') && I.t('en', 'n.nextDayStart') !== 'n.nextDayStart' &&
+    (await page.locator('#f-ports-0-nor-amStart, #f-ports-0-nor-pmStart, #f-ports-0-nor-turnHours, #f-ports-0-nor-manualStart').count()) === 0);
+  check('“unless sooner commenced” and office hours stay on offer', await page.isChecked(sooner) && await page.isChecked('#f-ports-0-nor-officeHours-enabled'));
+  check('loading began before the next working day: the time sheet says laytime started with it',
+    /06 Mar 2026 14:10 Laytime commenced \(operations started before notice time ran out\)/.test(await facts()), await facts());
+  await page.uncheck(sooner);
+  check('without “unless sooner commenced” the time sheet starts on Monday at 08:00', /09 Mar 2026 08:00 Laytime commenced/.test(await facts()) &&
+    !/0[678] Mar 2026 \d\d:\d\d Laytime commenced/.test(await facts()) && /^09 Mar 2026 Mon 08:00 /.test(await text(page, '#sheet .tsp table.ts tbody tr')), await facts());
+  await page.fill(startTime, '06:00');
+  let nd = await text(page, '#summary');
+  check('another start time moves the start and the result', /09 Mar 2026 06:00 Laytime commenced/.test(await facts()) && /USD 13,684\.38/.test(nd) && /1d 00h 00m saved/.test(nd), nd);
+  await page.waitForTimeout(700);
+  await page.reload({ waitUntil: 'networkidle' });
+  nd = await text(page, '#summary');
+  check('the rule, its time and the result survive a reload', (await page.inputValue(rule)) === 'nextday' && (await page.inputValue(startTime)) === '06:00' && !(await page.isChecked(sooner)) && /USD 13,684\.38/.test(nd), nd);
+  await page.fill(startTime, '08:00');
+  await page.click('[data-act="statement"]');
+  await page.selectOption('#st-lang', 'ru');
+  const ndPaper = await text(page, '#st-paper');
+  check('the statement words the rule in its own language, with the start it gave', ndPaper.includes(I.t('ru', 'st.term.nor.nextday', { at: '08:00' })) && !/[{}]/.test(ndPaper) && /09\.03\.2026 08:00/.test(ndPaper), ndPaper.slice(0, 700));
+  await page.selectOption('#st-lang', 'en');
+  await page.keyboard.press('Escape');
+  await page.selectOption(rule, 'gencon');
+  await page.check(sooner);
+  check('back on the noon rule its two times and the result are as they were',
+    (await page.inputValue('#f-ports-0-nor-amStart')) === '13:00' && (await page.inputValue('#f-ports-0-nor-pmStart')) === '08:00' && (await page.locator(startTime).count()) === 0 &&
+    /06 Mar 2026 13:00 Laytime commenced/.test(await facts()) && /USD 23,841\.93/.test(await text(page, '#summary')), await text(page, '#summary'));
+
   console.log('time line tooltip');
   await page.locator('.tl .seg-dem').first().hover();
   check('tooltip shows on hover', await page.locator('#tip').isVisible() && /On demurrage/.test(await text(page, '#tip')));

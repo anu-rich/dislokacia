@@ -20,7 +20,7 @@
    *   dialog(html), closeDialog(), copy(text), download(name, mime, content), link(), touch()
    */
   function create(app) {
-    const { t, esc, engine: E, model: M, view: V, core: C, state } = app;
+    const { t, esc, engine: E, model: M, view: V, core: C, state, extract: X, reader } = app;
     const $ = (s) => document.querySelector(s);
     const endpoint = (app.config.space && app.config.space.endpoint) || (app.config.ai && app.config.ai.endpoint) || '';
     if (!endpoint || app.preview || !C) {
@@ -45,11 +45,12 @@
     /** The result of a calculation in a few words, for a list. */
     function resultText(sum) {
       if (!sum || sum.net == null) return '—';
-      if (sum.outcome === 'demurrage') return t('sp.out.demurrage') + ' ' + V.fmtMoney(Math.abs(sum.net), sum.currency, state.lang);
-      if (sum.outcome === 'despatch') return t('sp.out.despatch') + ' ' + V.fmtMoney(Math.abs(sum.net), sum.currency, state.lang);
+      // "net_demurrage" / "net_despatch": demurrage at one port set against despatch at another; the balance is what is owed
+      if (/demurrage$/.test(sum.outcome)) return t('sp.out.demurrage') + ' ' + V.fmtMoney(Math.abs(sum.net), sum.currency, state.lang);
+      if (/despatch$/.test(sum.outcome)) return t('sp.out.despatch') + ' ' + V.fmtMoney(Math.abs(sum.net), sum.currency, state.lang);
       return t('sp.out.none');
     }
-    const signed = (sum) => (sum && sum.net != null ? (sum.outcome === 'despatch' ? -Math.abs(sum.net) : (sum.outcome === 'demurrage' ? Math.abs(sum.net) : 0)) : null);
+    const signed = (sum) => (sum && sum.net != null ? (/despatch$/.test(sum.outcome) ? -Math.abs(sum.net) : (/demurrage$/.test(sum.outcome) ? Math.abs(sum.net) : 0)) : null);
     async function run(fn, quiet) {
       ui.error = '';
       try { return await fn(); } catch (e) {
@@ -62,7 +63,8 @@
     const title = (m) => m.title || [m.vessel, m.voyage].filter(Boolean).join(' ') || t('sp.untitled');
 
     // ------------------------------------------------------------ the bar above the form
-    const fresh = () => JSON.stringify(state.calc);
+    // what would be saved: the calculation and how many things a reading left to check
+    const fresh = () => JSON.stringify(state.calc) + '#' + (state.notes || []).length;
     const dirty = () => !!state.cloud && fresh() !== state.cloud.saved;
     /** Everything the bar shows, in one line: it is drawn again only when this changes. */
     const barSig = () => { const c = state.cloud; return c ? [c.id, c.base, c.head, c.role, c.status, c.comments, c.active, c.newer ? c.newer.n : 0, dirty(), role()].join('|') : ['-', role(), state.contractId, state.source, state.pristine, (ui.contracts || []).length].join('|'); };
@@ -121,9 +123,12 @@
       const calc = M.normalizeCalc(r.calc);
       app.setCalc(calc, {
         source: 'space', pristine: false,
-        cloud: { id, base: r.n, head: r.head, role: r.role, guest: r.guest, active: r.active, contractId: r.contractId, status: (r.meta && r.meta.status) || 'draft', comments: r.comments, saved: JSON.stringify(calc), newer: null },
-        contractId: r.contractId,
+        cloud: { id, base: r.n, head: r.head, role: r.role, guest: r.guest, active: r.active, contractId: r.contractId, status: (r.meta && r.meta.status) || 'draft', comments: r.comments, saved: '', newer: null },
+        contractId: r.contractId, notes: r.notes,
       });
+      // what is on screen now is exactly what is stored: say so (the bar was drawn before this was known)
+      state.cloud.saved = fresh();
+      renderBar();
       if (ui.open) hide();
       window.scrollTo(0, 0);
       watch();
@@ -133,7 +138,7 @@
       const c = state.cloud;
       const base = force ? c.head : c.base;
       try {
-        const r = await sp.save(c.id, base, state.calc, state.result, { guest: c.guest, note, status: c.status === 'agreed' ? 'sent' : c.status });
+        const r = await sp.save(c.id, base, state.calc, state.result, { guest: c.guest, note, status: c.status === 'agreed' ? 'sent' : c.status, notes: state.notes });
         if (c.status === 'agreed') c.status = 'sent';
         Object.assign(c, { base: r.head, head: r.head, saved: fresh(), newer: null });
         ui.list = null;
@@ -202,6 +207,9 @@
       if (space.trialUntil > now) return '<span class="pill pill-pro">' + esc(t('sp.plan.trial', { date: day(space.trialUntil) })) + '</span>';
       return '<span class="pill pill-dem">' + esc(t('sp.plan.locked')) + '</span>';
     }
+    /** When the voyage of a list entry began; entries saved before that was recorded fall back on their month. */
+    const startKey = (r) => r.meta.start || (r.meta.period ? r.meta.period + '-99' : '');
+    /** The rows to show: the latest voyage first, and within one moment the latest change first. */
     function filtered() {
       const f = ui.f, q = f.q.toLowerCase();
       return (ui.list || []).filter((r) => {
@@ -211,8 +219,16 @@
         if (f.status && (m.status || 'draft') !== f.status) return false;
         if (q && [m.title, m.vessel, m.voyage, m.charterers, m.owners, m.ports].join(' ').toLowerCase().indexOf(q) < 0) return false;
         return true;
-      });
+      }).sort((a, b) => (startKey(a) < startKey(b) ? 1 : startKey(a) > startKey(b) ? -1 : b.updatedAt - a.updatedAt));
     }
+    /** The counterparty's figure of a row and how far it is from ours; nulls when either is missing. */
+    function claimOf(r) {
+      const ours = signed(r.meta.sum), theirs = typeof r.meta.claimed === 'number' ? r.meta.claimed : null;
+      return { ours, theirs, gap: ours != null && theirs != null ? Math.round((theirs - ours) * 100) / 100 : null };
+    }
+    const money = (v, cur) => (v < 0 ? '−' : '') + V.fmtMoney(Math.abs(v), cur, state.lang);
+    const gapHTML = (gap, cur) => (gap == null ? '' : Math.abs(gap) < 0.005 ? '<span class="pill pill-lay">' + esc(t('cl.same')) + '</span>'
+      : '<span class="' + (gap > 0 ? 'up' : 'down') + '">' + (gap > 0 ? '+' : '−') + esc(V.fmtMoney(Math.abs(gap), cur, state.lang)) + '</span>');
     function calcsHTML() {
       const all = ui.list || [], rows = filtered();
       if (!all.length) return '<p class="sp-empty">' + esc(t('sp.calcs.empty')) + '</p>';
@@ -222,24 +238,37 @@
         '<select data-sp="contract">' + opt('', t('sp.calcs.allContracts'), ui.f.contract) + (ui.contracts || []).map((c) => opt(c.id, c.data.name || '—', ui.f.contract)).join('') + opt('-', t('sp.calcs.noContract'), ui.f.contract) + '</select>' +
         '<select data-sp="month">' + opt('', t('sp.calcs.allMonths'), ui.f.month) + months.map((p) => opt(p, monthName(p), ui.f.month)).join('') + '</select>' +
         '<select data-sp="status">' + opt('', t('sp.calcs.allStatuses'), ui.f.status) + C.STATUSES.map((x) => opt(x, t('sp.status.' + x), ui.f.status)).join('') + '</select></div>';
-      h += '<div class="sp-table-wrap"><table class="sp-table"><thead><tr><th>' + [t('sp.calcs.col.title'), t('sp.calcs.col.period'), t('sp.calcs.col.status'), t('sp.calcs.col.result'), t('sp.calcs.col.changed')].map(esc).join('</th><th>') + '</th><th></th></tr></thead><tbody>';
+      // the counterparty's figures get their two columns as soon as one voyage on screen has one
+      const withClaims = rows.some((r) => typeof r.meta.claimed === 'number');
+      const heads = [t('sp.calcs.col.title'), t('sp.calcs.col.period'), t('sp.calcs.col.status'), t('sp.calcs.col.result')].concat(withClaims ? [t('cl.col.theirs'), t('cl.col.gap')] : [], [t('sp.calcs.col.changed')]);
+      h += '<div class="sp-table-wrap"><table class="sp-table"><thead><tr><th>' + heads.map(esc).join('</th><th>') + '</th><th></th></tr></thead><tbody>';
       for (const r of rows) {
-        const m = r.meta, ct = contractOf(r.contractId);
+        const m = r.meta, ct = contractOf(r.contractId), cl = claimOf(r), cur = (m.sum && m.sum.currency) || 'USD';
         h += '<tr data-id="' + esc(r.id) + '"><td><button type="button" class="sp-open" data-act="sp-open" data-id="' + esc(r.id) + '"><b>' + esc(title(m)) + '</b>' +
-          '<span>' + esc([m.vessel, m.voyage, m.ports].filter(Boolean).join(' · ')) + (ct ? ' · ' + esc(ct.data.name || '') : '') + '</span></button></td>' +
+          '<span>' + esc([m.vessel, m.voyage, m.ports].filter(Boolean).join(' · ')) + (ct ? ' · ' + esc(ct.data.name || '') : '') + '</span></button>' +
+          (m.flags ? ' <span class="pill pill-dem sp-flags">' + esc(t('sp.calcs.flags', { n: m.flags })) + '</span>' : '') + '</td>' +
           '<td>' + esc(m.period ? monthName(m.period) : '') + '</td>' +
           '<td><span class="pill sp-st-' + esc(m.status || 'draft') + '">' + esc(t('sp.status.' + (C.STATUSES.includes(m.status) ? m.status : 'draft'))) + '</span></td>' +
           '<td class="num">' + esc(resultText(m.sum)) + '</td>' +
+          (withClaims ? '<td class="num">' + (cl.theirs == null ? '' : esc(money(cl.theirs, cur))) + '</td><td class="num">' + gapHTML(cl.gap, cur) + '</td>' : '') +
           '<td>' + esc(when(r.updatedAt)) + '<span class="sp-by">' + esc(m.by || '') + (m.guest || r.stale ? ' · ' + esc(t('sp.hist.guest')) : '') + ' · v' + r.head + '</span></td>' +
           '<td>' + (canEdit() ? btn('sp-del', t('sp.calcs.delete'), 'btn-sm btn-ghost', ' data-id="' + esc(r.id) + '"') : '') + '</td></tr>';
       }
       h += '</tbody></table></div>';
       // the foot of the table: what the rows on screen add up to, one line per currency
-      const sums = {};
-      for (const r of rows) { const v = signed(r.meta.sum); if (v != null) { const cur = r.meta.sum.currency; sums[cur] = (sums[cur] || 0) + v; } }
+      const sums = {}, theirs = {}, gaps = {};
+      for (const r of rows) {
+        const v = signed(r.meta.sum), cl = claimOf(r);
+        if (v == null) continue;
+        const cur = r.meta.sum.currency;
+        sums[cur] = (sums[cur] || 0) + v;
+        if (cl.gap != null) { theirs[cur] = (theirs[cur] || 0) + cl.theirs; gaps[cur] = (gaps[cur] || 0) + cl.gap; }
+      }
       const parts = Object.keys(sums).sort().map((cur) => (sums[cur] < 0 ? t('sp.out.despatch') : t('sp.out.demurrage')) + ' ' + V.fmtMoney(Math.abs(sums[cur]), cur, state.lang));
-      h += '<div class="sp-foot"><span id="sp-total">' + esc(t('sp.calcs.total', { n: rows.length })) + ' <b>' + esc(parts.join(' · ') || '—') + '</b></span><span class="grow"></span>' +
-        (rows.length ? btn('sp-csv', t('sp.calcs.csv')) : '') + '</div>';
+      const claimParts = Object.keys(theirs).sort().map((cur) => t('cl.total', { theirs: money(theirs[cur], cur), gap: (gaps[cur] > 0 ? '+' : '') + money(Math.round(gaps[cur] * 100) / 100, cur) }));
+      h += '<div class="sp-foot"><span id="sp-total">' + esc(t('sp.calcs.total', { n: rows.length })) + ' <b>' + esc(parts.join(' · ') || '—') + '</b>' +
+        (claimParts.length ? '<span id="sp-claims-total" class="sp-claims-total">' + esc(claimParts.join(' · ')) + '</span>' : '') + '</span><span class="grow"></span>' +
+        (rows.length && canEdit() ? btn('sp-claims', t('cl.paste')) : '') + (rows.length ? btn('sp-csv', t('sp.calcs.csv')) : '') + '</div>';
       return h;
     }
     function contractsHTML() {
@@ -257,8 +286,9 @@
       for (const c of list) {
         const n = (ui.list || []).filter((r) => r.contractId === c.id).length;
         h += '<li><div><b>' + esc(c.data.name || '—') + '</b><span>' + esc([c.data.counterparty, V.termsText ? '' : ''].filter(Boolean).join(' · ')) + (c.data.counterparty ? ' · ' : '') + esc(t('sp.ct.voyages', { n })) + '</span>' +
+          (c.data.terms && V.rulesText(c.data.terms, state.lang) ? '<p class="sp-clauses sp-rules"><b>' + esc(t('t.rules')) + ':</b> ' + esc(V.rulesText(c.data.terms, state.lang)) + '</p>' : '') +
           (c.data.clauses ? '<p class="sp-clauses">' + esc(c.data.clauses) + '</p>' : '') + '</div><div class="sp-row">' +
-          (canEdit() ? btn('sp-ct-new', t('sp.ct.new'), 'btn-sm btn-primary', ' data-id="' + esc(c.id) + '"') : '') +
+          (canEdit() ? btn('sp-ct-new', t('sp.ct.new'), 'btn-sm btn-primary', ' data-id="' + esc(c.id) + '"') + btn('sp-b-start', t('sp.batch.tab'), 'btn-sm', ' data-id="' + esc(c.id) + '"') : '') +
           btn('sp-ct-filter', t('sp.ct.show'), 'btn-sm', ' data-id="' + esc(c.id) + '"') +
           (canEdit() ? btn('sp-ct-update', t('sp.ct.update'), 'btn-sm', ' data-id="' + esc(c.id) + '"') + btn('sp-ct-del', t('sp.calcs.delete'), 'btn-sm btn-ghost', ' data-id="' + esc(c.id) + '"') : '') +
           '</div></li>';
@@ -305,9 +335,12 @@
       const o = ui.over;
       let h = '<div class="sp-head"><h2 class="imp-h">' + esc(o.space.name || t('sp.title')) + '</h2><span class="pill">' + esc(t('sp.role.' + o.me.role)) + '</span>' + planHTML(o.space) + '</div>';
       if (ui.error) h += '<p class="note note-err" role="alert">' + esc(ui.error) + '</p>';
-      h += '<div class="sp-tabs" role="tablist">' + [['calcs', t('sp.tab.calcs') + ' · ' + (ui.list || []).length], ['contracts', t('sp.tab.contracts') + ' · ' + (ui.contracts || []).length], ['people', t('sp.tab.people') + ' · ' + o.members.length]]
+      const tabs = [['calcs', t('sp.tab.calcs') + ' · ' + (ui.list || []).length], ['contracts', t('sp.tab.contracts') + ' · ' + (ui.contracts || []).length]]
+        .concat(canEdit() && reader ? [['batch', t('sp.batch.tab')]] : [], [['people', t('sp.tab.people') + ' · ' + o.members.length]]);
+      if (ui.tab === 'batch' && !(canEdit() && reader)) ui.tab = 'calcs';
+      h += '<div class="sp-tabs" role="tablist">' + tabs
         .map((x) => '<button type="button" role="tab" class="sp-tab' + (ui.tab === x[0] ? ' on' : '') + '" data-act="sp-tab" data-tab="' + x[0] + '" aria-selected="' + (ui.tab === x[0]) + '">' + esc(x[1]) + '</button>').join('') + '</div>';
-      h += '<div class="sp-pane">' + (ui.tab === 'people' ? peopleHTML() : ui.tab === 'contracts' ? contractsHTML() : calcsHTML()) + '</div>';
+      h += '<div class="sp-pane">' + (ui.tab === 'people' ? peopleHTML() : ui.tab === 'contracts' ? contractsHTML() : ui.tab === 'batch' ? batchHTML() : calcsHTML()) + '</div>';
       body.innerHTML = h;
       if (keep) { const q = $('#sp-q'); if (q) { q.focus(); q.setSelectionRange(q.value.length, q.value.length); } }
     }
@@ -369,6 +402,170 @@
       app.dialog(h + '</div>');
     }
 
+    // ------------------------------------------------------------ a month's scan read into voyages
+    // The scan is cut into voyages (so many pages each; any cut can be moved), every voyage is read under the terms
+    // of one contract, and each becomes a calculation of the space with what the reading left to check.
+    const MAX_BATCH = 120;
+    const B = { contractId: '', pages: [], starts: [0], per: 2, busy: '', error: '', run: null, quota: null };
+    const canRead = () => !!(reader && reader.available());
+    /** A new calculation that carries a contract's terms and nothing of any voyage. */
+    function contractCalc(c) {
+      const calc = M.normalizeCalc(JSON.parse(JSON.stringify(c.data.terms)));
+      calc.meta.clauses = c.data.clauses || calc.meta.clauses || '';
+      return calc;
+    }
+    function voyageName(calc) {
+      const st = C.startOf(calc), m = calc.meta;
+      return [[m.vessel, m.voyage].filter(Boolean).join(' '), calc.ports.map((p) => p.name).filter(Boolean).join(' — '), st ? V.fmtDate(E.parseDT(st), state.lang) : ''].filter(Boolean).join(' · ').slice(0, 120);
+    }
+    const pagesText = (g) => (g.length > 1 ? (g[0] + 1) + '–' + (g[g.length - 1] + 1) : String(g[0] + 1));
+    function batchHTML() {
+      const cts = ui.contracts || [];
+      if (!cts.length) return '<p class="sp-empty">' + esc(t('sp.batch.needContract')) + '</p><p>' + btn('sp-tab', t('sp.tab.contracts'), 'btn', ' data-tab="contracts"') + '</p>';
+      if (!contractOf(B.contractId)) B.contractId = cts[0].id;
+      if (B.run) return runHTML();
+      const groups = C.groupPages(B.pages.length, B.starts), max = reader.maxPages;
+      let h = '<p class="sp-lead">' + esc(t('sp.batch.lead')) + '</p>';
+      if (!canRead()) h += '<p class="note note-err">' + esc(t('imp.err.unavailable')) + '</p>';
+      h += '<div class="sp-form"><div><label class="f-l" for="sp-b-ct">' + esc(t('sp.batch.contract')) + '</label><select id="sp-b-ct" data-sp="b-contract">' + cts.map((c) => opt(c.id, c.data.name || '—', B.contractId)).join('') + '</select></div>' +
+        '<div><label class="f-l" for="sp-b-per">' + esc(t('sp.batch.per')) + '</label><input type="number" id="sp-b-per" data-sp="b-per" min="1" max="' + max + '" step="1" inputmode="numeric" value="' + B.per + '"></div>' +
+        '<div><label class="btn' + (B.busy ? ' disabled' : '') + '" for="sp-b-file">' + esc(t(B.pages.length ? 'sp.batch.addMore' : 'sp.batch.add')) + '</label><input type="file" id="sp-b-file" data-sp="b-files" accept="application/pdf,image/*" multiple hidden' + (B.busy ? ' disabled' : '') + '></div></div>';
+      if (B.busy === 'opening') return h + '<p class="sp-empty" role="status">' + esc(t('sp.batch.opening', { n: B.pages.length })) + '</p>';
+      if (B.error) h += '<p class="note note-err" role="alert">' + esc(B.error) + '</p>';
+      if (!B.pages.length) return h;
+      h += '<div class="sp-b-grid">';
+      groups.forEach((g, k) => {
+        h += '<fieldset class="sp-b-voy' + (g.length > max ? ' bad' : '') + '"><legend>' + esc(t('sp.batch.voyage', { n: k + 1 })) + (g.length > max ? ' · ' + esc(t('imp.tooMany', { n: max })) : '') + '</legend>';
+        for (const i of g) {
+          const p = B.pages[i];
+          h += '<figure><img src="' + p.thumb + '" alt="" loading="lazy" width="' + Math.round(p.w / 10) + '" height="' + Math.round(p.h / 10) + '"><figcaption>' + esc(t('imp.page', { n: i + 1 })) + '</figcaption>' +
+            (i > 0 ? btn('sp-b-cut', t(i === g[0] ? 'sp.batch.join' : 'sp.batch.cut'), 'btn-sm btn-ghost', ' data-i="' + i + '"') : '') + '</figure>';
+        }
+        h += '</fieldset>';
+      });
+      h += '</div><p class="f-hint">' + esc(t('imp.privacy')) + ' ' + esc(t('sp.batch.cost')) + '</p>';
+      h += '<div class="sp-foot"><span id="sp-b-count">' + esc(t('sp.batch.count', { pages: B.pages.length, n: groups.length })) + '</span><span class="grow"></span>' +
+        btn('sp-b-clear', t('sp.batch.clear'), 'btn-sm btn-ghost') +
+        btn('sp-b-go', t('sp.batch.go', { n: groups.length }), 'btn btn-primary', canRead() && !groups.some((g) => g.length > max) ? '' : ' disabled') + '</div>';
+      return h;
+    }
+    function runHTML() {
+      const R = B.run, saved = R.rows.filter((r) => r.status === 'saved'), failed = R.rows.filter((r) => r.status === 'failed').length;
+      let h = '<p class="sp-lead" role="status" id="sp-b-status">' + esc(R.active ? t('sp.batch.running', { done: saved.length + failed, n: R.rows.length }) : t('sp.batch.done', { done: saved.length, n: R.rows.length })) + '</p>';
+      if (!R.active && saved.length) {
+        const flags = saved.reduce((a, r) => a + r.flags, 0);
+        h += '<p class="note ' + (flags ? 'note-warn' : 'note-ok') + '">' + esc(flags ? t('sp.batch.check', { n: flags, k: saved.filter((r) => r.flags).length }) : t('sp.batch.allClean')) + '</p>';
+      }
+      h += '<div class="sp-table-wrap"><table class="sp-table"><thead><tr><th>#</th><th>' + [t('sp.batch.col.pages'), t('sp.batch.col.result'), t('sp.batch.col.check')].map(esc).join('</th><th>') + '</th><th></th></tr></thead><tbody>';
+      R.rows.forEach((r, k) => {
+        h += '<tr data-k="' + k + '" data-st="' + r.status + '"><td>' + (k + 1) + '</td><td>' + esc(pagesText(r.pages)) + '</td><td>' +
+          (r.status === 'saved' ? '<b>' + esc(r.title) + '</b><span class="sp-by">' + esc(resultText(r.sum)) + '</span>'
+            : r.status === 'failed' ? '<span class="sp-b-err">' + esc(r.error) + '</span>' : esc(t(r.status === 'reading' ? 'sp.batch.st.reading' : 'sp.batch.st.wait'))) + '</td><td>' +
+          (r.status === 'saved' ? (r.flags ? '<span class="pill pill-dem">' + esc(t('sp.calcs.flags', { n: r.flags })) + '</span>' : '<span class="pill pill-lay">' + esc(t('sp.batch.clean')) + '</span>') : '') + '</td><td>' +
+          (r.status === 'saved' ? btn('sp-open', t('sp.batch.open'), 'btn-sm', ' data-id="' + esc(r.id) + '"') : (r.status === 'failed' && !R.active ? btn('sp-b-retry', t('sp.batch.retry'), 'btn-sm', ' data-k="' + k + '"') : '')) + '</td></tr>';
+      });
+      h += '</tbody></table></div><div class="sp-foot"><span>' + (B.quota ? esc(reader.quotaWords(B.quota)) : '') + '</span><span class="grow"></span>' +
+        (R.active ? btn('sp-b-stop', t('sp.batch.stop'), 'btn') : btn('sp-b-new', t('sp.batch.again'), 'btn-sm btn-ghost') + btn('sp-b-list', t('sp.batch.toList'), 'btn btn-primary')) + '</div>';
+      return h;
+    }
+    /** Read the voyages that are still waiting, two at a time, and file each as a calculation of the space. */
+    async function runBatch() {
+      const ct = contractOf(B.contractId), R = B.run;
+      if (!ct || !R || R.active) return;
+      R.active = true; R.stop = false; render();
+      const base = contractCalc(ct), terms = V.readerTerms(base);
+      const next = () => (R.stop ? null : R.rows.find((r) => r.status === 'wait'));
+      const worker = async () => {
+        for (let row = next(); row; row = next()) {
+          row.status = 'reading'; render();
+          const ac = typeof AbortController === 'function' ? new AbortController() : null;
+          if (ac) R.aborts.add(ac);
+          const res = await reader.readSheets(row.pages.map((i) => B.pages[i]), terms, ac ? ac.signal : undefined);
+          if (ac) R.aborts.delete(ac);
+          if (res.quota) B.quota = res.quota;
+          if (res.error === 'aborted') { row.status = 'wait'; break; }
+          if (!res.ok) {
+            row.status = 'failed'; row.error = reader.errorText(res);
+            // nothing further can succeed once the allowance is spent or the service is away
+            if (['limit', 'pro', 'unavailable', 'network'].indexOf(res.error) >= 0) R.stop = true;
+            render(); continue;
+          }
+          try {
+            const got = X.toCalc(res.extraction);
+            if (got.empty || !got.calc.ports.some((p) => X.hasFacts(p))) { row.status = 'failed'; row.error = t('imp.err.empty'); render(); continue; }
+            const out = X.merge(JSON.parse(JSON.stringify(base)), got, 'terms');
+            out.calc.name = voyageName(out.calc);
+            const result = E.compute(out.calc), notes = out.notes.slice();
+            // a voyage that does not add up yet is kept all the same, with that said first
+            if (!result.ok) notes.unshift({ field: 'other', port: null, status: 'not_found', comment: t('sp.batch.incomplete') });
+            const made = await sp.add(out.calc, result, { contractId: ct.id, notes, note: t('sp.batch.note', { pages: pagesText(row.pages) }) });
+            Object.assign(row, { status: 'saved', id: made.id, title: out.calc.name, sum: C.summaryOf(out.calc, result), flags: notes.length });
+          } catch (e) {
+            row.status = 'failed'; row.error = errText(e);
+            if (e && ['plan', 'auth', 'forbidden', 'limit', 'full'].indexOf(e.code) >= 0) R.stop = true;
+          }
+          render();
+        }
+      };
+      await Promise.all([worker(), worker()]);
+      R.active = false;
+      try { ui.list = await sp.list(); } catch (e) { ui.list = null; }
+      render();
+    }
+
+    // ------------------------------------------------------------ the counterparty's figures, pasted as a column
+    /** The rows on screen from the earliest voyage to the latest: the order of a claim sent for the month. */
+    const inVoyageOrder = () => filtered().slice().reverse();
+    const parseColumn = (text) => String(text || '').split(/\r?\n/).map((x) => x.trim()).filter(Boolean).map((x) => E.num(x.replace(/[^\d.,\-\s]/g, '')));
+    function claimsPreview() {
+      const box = $('#sp-cl-preview'), go = $('#sp-cl-go');
+      if (!box) return;
+      const rows = inVoyageOrder(), nums = parseColumn(val('sp-cl-text')), bad = nums.some((n) => isNaN(n));
+      const ok = nums.length === rows.length && !bad;
+      let h = '<p class="note ' + (ok ? 'note-ok' : 'note-warn') + '">' + esc(bad ? t('cl.paste.bad') : t('cl.paste.count', { lines: nums.length, n: rows.length })) + '</p>';
+      if (nums.length && !bad) {
+        h += '<table class="sp-table"><tbody>' + rows.map((r, i) => {
+          const cur = (r.meta.sum && r.meta.sum.currency) || 'USD', ours = signed(r.meta.sum), theirs = i < nums.length ? nums[i] : null;
+          return '<tr><td>' + (i + 1) + '</td><td>' + esc(title(r.meta)) + '</td><td class="num">' + (ours == null ? '—' : esc(money(ours, cur))) + '</td><td class="num">' + (theirs == null ? '' : esc(money(theirs, cur))) + '</td><td class="num">' +
+            (theirs == null || ours == null ? '' : gapHTML(Math.round((theirs - ours) * 100) / 100, cur)) + '</td></tr>';
+        }).join('') + '</tbody></table>';
+      }
+      box.innerHTML = h;
+      if (go) go.disabled = !ok;
+    }
+    function claimsDialog() {
+      const rows = inVoyageOrder();
+      app.dialog('<div class="dlg-h"><h2>' + esc(t('cl.paste')) + '</h2>' + btn('dlg-close', t('common.close')) + '</div><div class="dlg-b">' +
+        '<p>' + esc(t('cl.paste.lead', { n: rows.length })) + '</p>' +
+        '<div><label class="f-l" for="sp-cl-text">' + esc(t('cl.paste.label')) + '</label><textarea id="sp-cl-text" data-sp="cl-text" rows="8" inputmode="decimal" spellcheck="false"></textarea></div>' +
+        '<div id="sp-cl-preview"></div><div id="sp-dlg-msg"></div>' +
+        '<div>' + btn('sp-claims-go', t('cl.paste.go'), 'btn btn-primary', ' id="sp-cl-go" disabled') + '</div></div>');
+      claimsPreview();
+      const el = $('#sp-cl-text');
+      if (el) el.focus();
+    }
+    /** Write each figure into its voyage as a new version, so it is kept with the calculation and its history. */
+    async function saveClaims() {
+      const rows = inVoyageOrder(), nums = parseColumn(val('sp-cl-text')), msg = $('#sp-dlg-msg'), go = $('#sp-cl-go');
+      if (nums.length !== rows.length || nums.some((n) => isNaN(n))) return;
+      if (go) go.disabled = true;
+      let done = 0, failed = 0;
+      for (let i = 0; i < rows.length; i++) {
+        if (msg) msg.innerHTML = '<p class="f-hint" role="status">' + esc(t('cl.paste.saving', { done: i, n: rows.length })) + '</p>';
+        try {
+          const r = await sp.load(rows[i].id), calc = M.normalizeCalc(r.calc), amount = String(Math.round(nums[i] * 100) / 100);
+          if (E.num(calc.meta.claimAmount) === Number(amount)) { done++; continue; }
+          calc.meta.claimAmount = amount;
+          await sp.save(rows[i].id, r.head, calc, E.compute(calc), { note: t('cl.paste.note'), status: (r.meta && r.meta.status) || 'draft', notes: r.notes });
+          done++;
+        } catch (e) { failed++; }
+      }
+      app.closeDialog();
+      app.toast(failed ? t('cl.paste.partly', { done, n: rows.length }) : t('cl.paste.done', { n: done }));
+      // the calculation on screen may be one of them: the bar will offer its newer version
+      await refresh();
+    }
+
     // ------------------------------------------------------------ the monthly table
     function csv() {
       const f = V.fmtNumber, sep = state.lang === 'en' || state.lang === 'zh' ? ',' : ';';
@@ -376,11 +573,12 @@
       // words typed by people (some of them outside the company) must stay words when a spreadsheet opens the file
       const w = (v) => { const s = String(v == null ? '' : v); return /^[=+\-@\t\r]/.test(s) ? "'" + s : s; };
       const dur = (min) => (min == null ? '' : Math.floor(Math.round(min) / 60) + ':' + two(Math.round(min) % 60));
-      const head = ['#', t('f.vessel'), t('f.voyage'), t('sp.calcs.col.title'), t('sp.calcs.col.period'), t('sp.csv.contract'), t('sp.calcs.col.status'), t('sp.csv.time'), t('t.demRate'), t('t.currency'), t('sp.csv.amount')];
+      const head = ['#', t('f.vessel'), t('f.voyage'), t('sp.calcs.col.title'), t('sp.calcs.col.period'), t('sp.csv.contract'), t('sp.calcs.col.status'), t('sp.csv.time'), t('t.demRate'), t('t.currency'), t('sp.csv.amount'), t('cl.col.theirs'), t('cl.col.gap')];
       const lines = [head.map(q).join(sep)];
+      const n2 = (v) => (v == null ? '' : f(v, state.lang, 2).replace(/\s/g, ''));
       filtered().slice().reverse().forEach((r, i) => {
-        const m = r.meta, s = m.sum || {}, ct = contractOf(r.contractId);
-        lines.push([i + 1, w(m.vessel), w(m.voyage), w(title(m)), m.period, w(ct ? ct.data.name : ''), t('sp.status.' + (m.status || 'draft')), dur(s.outcome === 'despatch' ? s.desMin : s.demMin), s.rate == null ? '' : f(s.rate, state.lang, 2).replace(/\s/g, ''), s.currency || '', signed(s) == null ? '' : f(signed(s), state.lang, 2).replace(/\s/g, '')].map(q).join(sep));
+        const m = r.meta, s = m.sum || {}, ct = contractOf(r.contractId), cl = claimOf(r);
+        lines.push([i + 1, w(m.vessel), w(m.voyage), w(title(m)), m.period, w(ct ? ct.data.name : ''), t('sp.status.' + (m.status || 'draft')), dur(s.outcome === 'despatch' ? s.desMin : s.demMin), s.rate == null ? '' : f(s.rate, state.lang, 2).replace(/\s/g, ''), s.currency || '', n2(signed(s)), n2(cl.theirs), n2(cl.gap)].map(q).join(sep));
       });
       app.download('stalia-' + (ui.f.month || 'summary') + '.csv', 'text/csv;charset=utf-8', '﻿' + lines.join('\r\n') + '\r\n');
     }
@@ -413,10 +611,29 @@
         refresh();
       },
       'sp-csv'() { csv(); },
+      'sp-claims'() { claimsDialog(); },
+      'sp-claims-go'() { saveClaims(); },
+      // a month's scan
+      'sp-b-start'(el) { B.contractId = el.dataset.id; ui.tab = 'batch'; ui.error = ''; render(); },
+      'sp-b-cut'(el) {
+        const i = parseInt(el.dataset.i, 10), at = B.starts.indexOf(i);
+        if (at >= 0) B.starts.splice(at, 1); else B.starts.push(i);
+        render();
+      },
+      'sp-b-clear'() { B.pages = []; B.starts = [0]; B.error = ''; B.run = null; render(); },
+      'sp-b-go'() {
+        if (B.run || !B.pages.length || !canRead()) return;
+        B.run = { rows: C.groupPages(B.pages.length, B.starts).map((g) => ({ pages: g, status: 'wait', error: '', id: '', title: '', sum: null, flags: 0 })), active: false, stop: false, aborts: new Set() };
+        runBatch();
+      },
+      'sp-b-stop'() { const R = B.run; if (!R) return; R.stop = true; for (const a of R.aborts) a.abort(); },
+      'sp-b-retry'(el) { const R = B.run, r = R && R.rows[parseInt(el.dataset.k, 10)]; if (!r || R.active) return; r.status = 'wait'; r.error = ''; runBatch(); },
+      'sp-b-new'() { B.pages = []; B.starts = [0]; B.error = ''; B.run = null; render(); },
+      'sp-b-list'() { ui.f.contract = B.contractId; ui.f.month = ''; ui.f.status = ''; ui.f.q = ''; ui.tab = 'calcs'; render(); },
       // the open calculation
       async 'sp-add'() {
         if (!sp.session()) { show(); return; }
-        const r = await run(() => sp.add(state.calc, state.result, { contractId: state.contractId || '' }));
+        const r = await run(() => sp.add(state.calc, state.result, { contractId: state.contractId || '', notes: state.notes }));
         if (!r) return;
         state.cloud = { id: r.id, base: 1, head: 1, role: role(), guest: false, active: true, contractId: state.contractId || '', status: 'draft', comments: 0, saved: fresh(), newer: null };
         if (state.source === 'example' || state.source === 'blank') state.source = 'space';
@@ -522,11 +739,28 @@
     document.addEventListener('input', (e) => {
       const k = e.target && e.target.dataset && e.target.dataset.sp;
       if (k === 'q') { ui.f.q = e.target.value; render(); }
+      if (k === 'cl-text') claimsPreview();
     });
     document.addEventListener('change', async (e) => {
       const el = e.target, k = el && el.dataset && el.dataset.sp;
       if (!k) return;
       if (k === 'contract' || k === 'month' || k === 'status' && el.id !== 'cb-status') { ui.f[k] = el.value; render(); return; }
+      if (k === 'b-contract') { B.contractId = el.value; return; }
+      if (k === 'b-per') {
+        B.per = Math.min(reader.maxPages, Math.max(1, parseInt(el.value, 10) || 1));
+        B.starts = C.evenStarts(B.pages.length, B.per);
+        render(); return;
+      }
+      if (k === 'b-files') {
+        if (B.busy || !el.files || !el.files.length) return;
+        B.busy = 'opening'; B.error = ''; render();
+        let last = 0;
+        const problem = await reader.pagesInto(B.pages, el.files, MAX_BATCH, () => { const now = Date.now(); if (now - last > 250) { last = now; render(); } });
+        B.busy = '';
+        B.error = problem === 'too_many' ? t('sp.batch.tooMany', { n: MAX_BATCH }) : problem === 'office' ? t('imp.officeFile') : problem === 'pdf' ? t('imp.pdfFail') : problem === 'image' ? t('imp.imgFail') : '';
+        B.starts = C.evenStarts(B.pages.length, B.per);
+        render(); return;
+      }
       if (k === 'role') { await run(() => sp.setRole(el.dataset.id, el.value)); refresh(); return; }
       if (k === 'status') {
         const c = state.cloud;

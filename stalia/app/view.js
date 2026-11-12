@@ -334,6 +334,13 @@
     return bits.join('; ') + '.';
   }
 
+  /** The contract's rules for delays in one line, in the reader's language; '' when it has none. */
+  function rulesText(calc, lang) {
+    const t = T(lang);
+    return ((calc && calc.rules) || []).filter((r) => M.ruleFor(calc, r.type))
+      .map((r) => t('et.' + r.type) + ': ' + fmtNumber(E.num(r.countPct), lang, E.num(r.countPct) % 1 ? 1 : 0) + '%' + (r.alsoOnDemurrage ? ' (' + t('e.dem') + ')' : '')).join(' · ');
+  }
+
   /**
    * The terms of a calculation in plain English lines, for the document reader: with these it can count a time
    * sheet under a contract whose pages are not attached. Needs no result, so it works before any time is entered.
@@ -347,9 +354,23 @@
     (calc.ports || []).forEach((p, i) => {
       lines.push('Port ' + (i + 1) + ' (' + (p.operation === 'discharge' ? 'discharging' : 'loading') + (p.name ? ', ' + p.name : '') + '): ' + portTermsText(p, 'en') + '.');
     });
+    const rules = (calc.rules || []).filter((r) => M.ruleFor(calc, r.type));
+    if (rules.length) {
+      lines.push('How each kind of delay counts under this charter party (the calculator applies these shares itself; give such events the type named):');
+      for (const r of rules) {
+        const pct = E.num(r.countPct);
+        lines.push('- ' + RULE_WORDS[r.type] + ' (type "' + r.type + '"): ' +
+          (pct === 0 ? 'does not count as laytime' : pct === 100 ? 'counts in full as laytime' : 'counts ' + pct + '% as laytime') + '; on demurrage ' +
+          (r.alsoOnDemurrage && pct !== 100 ? 'the same applies' : 'such time counts in full') + '.');
+      }
+    }
     if (calc.meta && calc.meta.clauses) lines.push('Clauses of the charter party:', calc.meta.clauses);
     return lines.join('\n').slice(0, 6000);
   }
+  const RULE_WORDS = {
+    weather: 'bad weather, a port closed by weather', shifting: 'shifting', awaiting: 'awaiting tide, daylight, pilot, tugs or a berth',
+    breakdown: 'breakdown of the vessel or her gear', owner: 'bunkering, ballasting and other owners\' purposes', survey: 'surveys, inspections and sampling', strike: 'strikes',
+  };
 
   // ---------------------------------------------------------------- statement (print document)
   /**
@@ -446,6 +467,6 @@
     esc, fmtNumber, fmtMoney, fmtRate, fmtDur, fmtDays, fmtDate, fmtDayShort, fmtTime, fmtDT, fmtDow, fmtPct,
     reasonText, rowRemarks, rowState, portFacts, portTitle, messageText, outcomeOf,
     summaryHTML, messagesHTML, timelineHTML, factsHTML, sheetRows, sheetTableHTML, sheetHTML, portSummaryHTML,
-    calendarText, portTermsText, termsText, readerTerms, statementHTML, sheetCSV, summaryText, portChip,
+    calendarText, portTermsText, termsText, rulesText, readerTerms, statementHTML, sheetCSV, summaryText, portChip,
   };
 });

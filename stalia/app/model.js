@@ -26,6 +26,8 @@
     { id: 'custom', kind: 'exception', pct: 0, dem: false },
   ];
   const eventType = (id) => EVENT_TYPES.find((x) => x.id === id) || EVENT_TYPES[EVENT_TYPES.length - 1];
+  /** Kinds of delay a charter party can rule on once, for the whole contract (the document reader uses the same ids). */
+  const RULE_TYPES = ['weather', 'shifting', 'awaiting', 'breakdown', 'owner', 'survey', 'strike'];
 
   let seq = 0;
   const uid = (p) => (p || 'x') + Date.now().toString(36) + (seq++).toString(36) + Math.random().toString(36).slice(2, 6);
@@ -51,15 +53,49 @@
   function blankCalc() {
     return {
       v: VERSION, name: '',
-      meta: { vessel: '', voyage: '', cpForm: '', cpDate: '', owners: '', charterers: '', cargo: '', remarks: '', clauses: '' },
+      meta: { vessel: '', voyage: '', cpForm: '', cpDate: '', owners: '', charterers: '', cargo: '', remarks: '', clauses: '', claimAmount: '' },
       currency: 'USD', demurrageRate: '', despatchMode: 'half', despatchRate: '', despatchBasis: 'WTS',
       commissionPct: '', laytimeMode: 'reversible', onceOnDemurrage: true, demurrageAtNextPort: 'nor',
+      // how the contract counts each kind of delay: [{ type, countPct, alsoOnDemurrage }], at most one per kind
+      rules: [],
       ports: [blankPort('load'), blankPort('discharge')],
     };
   }
-  function blankEvent(typeId, from, to) {
-    const tp = eventType(typeId || 'weather');
-    return { id: uid('e'), type: tp.id, kind: tp.kind, from: from || '', to: to || '', desc: '', countPct: String(tp.pct), alsoOnDemurrage: tp.dem };
+  /** @param {object} [calc]  when given, a kind of delay the contract rules on starts with that rule instead of the usual effect */
+  function blankEvent(typeId, from, to, calc) {
+    const tp = eventType(typeId || 'weather'), rule = tp.kind === 'exception' ? ruleFor(calc, tp.id) : null;
+    return {
+      id: uid('e'), type: tp.id, kind: tp.kind, from: from || '', to: to || '', desc: '',
+      countPct: rule ? String(rule.countPct) : String(tp.pct), alsoOnDemurrage: rule ? rule.alsoOnDemurrage : tp.dem,
+    };
+  }
+
+  // ---------------------------------------------------------------- the contract's rules for delays
+  const validPct = (v) => { const n = E.num(v); return String(v == null ? '' : v).trim() !== '' && !isNaN(n) && n >= 0 && n <= 100; };
+  /** The contract's rule for a kind of delay, or null. A rule with an unusable share is no rule. */
+  function ruleFor(calc, type) {
+    const r = ((calc && calc.rules) || []).find((x) => x.type === type);
+    return r && validPct(r.countPct) ? r : null;
+  }
+  /**
+   * Give every deduction of a kind the contract rules on that rule's share and its treatment on demurrage.
+   * This is what keeps a contract's reading the same from one voyage to the next: the rule is decided once.
+   * @param {string} [onlyType]  apply one rule only
+   * @returns {number} how many events changed
+   */
+  function applyRules(calc, onlyType) {
+    let n = 0;
+    for (const r of (calc && calc.rules) || []) {
+      if ((onlyType && r.type !== onlyType) || !validPct(r.countPct)) continue;
+      for (const p of calc.ports || []) {
+        for (const e of p.events || []) {
+          if (e.kind !== 'exception' || e.type !== r.type) continue;
+          if (String(e.countPct) === String(r.countPct) && e.alsoOnDemurrage === r.alsoOnDemurrage) continue;
+          e.countPct = String(r.countPct); e.alsoOnDemurrage = r.alsoOnDemurrage; n++;
+        }
+      }
+    }
+    return n;
   }
 
   // ---------------------------------------------------------------- clean-up of untrusted input
@@ -92,6 +128,8 @@
         owners: str(m.owners), charterers: str(m.charterers), cargo: str(m.cargo), remarks: str(m.remarks, 2000),
         // the clauses that decide the count, in words: not printed, handed to the reader with the next time sheet
         clauses: str(m.clauses, 3000),
+        // what the counterparty's own calculation comes to for this voyage (demurrage +, despatch −), in the calculation's currency
+        claimAmount: numStr(m.claimAmount),
       },
       currency: (/^[A-Za-z]{3}$/.test(src.currency || '') ? String(src.currency).toUpperCase() : b.currency),
       demurrageRate: numStr(src.demurrageRate),
@@ -102,8 +140,14 @@
       laytimeMode: oneOf(src.laytimeMode, ['reversible', 'separate', 'average'], 'reversible'),
       onceOnDemurrage: bool(src.onceOnDemurrage, true),
       demurrageAtNextPort: oneOf(src.demurrageAtNextPort, ['nor', 'laytimeStart'], 'nor'),
+      rules: [],
       ports: [],
     };
+    for (const rRaw of arr(src.rules)) {
+      const r = obj(rRaw);
+      if (RULE_TYPES.indexOf(r.type) < 0 || out.rules.some((x) => x.type === r.type)) continue;
+      out.rules.push({ type: r.type, countPct: numStr(r.countPct === 0 ? '0' : r.countPct), alsoOnDemurrage: bool(r.alsoOnDemurrage, eventType(r.type).dem) });
+    }
     for (const pRaw of arr(src.ports).slice(0, LIMITS.ports)) {
       const p = obj(pRaw), bp = blankPort(), a = obj(p.allowed), c = obj(p.calendar), n = obj(p.nor), oh = obj(n.officeHours), w = obj(c.weekly);
       const port = {
@@ -264,5 +308,5 @@
     return list;
   }
 
-  return { VERSION, CAL_PRESETS, CURRENCIES, EVENT_TYPES, LIMITS, eventType, uid, blankCalc, blankPort, blankEvent, blankCalendar, normalizeCalc, examples };
+  return { VERSION, CAL_PRESETS, CURRENCIES, EVENT_TYPES, RULE_TYPES, LIMITS, eventType, ruleFor, applyRules, uid, blankCalc, blankPort, blankEvent, blankCalendar, normalizeCalc, examples };
 });

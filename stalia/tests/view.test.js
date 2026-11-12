@@ -218,3 +218,12 @@ test('every string key used by the views exists', () => {
   }
   assert.deepEqual([...missing], []);
 });
+
+test('the contract’s rules for delays in one line, in the reader’s language', () => {
+  const c = M.normalizeCalc(M.examples('en')[1].calc);
+  assert.equal(V.rulesText(c, 'en'), '');
+  c.rules = [{ type: 'weather', countPct: '50', alsoOnDemurrage: false }, { type: 'owner', countPct: '0', alsoOnDemurrage: true }, { type: 'strike', countPct: '', alsoOnDemurrage: false }];
+  assert.equal(V.rulesText(c, 'en'), 'Bad weather / rain: 50% · Ballasting, bunkering, stores (Owners’ purposes): 0% (Applies on demurrage too)', 'a rule without a share is left out');
+  assert.match(V.rulesText(c, 'ru'), /^Непогода \/ дождь: 50% · .*: 0% \(Действует и на демередже\)$/);
+  for (const lang of I.LANGS) assert.ok(V.rulesText(c, lang).includes('50%'), lang);
+});

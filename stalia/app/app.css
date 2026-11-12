@@ -121,6 +121,19 @@ input.chk, select.chk { border-color: var(--warn); box-shadow: 0 0 0 2px var(--w
 .ev .ev-opt .f { flex: 0 0 5.5rem; }
 .ev .ev-opt .ck { flex: 1 1 8rem; padding-top: 1rem; }
 .ev .f-l { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* the contract's rules for delays: one line per kind */
+.f-rules { margin-top: 14px; display: grid; gap: 8px; }
+.f-rules:focus { outline: none; }
+.f-rules > .f-l { margin: 0; }
+.f-rules > .btn { justify-self: start; }
+.rule { display: grid; grid-template-columns: minmax(0, 1.6fr) 5.5rem minmax(0, 1.2fr) auto; gap: 8px; align-items: end; padding-top: 8px; border-top: 1px solid var(--line); }
+.rule .ck { padding-bottom: .45rem; }
+.rule .f-l { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 620px) {
+  .rule { grid-template-columns: minmax(0, 1fr) 5.5rem auto; }
+  .rule .ck { grid-column: 1 / -1; grid-row: 2; padding-bottom: 0; }
+}
 @media (max-width: 620px) {
   .ev { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .ev .ev-type { grid-column: 1 / -1; }
@@ -483,3 +496,28 @@ dialog.dlg::backdrop { background: var(--scrim); }
 .sp-hist-r i.down { color: var(--good); }
 .sp-note { font-size: var(--fs-sm); overflow-wrap: anywhere; }
 .sp-diff ul { font-size: var(--fs-sm); color: var(--ink-2); overflow-wrap: anywhere; }
+
+/* our figure next to the counterparty's */
+.claim { display: flex; align-items: center; gap: 8px 18px; flex-wrap: wrap; margin-top: 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--r-sm); font-size: var(--fs-sm); }
+.claim > div { display: grid; gap: 2px; }
+.claim-l { color: var(--ink-2); font-size: var(--fs-xs); }
+.claim b { font-variant-numeric: tabular-nums; }
+.claim b.up, .sp-table .up { color: var(--dem-ink); }
+.claim b.down, .sp-table .down { color: var(--good); }
+.claim .btn { margin-left: auto; }
+.cl-list { margin: 0 0 4px; padding-left: 1.2em; display: grid; gap: 6px; font-size: var(--fs-sm); }
+.sp-claims-total { display: block; color: var(--ink-2); font-size: var(--fs-xs); margin-top: 2px; }
+.sp-flags { margin-top: 4px; }
+
+/* a month's scan cut into voyages */
+.sp-lead { max-width: 76ch; margin: 0 0 4px; }
+.sp-b-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(232px, 1fr)); gap: 12px; }
+.sp-b-voy { margin: 0; min-width: 0; padding: 8px 10px 10px; border: 1px solid var(--line-strong); border-radius: var(--r-sm); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; align-content: start; }
+.sp-b-voy.bad { border-color: var(--dem-ink); }
+.sp-b-voy legend { padding: 0 6px; font-size: var(--fs-sm); font-weight: 600; }
+.sp-b-voy figure { margin: 0; display: grid; gap: 4px; justify-items: start; min-width: 0; }
+.sp-b-voy img { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 4px; background: #fff; }
+.sp-b-voy figcaption { font-size: var(--fs-xs); color: var(--ink-2); }
+.sp-b-voy .btn { white-space: normal; text-align: left; padding-left: 0; padding-right: 0; }
+.sp-b-err { color: var(--dem-ink); }
+label.btn.disabled { opacity: .55; pointer-events: none; }

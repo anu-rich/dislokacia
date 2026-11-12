@@ -12,12 +12,14 @@
   const DAYS = ['', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
   const REGIMES = ['SHINC', 'SHEX', 'SSHEX', 'SATNOON', 'FRI17', 'FHEX', 'FSHEX', 'CUSTOM', 'unknown'];
   const EVENT_TYPES = ['weather', 'shifting', 'awaiting', 'breakdown', 'owner', 'survey', 'strike', 'worked', 'note', 'custom'];
+  /** The kinds of delay a charter party can rule on once for the whole contract (app/model.js RULE_TYPES). */
+  const RULE_TYPES = ['weather', 'shifting', 'awaiting', 'breakdown', 'owner', 'survey', 'strike'];
   const STATUSES = ['not_found', 'redacted', 'ambiguous', 'assumed'];
 
   /** What a note can be about. app/extract.js gives each of these a label and a form field. */
   const FIELD_CODES = [
     'vessel', 'voyage', 'cp_form', 'cp_date', 'owners', 'charterers', 'cargo',
-    'currency', 'demurrage_rate', 'despatch', 'despatch_basis', 'commission', 'laytime_between_ports', 'exceptions_on_demurrage',
+    'currency', 'demurrage_rate', 'despatch', 'despatch_basis', 'commission', 'laytime_between_ports', 'exceptions_on_demurrage', 'delay_rules',
     'port', 'laytime_allowed', 'working_time', 'holidays', 'work_in_excepted_time', 'notice_rule', 'office_hours',
     'nor_tendered', 'operations_commenced', 'operations_completed', 'events', 'other',
   ];
@@ -59,6 +61,11 @@
       between_ports: str('reversible = one pooled allowance for loading and discharging; separate = each port has its own; average = time saved at one port offsets time lost at the other.', ['reversible', 'separate', 'average', 'unknown']),
       clauses: str('The clauses of the charter party that decide the count, in the charter party\'s own words, shortened, one per line: when laytime starts and stops at each port, what does not count or counts in part, and how each of these is treated on demurrage. At most 1200 characters. "" when no charter party was supplied.'),
       exceptions_apply_on_demurrage: str('"yes" only if the charter party says that weekends, holidays or weather also interrupt demurrage. "no" for "once on demurrage, always on demurrage" and when the charter party is read and says nothing.', YNU),
+      delay_rules: list(obj({
+        type: str('The kind of delay, with the meaning of the event type of the same name.', RULE_TYPES),
+        counts_percent: str('Share of such a delay that counts as laytime: "0" does not count, "50" half, "100" counts in full.'),
+        on_demurrage: str('stops_too = the same share applies once the vessel is on demurrage; keeps_running = on demurrage such time counts in full.', ['stops_too', 'keeps_running']),
+      }), 'How the charter party counts each kind of delay, decided once for the whole contract: one entry per kind that it, or the undeleted clauses of the form it is written on, rules on. Empty when no charter party pages were supplied.'),
     }),
     ports: list(obj({
       name: str('Port name, with the berth if stated. "" if not stated or blacked out.'),
@@ -124,7 +131,7 @@
       documents: { charter_party: 'absent', statement_of_facts: 'absent' },
       fixture: { vessel: '', voyage: '', charter_party_form: '', charter_party_date: '', owners: '', charterers: '', cargo: '' },
       money: { currency: '', demurrage_per_day: '', despatch: 'unknown', despatch_per_day: '', despatch_basis: 'unknown', commission_percent: '' },
-      laytime: { between_ports: 'unknown', clauses: '', exceptions_apply_on_demurrage: 'unknown' },
+      laytime: { between_ports: 'unknown', clauses: '', exceptions_apply_on_demurrage: 'unknown', delay_rules: [] },
       ports: [], notes: [],
     };
   }
@@ -190,5 +197,5 @@
     return schema.enum[0];
   }
 
-  return { SCHEMA, FIELD_CODES, EVENT_TYPES, STATUSES, REGIMES, blankExtraction, blankExtractionPort, shapeError, conform };
+  return { SCHEMA, FIELD_CODES, EVENT_TYPES, RULE_TYPES, STATUSES, REGIMES, blankExtraction, blankExtractionPort, shapeError, conform };
 });

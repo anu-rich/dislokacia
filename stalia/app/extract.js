@@ -25,6 +25,7 @@
     commission: { label: 't.commission', path: () => 'commissionPct', group: 'terms' },
     laytime_between_ports: { label: 't.mode', path: () => 'laytimeMode', group: 'terms' },
     exceptions_on_demurrage: { label: 't.once', path: () => 'onceOnDemurrage', group: 'terms' },
+    delay_rules: { label: 't.rules', path: () => 'rules', group: 'terms' },
     port: { label: 'p.name', path: (i) => 'ports.' + i + '.name', group: 'facts', perPort: true },
     laytime_allowed: { label: 'a.title', path: (i, p) => 'ports.' + i + '.allowed.' + (p && p.allowed.type === 'rate' ? 'quantity' : 'days'), group: 'terms', perPort: true },
     working_time: { label: 'c.preset', path: (i) => 'ports.' + i + '.calendar.preset', group: 'terms', perPort: true },
@@ -87,6 +88,12 @@
     raw.despatchBasis = mo.despatch_basis === 'all_time_saved' ? 'ATS' : 'WTS';
     raw.commissionPct = numText(mo.commission_percent);
     raw.onceOnDemurrage = lt.exceptions_apply_on_demurrage !== 'yes';
+    // how the contract counts each kind of delay: decided once here, then applied by the calculator to every event of that kind
+    raw.rules = (Array.isArray(lt.delay_rules) ? lt.delay_rules : []).map((r) => {
+      r = r && typeof r === 'object' ? r : {};
+      const pct = numText(r.counts_percent);
+      return M.RULE_TYPES.indexOf(r.type) >= 0 && pct !== '' && Number(pct) <= 100 ? { type: r.type, countPct: pct, alsoOnDemurrage: r.on_demurrage === 'stops_too' } : null;
+    }).filter(Boolean);
 
     raw.ports = (Array.isArray(ex.ports) ? ex.ports : []).slice(0, M.LIMITS.ports).map((src) => {
       src = src && typeof src === 'object' ? src : {};
@@ -164,6 +171,7 @@
     raw.name = text([raw.meta.cargo, names.join(' — ')].filter(Boolean).join(', '), 120);
 
     const calc = M.normalizeCalc(raw);
+    M.applyRules(calc);
 
     // notes: the reader's own, then anything essential that is still empty and went unmentioned
     const notes = [];
@@ -287,6 +295,8 @@
     }
 
     const calc = M.normalizeCalc(out);
+    // the contract's rules for delays hold for the events that were just read as well as for those that were kept
+    M.applyRules(calc);
     // notes: drop those about the half that was kept, re-point the rest
     const keptGroup = keep === 'terms' ? 'terms' : 'facts';
     const notes = [];

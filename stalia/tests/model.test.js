@@ -176,3 +176,44 @@ test('i18n: every language defines exactly the same keys and placeholders as Eng
   for (const tp of M.EVENT_TYPES) { assert.ok(en['et.' + tp.id], tp.id); assert.ok('et.d.' + tp.id in en, tp.id); }
   for (const p of M.CAL_PRESETS) assert.ok(en['c.' + p], p);
 });
+
+test('rules for delays: cleaned on the way in, applied to deductions of their kind only, used for new events', () => {
+  const c = M.normalizeCalc(Object.assign(M.examples('en')[1].calc, {
+    rules: [
+      { type: 'weather', countPct: 50, alsoOnDemurrage: false },
+      { type: 'weather', countPct: '0', alsoOnDemurrage: true },          // one rule per kind: the first stays
+      { type: 'note', countPct: '0' }, { type: 'nonsense' }, null,         // not kinds of delay
+      { type: 'shifting', countPct: 'abc' },                               // no share: kept for editing, but it is no rule
+      { type: 'owner' },                                                   // the usual effect of the kind is the default
+    ],
+  }));
+  assert.deepEqual(c.rules, [
+    { type: 'weather', countPct: '50', alsoOnDemurrage: false },
+    { type: 'shifting', countPct: '', alsoOnDemurrage: false },
+    { type: 'owner', countPct: '', alsoOnDemurrage: true },
+  ]);
+  assert.equal(M.ruleFor(c, 'weather').countPct, '50');
+  assert.equal(M.ruleFor(c, 'shifting'), null);
+  assert.equal(M.ruleFor(c, 'strike'), null);
+  assert.equal(M.ruleFor(null, 'weather'), null);
+  assert.deepEqual(M.normalizeCalc({}).rules, [], 'a calculation saved before rules existed opens without any');
+
+  // a new event of a ruled kind starts with the rule; any other kind with its usual effect
+  const w = M.blankEvent('weather', '2026-04-09T14:00', '2026-04-09T16:00', c);
+  assert.deepEqual([w.countPct, w.alsoOnDemurrage], ['50', false]);
+  assert.deepEqual([M.blankEvent('weather').countPct, M.blankEvent('weather').alsoOnDemurrage], ['0', false]);
+  assert.deepEqual([M.blankEvent('breakdown', '', '', c).countPct, M.blankEvent('breakdown', '', '', c).alsoOnDemurrage], ['0', true]);
+  assert.equal(M.blankEvent('note', '2026-04-09T14:00', '', c).kind, 'note');
+
+  // applying: only deductions of that kind change; shifting (a rule without a share) and the breakdown stay as they are
+  c.ports[1].events.push(Object.assign(M.blankEvent('weather', '2026-04-09T14:00', '2026-04-09T16:00'), { countPct: '0', alsoOnDemurrage: true }));
+  const before = JSON.stringify(c.ports[0].events);
+  assert.equal(M.applyRules(c), 1);
+  assert.equal(JSON.stringify(c.ports[0].events), before);
+  assert.deepEqual(c.ports[1].events.map((e) => [e.type, e.countPct, e.alsoOnDemurrage]), [['breakdown', '0', true], ['weather', '50', false]]);
+  assert.equal(M.applyRules(c), 0, 'nothing left to change');
+  c.rules[0].countPct = '25';
+  assert.equal(M.applyRules(c, 'owner'), 0, 'one rule at a time when asked');
+  assert.equal(M.applyRules(c, 'weather'), 1);
+  assert.equal(c.ports[1].events[1].countPct, '25');
+});

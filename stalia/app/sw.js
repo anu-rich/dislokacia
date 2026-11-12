@@ -5,7 +5,7 @@
  * are never touched.
  */
 'use strict';
-const VERSION = 'stalia-v6';
+const VERSION = 'stalia-v7';
 const FONTS = [
   'ibm-plex-sans-latin-wght-normal', 'ibm-plex-sans-latin-ext-wght-normal', 'ibm-plex-sans-cyrillic-wght-normal', 'ibm-plex-sans-cyrillic-ext-wght-normal',
   'ibm-plex-sans-greek-wght-normal', 'fira-sans-extra-condensed-greek-700-normal',
@@ -14,7 +14,7 @@ const FONTS = [
   'fira-sans-extra-condensed-latin-700-normal', 'fira-sans-extra-condensed-cyrillic-700-normal', 'fira-sans-extra-condensed-cyrillic-ext-700-normal',
 ].map((f) => '../assets/fonts/' + f + '.woff2');
 const SHELL = [
-  'index.html', 'app.css', 'config.js', 'engine.js', 'license.js', 'i18n.js', 'model.js', 'view.js', 'export.js', 'schema.js', 'extract.js', 'import.js', 'space-core.js', 'space.js', 'app.js', 'manifest.webmanifest',
+  'index.html', 'app.css', 'config.js', 'engine.js', 'license.js', 'i18n.js', 'model.js', 'view.js', 'export.js', 'schema.js', 'extract.js', 'audit.js', 'import.js', 'space-core.js', 'space.js', 'app.js', 'manifest.webmanifest',
   'lang/zh.js', 'lang/ru.js', 'lang/kk.js', 'lang/uk.js', 'lang/tr.js', 'lang/el.js',
   '../assets/base.css', '../assets/favicon.svg', '../assets/icons/icon-192.png', '../assets/icons/icon-512.png',
 ].concat(FONTS);

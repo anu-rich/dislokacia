@@ -186,6 +186,69 @@ test('contracts are kept once in the space; a recovery file brings the owner bac
   await assert.rejects(phone.overview(), { code: 'auth' });
 });
 
+test('a month of voyages: what a reading left to check, when each voyage began and the counterparty’s figure are kept with them', async () => {
+  const s = await server();
+  const aigerim = s.browser(), daniyar = s.browser(), owners = s.browser();
+  await aigerim.createSpace('ACME Shipping LLP', 'Aigerim');
+  const invite = await aigerim.invite('editor');
+  await daniyar.join(invite.token, invite.key, 'Daniyar');
+
+  // a scan cut into voyages: so many pages each, and any cut can be moved
+  assert.deepEqual(C.evenStarts(7, 2), [0, 2, 4, 6]);
+  assert.deepEqual(C.evenStarts(3, 0), [0, 1, 2], 'never fewer than one page a voyage');
+  assert.deepEqual(C.groupPages(7, C.evenStarts(7, 2)), [[0, 1], [2, 3], [4, 5], [6]]);
+  assert.deepEqual(C.groupPages(5, [3]), [[0, 1, 2], [3, 4]], 'the first page always starts a voyage');
+  assert.deepEqual(C.groupPages(4, [9, -1, 2, 2]), [[0, 1], [2, 3]], 'cuts outside the scan are ignored');
+  assert.deepEqual(C.groupPages(0, [0]), []);
+
+  // two voyages read from a scan, each with what the reading left for a person
+  const march = M.normalizeCalc(example('bulk'));
+  const april = M.normalizeCalc(example('tanker'));
+  const notes = [{ field: 'nor_tendered', port: 0, status: 'ambiguous', comment: 'The notice time reads 09:00 or 09:30: check it.' }];
+  const first = await aigerim.add(march, E.compute(march), { notes, note: 'Read from a scan, pages 1–2' });
+  const second = await aigerim.add(april, E.compute(april), { notes: [] });
+  let list = await daniyar.list();
+  const row = (id) => list.find((r) => r.id === id);
+  assert.deepEqual([row(first.id).meta.flags, row(second.id).meta.flags], [1, 0]);
+  assert.deepEqual([row(first.id).meta.start, row(second.id).meta.start], ['2026-03-06T09:00', '2026-04-02T03:00'], 'when each voyage began');
+  assert.deepEqual([C.startOf(march), C.startOf({ ports: [] }), C.startOf(null)], ['2026-03-06T09:00', '', '']);
+  assert.deepEqual([row(first.id).meta.claimed, row(second.id).meta.claimed], [null, null]);
+
+  // whoever opens the voyage sees the point; saving with it dealt with clears the mark in the list
+  const opened = await daniyar.load(first.id);
+  assert.deepEqual(opened.notes, notes);
+  assert.equal((await daniyar.load(second.id)).notes.length, 0);
+  await daniyar.save(first.id, 1, opened.calc, E.compute(opened.calc), { notes: [], note: 'notice time checked' });
+  list = await aigerim.list();
+  assert.equal(row(first.id).meta.flags, 0);
+  assert.deepEqual((await aigerim.load(first.id)).notes, []);
+  assert.deepEqual((await aigerim.load(first.id, { n: 1 })).notes, notes, 'the first version still says what was open then');
+
+  // the counterparty's figure is part of the calculation: it shows in the list as a number, typed however it was
+  const withClaim = (await aigerim.load(first.id)).calc;
+  withClaim.meta.claimAmount = '26 458,72';
+  await aigerim.save(first.id, 2, M.normalizeCalc(withClaim), E.compute(withClaim), { note: 'Counterparty’s figure' });
+  list = await daniyar.list();
+  assert.equal(row(first.id).meta.claimed, 26458.72);
+  assert.equal(row(second.id).meta.claimed, null);
+  assert.equal((await daniyar.load(first.id)).calc.meta.claimAmount, '26 458,72');
+
+  // the owners correct the voyage through a link; the list entry they cannot write is rebuilt with the same care
+  const share = await aigerim.share(first.id, 'edit', 'Owners');
+  owners.rememberGuest(first.id, share.token, share.key, 'Owners’ ops');
+  const theirs = await owners.load(first.id, { guest: true });
+  theirs.calc.demurrageRate = '15000';
+  await owners.save(first.id, theirs.head, theirs.calc, E.compute(theirs.calc), { guest: true, note: 'rate', notes: [{ field: 'demurrage_rate', port: null, status: 'assumed', comment: 'As per addendum 3.' }] });
+  list = await aigerim.list();
+  assert.equal(row(first.id).stale, true);
+  const meta = await aigerim.refreshMeta(row(first.id));
+  assert.deepEqual([meta.flags, meta.claimed, meta.start, meta.guest, meta.sum.rate], [1, 26458.72, '2026-03-06T09:00', true, 15000]);
+
+  // none of it is readable on the server
+  const dump = await s.dump();
+  for (const secret of ['09:00 or 09:30', '26458', '26 458', 'addendum', 'EXAMPLE TRADER', '2026-03-06']) assert.ok(!dump.includes(secret), secret);
+});
+
 test('what changed: terms, port facts and events are told apart', () => {
   const a = example('bulk'), b = JSON.parse(JSON.stringify(a)); // the same calculation, as it comes back from the server
   assert.deepEqual(C.diff(a, b), []);

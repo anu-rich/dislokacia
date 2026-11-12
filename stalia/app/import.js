@@ -95,11 +95,12 @@
       const im = await decode(p.blob);
       try { p.thumb = paint(im, p.marks, THUMB_EDGE).toDataURL('image/jpeg', 0.7); } finally { release(im); }
     }
-    async function addCanvas(canvas, doc) {
+    /** @param {Array} [into]  the list the page joins: the dialog's own by default, a caller's for the monthly batch */
+    async function addCanvas(canvas, doc, into) {
       const blob = await toBlob(canvas, 0.9);
       const p = { id: 'pg' + (++st.seq), doc, blob, w: canvas.width, h: canvas.height, marks: [], thumb: '' };
       p.thumb = paint(canvas, [], THUMB_EDGE).toDataURL('image/jpeg', 0.7);
-      st.pages.push(p);
+      (into || st.pages).push(p);
     }
 
     // ------------------------------------------------------------ files in
@@ -117,8 +118,8 @@
     const isOffice = (f) => /\.(docx?|rtf|odt|xlsx?|ods|pptx?)$/i.test(f.name || '') || /msword|officedocument|opendocument|ms-excel|rtf/.test(f.type || '');
     const isImage = (f) => /^image\//.test(f.type || '') || /\.(jpe?g|png|webp|gif|bmp|heic|heif)$/i.test(f.name || '');
 
-    async function addPdf(file, doc) {
-      const lib = await pdfjs();
+    async function addPdf(file, doc, into, limit, tick) {
+      const lib = await pdfjs(), list = into || st.pages;
       const dir = new URL('.', new URL(AI.pdfjs, document.baseURI)).href;
       const task = lib.getDocument({
         data: new Uint8Array(await file.arrayBuffer()),
@@ -126,22 +127,22 @@
       });
       const pdf = await task.promise;
       try {
-        for (let n = 1; n <= pdf.numPages && st.pages.length < KEEP_PAGES; n++) {
+        for (let n = 1; n <= pdf.numPages && list.length < (limit || KEEP_PAGES); n++) {
           const page = await pdf.getPage(n);
           const base = page.getViewport({ scale: 1 });
           const viewport = page.getViewport({ scale: MAX_EDGE / Math.max(base.width, base.height) });
           const canvas = canvasOf(viewport.width, viewport.height), g = canvas.getContext('2d');
           g.fillStyle = '#fff'; g.fillRect(0, 0, canvas.width, canvas.height);
           await page.render({ canvasContext: g, viewport, canvas }).promise;
-          await addCanvas(canvas, doc);
+          await addCanvas(canvas, doc, list);
           page.cleanup();
-          render();
+          (tick || render)();
         }
       } finally { try { await task.destroy(); } catch (e) { /* already gone */ } }
     }
-    async function addImage(file, doc) {
+    async function addImage(file, doc, into) {
       const im = await decode(file);
-      try { await addCanvas(paint(im, [], MAX_EDGE), doc); } finally { release(im); }
+      try { await addCanvas(paint(im, [], MAX_EDGE), doc, into); } finally { release(im); }
     }
     async function addFiles(files, doc) {
       files = Array.from(files || []);
@@ -168,10 +169,13 @@
       r.onerror = () => reject(new Error('read'));
       r.readAsDataURL(blob);
     });
-    /** The pages exactly as they leave the device: marks painted in, JPEG, within the size budget. null if they cannot fit. */
-    async function flatten() {
+    /**
+     * The pages exactly as they leave the device: marks painted in, JPEG, within the size budget. null if they cannot fit.
+     * @param {Array} [list]  pages to send, in that order; by default the dialog's own, charter party first
+     */
+    async function flatten(list) {
       const budget = AI.maxMb * 1024 * 1024;
-      const ordered = DOCS.flatMap((d) => st.pages.filter((p) => p.doc === d));
+      const ordered = list || DOCS.flatMap((d) => st.pages.filter((p) => p.doc === d));
       for (const [edge, quality] of [[MAX_EDGE, 0.82], [MAX_EDGE, 0.66], [1800, 0.62], [1500, 0.55]]) {
         const out = [];
         let total = 0;
@@ -205,9 +209,10 @@
           return await lib.readDirect({ apiKey: key.key, model: key.model, pages: payload.pages, lang: payload.lang, terms: payload.terms, signal, baseURL: AI.directBaseUrl || undefined });
         } catch (e) { return { ok: false, error: 'server' }; }
       }
-      if (!/^https?:\/\//.test(AI.endpoint || '')) return { ok: false, error: 'unavailable' };
+      const url = endpoint();
+      if (!url) return { ok: false, error: 'unavailable' };
       try {
-        const res = await fetch(AI.endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), signal });
+        const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), signal });
         let j = null;
         try { j = await res.json(); } catch (e) { /* not JSON: a server error page */ }
         if (res.ok && j && j.ok && j.extraction) return j;
@@ -216,7 +221,48 @@
         return { ok: false, error: e && e.name === 'AbortError' ? 'aborted' : 'network' };
       }
     }
-    const available = () => typeof AI.reader === 'function' || /^https?:\/\//.test(AI.endpoint || '') || !!mine();
+    /**
+     * The reading server's address. A full address is used as it is; one that starts with "/" means "on this same site"
+     * (the single-server setup) and only makes sense on a page that itself came from a web server.
+     */
+    function endpoint() {
+      const e = String(AI.endpoint || '');
+      if (/^https?:\/\//.test(e)) return e;
+      if (e.charAt(0) === '/' && e.charAt(1) !== '/' && /^https?:$/.test(location.protocol) && !app.native) return location.origin + e;
+      return '';
+    }
+    const available = () => typeof AI.reader === 'function' || !!endpoint() || !!mine();
+
+    // ------------------------------------------------------------ for the monthly batch (app/space.js)
+    /**
+     * Turn files (PDF, photos) into time-sheet pages of a list the caller keeps.
+     * @returns {Promise<string>} '' or what went wrong: 'too_many' | 'office' | 'pdf' | 'image'
+     */
+    async function pagesInto(list, files, limit, tick) {
+      let problem = '';
+      for (const f of Array.from(files || [])) {
+        if (list.length >= limit) { problem = 'too_many'; break; }
+        try {
+          if (isPdf(f)) { await addPdf(f, 'sof', list, limit, tick); if (list.length >= limit) problem = 'too_many'; }
+          else if (isImage(f)) { await addImage(f, 'sof', list); if (tick) tick(); }
+          else problem = isOffice(f) ? 'office' : 'image';
+        } catch (e) { problem = isPdf(f) ? 'pdf' : 'image'; }
+      }
+      return problem;
+    }
+    /** Read time-sheet pages under terms given in words. Never throws; the answer is checked for shape. */
+    async function readSheets(list, terms, signal) {
+      let pages = null;
+      try { pages = await flatten(list); } catch (e) { pages = null; }
+      if (!pages) return { ok: false, error: 'too_big' };
+      const res = await send({ v: 1, lang: app.state.lang, license: app.licenceKey() || '', pages, terms: terms || '' }, signal);
+      if (res.ok && S.shapeError(res.extraction, S.SCHEMA)) return { ok: false, error: 'server', quota: res.quota };
+      return res;
+    }
+    /** A failed reading in the user's words. */
+    const errorText = (res) => (res.error === 'too_many' ? t('imp.tooMany', { n: res.limit || AI.maxPages })
+      : res.error === 'key' ? t('imp.err.key', { text: res.said || '—' }) : t(ERRORS[res.error] || 'imp.err.server'));
+    const quotaWords = (q) => (q && q.left != null ? t(q.perMonth != null ? 'imp.quotaMonth' : 'imp.quota', { n: q.left }) : '');
 
     async function read() {
       if (st.busy) return;
@@ -353,6 +399,8 @@
         kv(t('f.owners'), m.owners) + kv(t('f.charterers'), m.charterers) + kv(t('f.cargo'), m.cargo);
       if (fix) h += '<dl class="kv">' + fix + '</dl>';
       h += '<p class="imp-terms">' + esc(termsText(calc)) + '</p>';
+      // how the contract counts each kind of delay: decided here once, applied to every event of that kind from now on
+      if (V.rulesText(calc, lang)) h += '<p class="imp-terms imp-rules"><b>' + esc(t('t.rules')) + ':</b> ' + esc(V.rulesText(calc, lang)) + '</p>';
       calc.ports.forEach((p, i) => {
         const mins = E.allowedMinutes(p.allowed);
         h += '<div class="imp-port"><h4>' + esc(portCaption(p, i)) + '</h4><p class="imp-terms">' + esc(V.portTermsText(p, lang)) +
@@ -621,6 +669,7 @@
 
     return {
       actions, open, close, hide, hideRedact, closeRedact, render, noteHTML, available,
+      pagesInto, readSheets, errorText, quotaWords, maxPages: AI.maxPages,
       isOpen: () => st.open, isRedacting: () => rd.open,
       // for automated checks
       _state: st, _flatten: flatten, _addFiles: addFiles,

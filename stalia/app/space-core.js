@@ -101,14 +101,40 @@
     }
     return '';
   }
-  /** The entry of a calculation in the space's list (encrypted with the space's key). */
+  /** When a voyage began: its first recorded time, "YYYY-MM-DDTHH:MM". The list is kept in this order. */
+  function startOf(calc) {
+    for (const p of (calc && calc.ports) || []) {
+      for (const v of [p.nor && p.nor.tendered, p.nor && p.nor.manualStart, p.commenced, p.completed]) if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(v || '')) return String(v).slice(0, 16);
+    }
+    return '';
+  }
+  /**
+   * The entry of a calculation in the space's list (encrypted with the space's key).
+   * `extra` carries what is not in the calculation's own numbers: status, who saved it, `flags` (how many things
+   * a reading left for a person to check) and `claimed` (the counterparty's figure for the voyage, a number or null).
+   */
   function metaOf(calc, result, extra) {
     const m = (calc && calc.meta) || {};
     return Object.assign({
       title: (calc && calc.name) || '', vessel: m.vessel || '', voyage: m.voyage || '', charterers: m.charterers || '', owners: m.owners || '',
       ports: ((calc && calc.ports) || []).map((p) => p.name).filter(Boolean).join(' — '),
-      period: periodOf(calc), status: 'draft', sum: summaryOf(calc, result),
+      period: periodOf(calc), start: startOf(calc), status: 'draft', sum: summaryOf(calc, result), flags: 0, claimed: null,
     }, extra || {});
+  }
+
+  // ---------------------------------------------------------------- a month's scan cut into voyages
+  /** Where voyages begin when every voyage takes `per` pages: [0, per, 2·per, …]. */
+  function evenStarts(pages, per) {
+    const out = [];
+    per = Math.max(1, Math.floor(per) || 1);
+    for (let i = 0; i < pages; i += per) out.push(i);
+    return out;
+  }
+  /** Page numbers (from 0) of each voyage, given the pages on which a voyage begins. Page 0 always begins one. */
+  function groupPages(pages, starts) {
+    const cut = new Set([0].concat(starts || []).filter((i) => Number.isInteger(i) && i >= 0 && i < pages)), out = [];
+    for (let i = 0; i < pages; i++) { if (cut.has(i)) out.push([]); out[out.length - 1].push(i); }
+    return out;
   }
 
   // ---------------------------------------------------------------- what changed between two versions
@@ -220,6 +246,10 @@
       return { token: s.token, key, name: s.name, guest: false };
     }
     const infoOf = (calc, result, name, note) => ({ by: name || '', note: String(note || '').slice(0, 300), sum: summaryOf(calc, result) });
+    /** The counterparty's figure kept with a calculation, as a number; null when there is none. */
+    const claimedOf = (calc) => { const n = E.num(calc && calc.meta && calc.meta.claimAmount); return isNaN(n) ? null : Math.round(n * 100) / 100; };
+    /** What a reading left for a person to check travels with the version, so whoever opens it sees it. */
+    const notesOf = (list) => (Array.isArray(list) ? list.slice(0, 60) : []);
 
     return {
       session: () => ses,
@@ -295,18 +325,21 @@
         if (!entry.stale || s.role === 'viewer') return null;
         const a = await access(entry.id), v = (await call('GET', 'calcs/' + entry.id + '/versions/' + entry.head, undefined, a.token)).version;
         const data = await open(a.key, v.data);
-        const meta = metaOf(data.calc, E.compute(data.calc), { status: entry.meta.status === 'agreed' ? 'sent' : (entry.meta.status || 'draft'), by: data.by || '', guest: /^s:/.test(v.by) });
+        const meta = metaOf(data.calc, E.compute(data.calc), {
+          status: entry.meta.status === 'agreed' ? 'sent' : (entry.meta.status || 'draft'), by: data.by || '', guest: /^s:/.test(v.by),
+          flags: notesOf(data.notes).length, claimed: claimedOf(data.calc),
+        });
         await call('PUT', 'calcs/' + entry.id + '/meta', { meta: await seal(s.key, meta), head: entry.head }, s.token);
         return meta;
       },
-      /** A new calculation in the space. */
+      /** A new calculation in the space. `o.notes`: what a reading left to check. */
       async add(calc, result, o) {
         o = o || {};
-        const s = need(), key = newKey(), status = STATUSES.includes(o.status) ? o.status : 'draft';
+        const s = need(), key = newKey(), status = STATUSES.includes(o.status) ? o.status : 'draft', notes = notesOf(o.notes);
         const r = await call('POST', 'calcs', {
           contractId: o.contractId || '', key: await seal(s.key, { k: key }),
-          meta: await seal(s.key, metaOf(calc, result, { status, by: s.name })),
-          data: await seal(key, { calc, by: s.name }), info: await seal(key, infoOf(calc, result, s.name, o.note)),
+          meta: await seal(s.key, metaOf(calc, result, { status, by: s.name, flags: notes.length, claimed: claimedOf(calc) })),
+          data: await seal(key, { calc, by: s.name, notes }), info: await seal(key, infoOf(calc, result, s.name, o.note)),
         }, s.token);
         calcKeys.set(r.calc.id, key);
         return r.calc;
@@ -317,9 +350,9 @@
        */
       async save(calcId, base, calc, result, o) {
         o = o || {};
-        const a = await access(calcId, o.guest);
-        const body = { base, data: await seal(a.key, { calc, by: a.name || '' }), info: await seal(a.key, infoOf(calc, result, a.name, o.note)) };
-        if (!a.guest) body.meta = await seal(need().key, metaOf(calc, result, { status: STATUSES.includes(o.status) ? o.status : 'draft', by: a.name }));
+        const a = await access(calcId, o.guest), notes = notesOf(o.notes);
+        const body = { base, data: await seal(a.key, { calc, by: a.name || '', notes }), info: await seal(a.key, infoOf(calc, result, a.name, o.note)) };
+        if (!a.guest) body.meta = await seal(need().key, metaOf(calc, result, { status: STATUSES.includes(o.status) ? o.status : 'draft', by: a.name, flags: notes.length, claimed: claimedOf(calc) }));
         return (await call('PUT', 'calcs/' + calcId, body, a.token)).calc;
       },
       /** A calculation with its history; `n` picks a version, otherwise the latest. */
@@ -337,7 +370,7 @@
         }
         let meta = null;
         if (!a.guest && r.meta) { try { meta = await open(need().key, r.meta); } catch (e) { /* stays null */ } }
-        return { id: calcId, head: r.head, n, role: r.role, active: r.active !== false, guest: a.guest, contractId: r.contractId || '', comments: r.comments, versions, calc: data.calc, by: data.by || '', meta };
+        return { id: calcId, head: r.head, n, role: r.role, active: r.active !== false, guest: a.guest, contractId: r.contractId || '', comments: r.comments, versions, calc: data.calc, by: data.by || '', notes: notesOf(data.notes), meta };
       },
       /** Where a calculation stands now, without fetching it: for noticing that somebody else saved. */
       async peek(calcId, o) {
@@ -391,5 +424,5 @@
     };
   }
 
-  return { SESSION, GUESTS, STATUSES, create, client, newKey, seal, open, isKey, inviteLink, shareLink, parseLink, summaryOf, periodOf, metaOf, diff, memoryStorage };
+  return { SESSION, GUESTS, STATUSES, create, client, newKey, seal, open, isKey, inviteLink, shareLink, parseLink, summaryOf, periodOf, startOf, metaOf, evenStarts, groupPages, diff, memoryStorage };
 });

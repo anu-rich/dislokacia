@@ -351,6 +351,64 @@ test('the charter party’s own rules are kept in words and stay when only a tim
   assert.equal(merged.ports[0].nor.tendered, '2026-05-01T08:00');
 });
 
+test('a contract rules on a kind of delay once: every event of that kind follows it, whatever a later reading says', () => {
+  const V = require('../app/view.js');
+  // the contract, read alone: weather counts half as laytime and in full on demurrage; time lost through the vessel never counts
+  const cp = extractionOf(examples()[1].calc);
+  cp.documents = { charter_party: 'read', statement_of_facts: 'absent' };
+  cp.ports.forEach((p) => { p.notice.tendered = ''; p.operations_commenced = ''; p.operations_completed = ''; p.events = []; });
+  cp.laytime.delay_rules = [
+    { type: 'weather', counts_percent: '50', on_demurrage: 'keeps_running' },
+    { type: 'owner', counts_percent: '0', on_demurrage: 'stops_too' },
+    { type: 'weather', counts_percent: '0', on_demurrage: 'stops_too' },  // a second entry for the same kind is ignored
+    { type: 'worked', counts_percent: '0', on_demurrage: 'stops_too' },   // not a kind of delay
+    { type: 'survey', counts_percent: '150', on_demurrage: 'stops_too' }, // not a share
+  ];
+  assert.equal(X.shapeError(cp, X.SCHEMA).replace(/.*delay_rules\[3\]\.type.*/, ''), '', 'only the entry of an unknown kind is out of shape');
+  const contract = X.toCalc(cp).calc;
+  assert.deepEqual(contract.rules, [{ type: 'weather', countPct: '50', alsoOnDemurrage: false }, { type: 'owner', countPct: '0', alsoOnDemurrage: true }]);
+
+  // the words that go with the next time sheet name the rules, so the reader gives such events their kind
+  const said = V.readerTerms(contract);
+  assert.match(said, /\nHow each kind of delay counts under this charter party[^\n]*\n- bad weather, a port closed by weather \(type "weather"\): counts 50% as laytime; on demurrage such time counts in full\.\n- bunkering, ballasting and other owners' purposes \(type "owner"\): does not count as laytime; on demurrage the same applies\./);
+  assert.doesNotMatch(V.readerTerms(M.blankCalc()), /How each kind/);
+
+  // a time sheet read later under that contract. The reader took the weather clause the other way on the second line
+  // (half on demurrage too) and forgot the share on the third; shifting has no rule and stays as it was read
+  const sof = extractionOf(examples()[1].calc);
+  sof.documents = { charter_party: 'absent', statement_of_facts: 'read' };
+  sof.ports[1].events = [
+    { type: 'weather', from: '2026-04-09T14:00', to: '2026-04-09T16:00', description: 'Port closed, weather', counts_percent: '50', on_demurrage: 'keeps_running' },
+    { type: 'breakdown', from: '2026-04-10T02:00', to: '2026-04-10T03:30', description: 'Stripping pump failure', counts_percent: '0', on_demurrage: 'stops_too' },
+    { type: 'weather', from: '2026-04-10T12:00', to: '2026-04-10T14:00', description: 'Port closed, weather', counts_percent: '50', on_demurrage: 'stops_too' },
+    { type: 'weather', from: '2026-04-10T18:00', to: '2026-04-10T19:00', description: 'Port closed, weather', counts_percent: '', on_demurrage: 'default' },
+    { type: 'shifting', from: '2026-04-10T20:00', to: '2026-04-10T20:30', description: 'Shifting', counts_percent: '100', on_demurrage: 'keeps_running' },
+  ];
+  const read = X.toCalc(sof);
+  assert.deepEqual(read.calc.rules, [], 'a time sheet brings no rules of its own');
+  const merged = X.merge(contract, read, 'terms').calc;
+  assert.deepEqual(merged.rules, contract.rules);
+  const weather = merged.ports[1].events.filter((e) => e.type === 'weather');
+  assert.deepEqual(weather.map((e) => [e.countPct, e.alsoOnDemurrage]), [['50', false], ['50', false], ['50', false]]);
+  assert.deepEqual(merged.ports[1].events.filter((e) => e.type === 'shifting').map((e) => [e.countPct, e.alsoOnDemurrage]), [['100', false]]);
+  // laytime would expire 10 April 09:10; the first stoppage (2 h at half) moves that to 10:10, the two on demurrage change nothing
+  assert.equal(totalsOf(merged).demMin, 780 - 60);
+  // without the contract's rule the same reading would have taken another hour off, on the reader's say-so
+  const loose = X.merge(Object.assign(JSON.parse(JSON.stringify(contract)), { rules: [] }), read, 'terms').calc;
+  assert.equal(totalsOf(loose).demMin, 780 - 60 - 60);
+
+  // the contract read after the facts were typed in: the events on screen follow the rules it brings
+  const typed = M.normalizeCalc(merged);
+  typed.rules = []; typed.ports[1].events.forEach((e) => { if (e.type === 'weather') { e.countPct = '0'; e.alsoOnDemurrage = true; } });
+  const after = X.merge(typed, X.toCalc(cp), 'facts').calc;
+  assert.deepEqual(after.ports[1].events.filter((e) => e.type === 'weather').map((e) => [e.countPct, e.alsoOnDemurrage]), [['50', false], ['50', false], ['50', false]]);
+
+  // one reading with both documents: the rules it states apply to its own events
+  const both = extractionOf(merged);
+  both.ports[1].events.forEach((e) => { if (e.type === 'weather') { e.counts_percent = '0'; e.on_demurrage = 'stops_too'; } });
+  assert.equal(totalsOf(X.toCalc(both).calc).demMin, 780 - 60);
+});
+
 test('“72 hours in total” for two ports reads as reversible; separate allowances read as separate', () => {
   const tanker = extractionOf(examples()[1].calc);
   tanker.laytime.between_ports = 'unknown';

@@ -319,6 +319,40 @@ serverTest('the next-working-day notice rule: the reader is told when to use it,
   } finally { await s.mock.close(); }
 });
 
+serverTest('the contract’s rules for delays: the reader is asked for them once, and a reply that leaves the field out is still taken', async () => {
+  const { prompt } = await load();
+  const about = prompt.SYSTEM_PROMPT.split('\n').find((line) => line.startsWith('Delay rules:'));
+  // decided once for the contract, taken from the clause's words, with the two usual wordings about demurrage told apart
+  assert.match(about, /under "delay_rules", say once for the whole contract how each kind of delay counts/);
+  assert.match(about, /or, if the vessel is on demurrage, as time on demurrage" is 50 and keeps_running/);
+  assert.match(about, /"or, if on demurrage, at half the demurrage rate" is 50 and stops_too/);
+  assert.match(about, /add a note \(field "delay_rules", status "ambiguous"\)/);
+  const sent = prompt.systemPrompt();
+  assert.ok(sent.includes('"delay_rules":{"type":"array"') && sent.includes('"enum":["weather","shifting","awaiting","breakdown","owner","survey","strike"]') && sent.includes('"enum":["stops_too","keeps_running"]'));
+  // a condition the documents do not state is never turned into a deduction
+  assert.match(prompt.SYSTEM_PROMPT, /The calendar alone is not such a statement: a call that runs over the end of a month does not show that the loading date was moved\./);
+  assert.match(prompt.SYSTEM_PROMPT, /every clause whose condition is a fact the documents do not state: no event, one note/);
+  // with the contract in words the reader leaves the rules empty: the calculator has them and applies them itself
+  assert.match(prompt.SYSTEM_PROMPT, /Leave the terms in the answer empty \("delay_rules" too\)/);
+
+  const good = answer();
+  good.laytime.delay_rules = [{ type: 'weather', counts_percent: '50', on_demurrage: 'keeps_running' }, { type: 'owner', counts_percent: '0', on_demurrage: 'stops_too' }];
+  const older = JSON.parse(JSON.stringify(good)); // a reply written before the field existed
+  delete older.laytime.delay_rules;
+  const replies = [JSON.stringify(good), JSON.stringify(older)];
+  const s = await service((req) => ({ text: replies[req.n - 1] }), { FREE_PER_DAY: '9' });
+  try {
+    const r = await s.post(twoPages());
+    assert.equal(r.status, 200);
+    assert.deepEqual(r.json.extraction.laytime.delay_rules, good.laytime.delay_rules);
+    assert.deepEqual(X.toCalc(r.json.extraction).calc.rules, [{ type: 'weather', countPct: '50', alsoOnDemurrage: false }, { type: 'owner', countPct: '0', alsoOnDemurrage: true }]);
+    const partial = (await s.post(twoPages())).json.extraction;
+    assert.equal(X.shapeError(partial, X.SCHEMA), '');
+    assert.deepEqual(partial.laytime.delay_rules, []);
+    assert.deepEqual(X.toCalc(partial).calc.rules, []);
+  } finally { await s.mock.close(); }
+});
+
 serverTest('other sites cannot use the service from a browser; the site and the mobile apps can', async () => {
   const s = await service(null, { ALLOWED_ORIGINS: 'https://stalia.example/, https://www.stalia.example' });
   try {

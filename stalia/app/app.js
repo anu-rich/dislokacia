@@ -2,7 +2,7 @@
 (function () {
   'use strict';
   const E = window.StaliaEngine, I = window.StaliaI18n, M = window.StaliaModel, V = window.StaliaView, L = window.StaliaLicense;
-  const X = window.StaliaExtract, S = window.StaliaSchema, XP = window.StaliaExport;
+  const X = window.StaliaExtract, S = window.StaliaSchema, XP = window.StaliaExport, AU = window.StaliaAudit;
   const CFG = window.STALIA_CONFIG || {};
   const PREVIEW = !!CFG.preview; // sandboxed preview: no printing, downloads or share links
   const NATIVE = !!CFG.native;   // packaged Android / iOS app (set by mobile/scripts/build-web.js)
@@ -99,7 +99,9 @@
       fld('meta.cpDate', 'f.cpDate', inp('meta.cpDate', c.meta.cpDate, { type: 'date' })) +
       txt('meta.owners', 'f.owners', c.meta.owners, { max: 160 }) +
       txt('meta.charterers', 'f.charterers', c.meta.charterers, { max: 160 }) +
-      txt('meta.cargo', 'f.cargo', c.meta.cargo, { cls: 'f-2', max: 160 }) + '</div>';
+      txt('meta.cargo', 'f.cargo', c.meta.cargo, { cls: 'f-2', max: 160 }) +
+      // what the other side's own calculation comes to: the result then shows the gap and what could explain it
+      numf('meta.claimAmount', 'f.claim', c.meta.claimAmount, { cls: 'f-2', hint: t('f.claim.hint') }) + '</div>';
   }
 
   function termsHTML(c) {
@@ -120,6 +122,19 @@
     h += '<div class="f-clauses" style="margin-top:12px"><label class="f-l" for="' + idOf('meta.clauses') + '">' + esc(t('t.clauses')) + '</label>' +
       '<textarea id="' + idOf('meta.clauses') + '" data-path="meta.clauses" maxlength="3000" rows="' + (c.meta.clauses ? Math.min(8, 2 + c.meta.clauses.split('\n').length) : 2) + '">' + esc(c.meta.clauses || '') + '</textarea>' +
       '<p class="f-hint">' + esc(t('t.clauses.hint')) + '</p></div>';
+    // how the contract counts each kind of delay: decided once here, applied to every event of that kind
+    const taken = c.rules.map((r) => r.type);
+    h += '<div class="f-rules" id="' + idOf('rules') + '" tabindex="-1"><span class="f-l">' + esc(t('t.rules')) + '</span>';
+    c.rules.forEach((r, k) => {
+      const rp = 'rules.' + k + '.';
+      h += '<div class="rule">' +
+        fld(rp + 'type', 'e.type', sel(rp + 'type', r.type, M.RULE_TYPES.filter((x) => x === r.type || taken.indexOf(x) < 0).map((x) => [x, t('et.' + x)]), { rr: 1 }), { cls: 'rule-type' }) +
+        numf(rp + 'countPct', 'e.pct', r.countPct, { max: 6, cls: 'rule-pct' }) +
+        ck(rp + 'alsoOnDemurrage', r.alsoOnDemurrage, t('e.dem'), { rr: 1 }) +
+        '<button type="button" class="btn btn-sm btn-ghost btn-icon" data-act="del-rule" data-idx="' + k + '" aria-label="' + esc(t('t.rules.remove')) + '" title="' + esc(t('t.rules.remove')) + '">✕</button></div>';
+    });
+    if (c.rules.length < M.RULE_TYPES.length) h += '<button type="button" class="btn btn-sm" data-act="add-rule">+ ' + esc(t('t.rules.add')) + '</button>';
+    h += '<p class="f-hint">' + esc(t('t.rules.hint')) + '</p></div>';
     return h;
   }
 
@@ -317,12 +332,51 @@
   function renderResult() {
     const c = state.calc, r = state.result;
     $('#summary').innerHTML = V.summaryHTML(c, r, state.lang);
+    $('#claim').innerHTML = claimHTML();
     $('#timelines').innerHTML = r.ok ? r.ports.map((p) => V.timelineHTML(p, state.lang)).join('') : '';
     $('#actions').innerHTML = actionsHTML();
     $('#sheet-sec').hidden = !r.ok;
     $('#sheet').innerHTML = V.sheetHTML(c, r, state.lang);
     refreshDerived();
     if (state.stOpen) renderStatement();
+  }
+
+  // ---------------------------------------------------------------- our figure next to the counterparty's
+  const claimed = () => { const v = state.calc.meta.claimAmount; return String(v == null ? '' : v).trim() === '' ? NaN : E.num(v); };
+  const signedMoney = (v, cur) => (v < 0 ? '−' : '') + V.fmtMoney(Math.abs(v), cur, state.lang);
+  function claimHTML() {
+    const c = state.calc, r = state.result, theirs = claimed();
+    if (!r || !r.ok || isNaN(theirs)) return '';
+    const gap = Math.round((theirs - AU.signedNet(c)) * 100) / 100, same = Math.abs(gap) < 0.005;
+    return '<div class="claim"><div><span class="claim-l">' + esc(t('cl.theirs')) + '</span><b>' + esc(signedMoney(theirs, c.currency)) + '</b></div>' +
+      '<div><span class="claim-l">' + esc(t('cl.gap')) + '</span><b class="' + (same ? 'same' : gap > 0 ? 'up' : 'down') + '" id="claim-gap">' +
+      esc(same ? t('cl.same') : (gap > 0 ? '+' : '−') + V.fmtMoney(Math.abs(gap), c.currency, state.lang)) + '</b></div>' +
+      (same ? '' : '<button type="button" class="btn btn-sm" data-act="claim-why">' + esc(t('cl.why')) + '</button>') + '</div>';
+  }
+  /** Which change to our own calculation would give their amount: single changes first, then one moment moved. */
+  function claimWhyHTML() {
+    const c = state.calc, x = AU.explain(c, claimed());
+    if (!x) return '';
+    const lang = state.lang, at = (v) => V.fmtDT(E.parseDT(v), lang), dur = (m) => V.fmtDur(Math.abs(m), lang);
+    const port = (i) => (i == null || !c.ports[i] ? '' : t('p.port', { n: i + 1 }) + (c.ports[i].name ? ' (' + c.ports[i].name + ')' : '') + ': ');
+    const what = (l) => (!l ? '' : l.what === 'nor' ? t('cl.w.nor') : l.what === 'commenced' ? t('cl.w.commenced') : (l.desc || t('et.' + l.type)));
+    const line = (k) => {
+      if (k.kind === 'start_at' || k.kind === 'end_at') return port(k.port) + t('cl.k.' + k.kind, { at: at(k.value), what: what(k.label) });
+      if (k.kind === 'notice_hours') return port(k.port) + t('cl.k.notice_hours', { h: k.value });
+      if (!k.event) return t('cl.k.' + k.kind);
+      return port(k.port) + t('cl.k.' + k.kind, { ev: '«' + (k.event.desc || t('et.' + k.event.type)) + '» (' + at(k.event.from) + ' – ' + at(k.event.to) + ')' });
+    };
+    let h = '<div class="dlg-h"><h2>' + esc(t('cl.why')) + '</h2><button type="button" class="btn btn-sm" data-act="dlg-close">' + esc(t('common.close')) + '</button></div><div class="dlg-b" id="claim-why">' +
+      '<p>' + esc(t('cl.why.sum', { ours: signedMoney(x.ours, c.currency), theirs: signedMoney(x.claimed, c.currency), gap: (x.gap > 0 ? '+' : '−') + V.fmtMoney(Math.abs(x.gap), c.currency, lang) })) +
+      (x.gapMin ? ' ' + esc(t('cl.why.time', { dur: dur(x.gapMin) })) : '') + '</p>';
+    if (x.matches.length) h += '<p><b>' + esc(t('cl.why.matches')) + '</b></p><ul class="cl-list" id="claim-matches">' + x.matches.map((m) => '<li>' + esc(m.kinds.map(line).join('; ')) + '</li>').join('') + '</ul>';
+    else h += '<p id="claim-none">' + esc(t('cl.why.none')) + '</p>';
+    if (x.shifts.length) {
+      h += '<p><b>' + esc(t('cl.why.shifts')) + '</b></p><ul class="cl-list" id="claim-shifts">' + x.shifts.map((sh) => '<li>' +
+        esc(port(sh.port) + t(sh.kind === 'start_shift' ? 'cl.s.start' : 'cl.s.end', { at: at(sh.at), dur: dur(sh.byMin), dir: t(sh.byMin > 0 ? 'cl.later' : 'cl.earlier') })) + '</li>').join('') + '</ul>';
+    }
+    if (x.rate) h += '<p>' + esc(t('cl.why.rate', { rate: V.fmtMoney(x.rate, c.currency, lang) })) + '</p>';
+    return h + '<p class="f-hint">' + esc(t('cl.why.hint')) + '</p></div>';
   }
 
   let saveTimer = null, shareTimer = null;
@@ -687,7 +741,7 @@
       else if (s.status === 'expired') h += '<p class="note note-warn">' + esc(t('pro.status.expired')) + '</p>';
       else if (s.error === 'offline_too_long') h += '<p class="note note-warn">' + esc(t('pro.err.offline_too_long')) + '</p>';
       else if (tr.state === 'ended' && !notice) h += '<p class="note note-warn">' + esc(t('trial.ended')) + '</p>';
-      h += '<p>' + esc(STORE ? t('pro.storeNote') : t('pro.lead')) + '</p><ul>' + (space.enabled ? ['f8'] : []).concat(['f1', 'f2', 'f3', 'f4', 'f5', 'f7', 'f6']).map((k) => '<li>' + esc(t('pro.' + k)) + '</li>').join('') + '</ul>';
+      h += '<p>' + esc(STORE ? t('pro.storeNote') : t('pro.lead')) + '</p><ul>' + (space.enabled ? ['f8', 'f9'] : []).concat(['f1', 'f2', 'f3', 'f4', 'f5', 'f7', 'f6']).map((k) => '<li>' + esc(t('pro.' + k)) + '</li>').join('') + '</ul>';
       if (tr.state === 'available') {
         h += '<div class="trialbox"><button type="button" class="btn btn-primary btn-lg" data-act="trial-start">' + esc(t('trial.start', { n: tr.days })) + '</button>' +
           '<p class="f-hint">' + esc(t('trial.note')) + '</p></div>';
@@ -797,13 +851,24 @@
       const i = +el.dataset.port, p = state.calc.ports[i];
       if (p.events.length >= M.LIMITS.events) return;
       const se = smartEventStart(p, i);
-      const ev = M.blankEvent('weather', se[0], se[1]);
+      const ev = M.blankEvent('weather', se[0], se[1], state.calc);
       ev.desc = t('et.d.weather');
       p.events.push(ev); touched(); renderForm(); recalc();
       const first = document.getElementById(idOf('ports.' + i + '.events.' + (p.events.length - 1) + '.type'));
       if (first) first.focus();
     },
     'del-event'(el) { state.calc.ports[+el.dataset.port].events.splice(+el.dataset.idx, 1); touched(); renderForm(); recalc(); },
+    'add-rule'() {
+      const c = state.calc, type = M.RULE_TYPES.find((x) => !c.rules.some((r) => r.type === x));
+      if (!type) return;
+      const tp = M.eventType(type);
+      // a new rule starts from the usual effect of its kind, so adding it changes nothing until it is edited
+      c.rules.push({ type, countPct: String(tp.pct), alsoOnDemurrage: tp.dem });
+      M.applyRules(c, type); touched(); renderForm(); recalc();
+      const first = document.getElementById(idOf('rules.' + (c.rules.length - 1) + '.type'));
+      if (first) first.focus();
+    },
+    'del-rule'(el) { state.calc.rules.splice(+el.dataset.idx, 1); touched(); renderForm(); recalc(); },
     'add-holiday'(el) {
       const i = +el.dataset.port, hs = state.calc.ports[i].calendar.holidays;
       if (hs.length >= M.LIMITS.holidays) return;
@@ -869,6 +934,7 @@
     'logo-remove'() { const b = getBrand(); delete b.logo; store.set(K.brand, b); renderStatementSide(); renderStatement(); },
     'notes-close'() { state.notes = []; if (state.source === 'import') state.source = 'edited'; renderBanner(); recalc(); },
     'note-go'(el) { showField(el.dataset.path); },
+    'claim-why'() { const h = claimWhyHTML(); if (h) { $('#dlg').innerHTML = h; showDialog(); } },
     help() { openHelp('guide', false); },
     'help-lang'(el) { actions.lang(el); helpState.step = 'guide'; renderHelp(); $('#help').scrollTop = 0; },
     'help-pick-lang'() { helpState.step = 'lang'; renderHelp(); $('#help').scrollTop = 0; },
@@ -944,7 +1010,7 @@
 
   // ---------------------------------------------------------------- the company space
   const space = window.StaliaSpace.create({
-    t, esc, state, config: CFG, preview: PREVIEW, engine: E, model: M, view: V, core: window.StaliaSpaceCore,
+    t, esc, state, config: CFG, preview: PREVIEW, engine: E, model: M, view: V, core: window.StaliaSpaceCore, extract: X, reader: imp,
     toast, overlayOpened, overlayClosed, setCalc, copy: copyText, download: saveFile, touch: saveNow,
     dialog(html) { $('#dlg').innerHTML = html; showDialog(); },
     closeDialog() { if ($('#dlg').open) $('#dlg').close(); },
@@ -983,15 +1049,21 @@
       // a new event type brings its own defaults; wording is replaced only if it was still the default one
       const ev = state.calc.ports[+m[1]].events[+m[2]], prev = ev.kind, tp = M.eventType(v);
       if (isDefaultDesc(ev.desc, old)) ev.desc = t('et.d.' + tp.id);
-      ev.kind = tp.kind; ev.countPct = String(tp.pct); ev.alsoOnDemurrage = tp.dem;
+      const rule = tp.kind === 'exception' ? M.ruleFor(state.calc, tp.id) : null;
+      ev.kind = tp.kind; ev.countPct = rule ? String(rule.countPct) : String(tp.pct); ev.alsoOnDemurrage = rule ? rule.alsoOnDemurrage : tp.dem;
       if (tp.kind === 'note') ev.to = ''; else if (prev === 'note' && ev.from) ev.to = E.fmtDT(E.parseDT(ev.from) + 60);
     }
+    // a rule of the contract was edited: every event of that kind follows it
+    const rm = /^rules\.(\d+)\.(\w+)$/.exec(path), rule = rm && state.calc.rules[+rm[1]];
+    if (rule && rm[2] === 'type') { const tp = M.eventType(rule.type); rule.countPct = String(tp.pct); rule.alsoOnDemurrage = tp.dem; }
+    const followed = rule ? M.applyRules(state.calc, rule.type) : 0;
     if (state.notes.length) {
-      const left = state.notes.filter((n) => X.notePath(n, state.calc) !== path);
+      const at = rule ? 'rules' : path;
+      const left = state.notes.filter((n) => X.notePath(n, state.calc) !== at);
       if (left.length !== state.notes.length) { state.notes = left; renderBanner(); }
     }
     touched();
-    if (el.dataset.rr) renderForm();
+    if (el.dataset.rr || followed) renderForm();
     recalc();
   }
   document.addEventListener('input', (e) => { if (isTextLike(e.target)) onField(e.target); });

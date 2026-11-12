@@ -27,6 +27,18 @@
     if (/^https:\/\//.test(url || '')) { el.setAttribute('href', url); el.setAttribute('target', '_blank'); el.setAttribute('rel', 'noopener'); }
     else el.setAttribute('href', '#contact');
   });
+  // ---- store links (shown only once the apps are published and set in config.js)
+  $$('[data-stores]').forEach(function (box) {
+    var apps = CFG.apps || {}, n = 0;
+    [['android', 'Google Play'], ['ios', 'App Store']].forEach(function (x) {
+      if (!/^https:\/\//.test(apps[x[0]] || '')) return;
+      var link = document.createElement('a');
+      link.className = 'btn'; link.href = apps[x[0]]; link.target = '_blank'; link.rel = 'noopener'; link.textContent = x[1];
+      box.appendChild(link); n++;
+    });
+    box.hidden = n === 0;
+  });
+
   $$('[data-copy]').forEach(function (btn) {
     btn.addEventListener('click', function () {
       var src = document.querySelector(btn.getAttribute('data-copy'));

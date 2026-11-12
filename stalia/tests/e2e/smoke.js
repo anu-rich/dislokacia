@@ -258,6 +258,36 @@ const norm = (s) => String(s).replace(/[  ]/g, ' ').replace(/\s+/g, ' ').trim
   check('offline: any address of the app resolves to the cached page', (await o.getAttribute('html', 'lang')) === 'ru');
   await octx.close();
 
+  console.log('site pages');
+  const SITE = require('../../tools/site.js');
+  for (const width of [390, 1280]) {
+    const sp = await newPage({ viewport: { width, height: 900 } });
+    for (const pg of SITE.PAGES.filter((x) => x.group !== 'app')) {
+      await sp.goto(base + pg.url, { waitUntil: 'networkidle' });
+      const info = await sp.evaluate(() => ({
+        fits: document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+        h1: (document.querySelector('h1') || {}).textContent || '',
+        demo: document.querySelectorAll('#demo-body .tl').length,
+        fonts: document.fonts.check('700 30px "Fira Condensed"', document.querySelector('h1').textContent),
+      }));
+      check(pg.url + ' @' + width + ': fits the screen, heading font covers its letters', info.fits && info.h1.length > 10 && info.fonts, JSON.stringify(info));
+      if (pg.group === 'home') check(pg.url + ' @' + width + ': live example drawn', info.demo === 2);
+    }
+    await sp.context().close();
+  }
+  const lp = await newPage();
+  await lp.goto(base + '/ru/', { waitUntil: 'networkidle' });
+  check('landing: prices come from config', /9\s?900 ₸/.test(norm(await lp.locator('#pricing').innerText())) && /\$19/.test(await lp.locator('#pricing').innerText()));
+  check('landing: buy button falls back to the contact block', (await lp.getAttribute('a[data-buy="monthly"]', 'href')) === '#contact');
+  await lp.click('.hero .cta a');
+  await lp.waitForSelector('#summary .res-amount');
+  check('landing → calculator opens in the page language', (await lp.getAttribute('html', 'lang')) === 'ru' && /app\/\?lang=ru/.test(lp.url()));
+  await lp.goto(base + '/guides/how-to-calculate-laytime.html', { waitUntil: 'networkidle' });
+  await lp.click('.try a');
+  await lp.waitForSelector('#summary .res-amount');
+  check('guide → opens its example in English', /USD 23,841\.93/.test(await text(lp, '#summary')) && (await lp.inputValue('#f-name')) === 'Wheat, Novorossiysk to Alexandria');
+  await lp.context().close();
+
   console.log('dark theme');
   const d = await newPage({ colorScheme: 'dark' });
   await d.goto(base + '/app/', { waitUntil: 'networkidle' });

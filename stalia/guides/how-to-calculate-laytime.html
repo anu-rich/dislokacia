@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>How to Calculate Laytime and Demurrage: a Worked Example — Stalia</title>
+<meta name="description" content="A step-by-step laytime calculation: laytime allowed, commencement after NOR, SSHEX unless used, rain, expiry and demurrage pro rata. Every figure can be checked by hand.">
+<meta name="theme-color" content="#0C2231">
+<!--SEO-->
+<link rel="canonical" href="how-to-calculate-laytime.html">
+<!--/SEO-->
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to calculate laytime and demurrage: a worked example">
+<meta property="og:description" content="From notice of readiness to the amount due, with every step you can check by hand.">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/base.css">
+<link rel="stylesheet" href="../assets/site.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"How to calculate laytime and demurrage: a worked example","inLanguage":"en","author":{"@type":"Organization","name":"Stalia"},"publisher":{"@type":"Organization","name":"Stalia"}}
+</script>
+</head>
+<body>
+
+<header class="site-top">
+  <div class="wrap">
+    <a class="brand" href="../"><b>STALIA</b></a>
+    <nav class="site-nav" aria-label="Site">
+      <a href="../#pricing">Pricing</a>
+      <a href="shinc-shex-sshex-fhex.html">SHINC, SHEX, SSHEX, FHEX</a>
+      <span class="langs-links" aria-label="Language"><a href="how-to-calculate-laytime.html" aria-current="true" lang="en">EN</a><a href="../ru/guides/raschet-staliynogo-vremeni.html" lang="ru" hreflang="ru">RU</a><a href="../kk/guides/staliya-esepteu.html" lang="kk" hreflang="kk">ҚАЗ</a></span>
+      <a class="btn btn-primary btn-sm" href="../app/?lang=en">Open the calculator</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap narrow article">
+  <p class="crumbs"><a href="../">Stalia</a> / Guides</p>
+  <h1>How to calculate laytime and demurrage</h1>
+  <p class="lead">A worked example from notice of readiness to the amount due. Every step is plain arithmetic you can check by hand.</p>
+
+  <h2>What you need before you start</h2>
+  <p>Everything comes from two documents: the charter party gives the rules, the statement of facts gives the times.</p>
+  <ol>
+    <li><strong>Laytime allowed.</strong> Either a fixed time (for example 72 hours) or the cargo quantity divided by a daily rate.</li>
+    <li><strong>The days that count.</strong> SHINC, SHEX, SSHEX, FHEX or a clause in words, and whether work in an excepted period counts.</li>
+    <li><strong>When laytime starts.</strong> The time notice of readiness was tendered and the commencement clause.</li>
+    <li><strong>What interrupts it.</strong> Weather, shifting, breakdowns and other periods the charter party excludes.</li>
+    <li><strong>The rates.</strong> Demurrage per day and, for dry cargo, despatch.</li>
+  </ol>
+
+  <h2>The fixture in this example</h2>
+  <ul>
+    <li>Cargo: 27,500 MT of wheat in bulk.</li>
+    <li>Loading rate: 8,000 MT per weather working day, Saturdays, Sundays and holidays excepted, unless used (SSHEX UU).</li>
+    <li>Commencement: notice given by 12:00 — laytime from 13:00 the same day; notice given after 12:00 — from 08:00 on the next working day; unless sooner commenced.</li>
+    <li>Demurrage: USD 14,500 per day or pro rata. Despatch: half demurrage on working time saved.</li>
+  </ul>
+  <p>The statement of facts for the loading port says:</p>
+  <ul>
+    <li>Friday 6 March, 09:00 — notice of readiness tendered.</li>
+    <li>Saturday 7 March, 08:00 to 20:00 — loading continued on overtime.</li>
+    <li>Monday 9 March, 10:00 to 14:30 — rain, loading suspended.</li>
+    <li>Wednesday 11 March, 21:00 — loading completed.</li>
+  </ul>
+
+  <h2>Step 1. Laytime allowed</h2>
+  <p class="formula">27,500 MT ÷ 8,000 MT per day = 3.4375 days
+3.4375 days = 3 days 10 hours 30 minutes = 82 h 30 m</p>
+  <p>Keep the result in hours and minutes. Rounding days early is the most common source of small differences between two calculations.</p>
+
+  <h2>Step 2. When laytime starts</h2>
+  <p>Notice was tendered at 09:00 on Friday, before noon, so laytime starts at 13:00 that day. The four hours in between do not count.</p>
+  <p>Had the notice been tendered at 14:00 with no work before the weekend, laytime would have started at 08:00 on Monday: under SSHEX, Saturday and Sunday are not working days.</p>
+
+  <h2>Step 3. Count day by day</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Day</th><th>Period</th><th>What happened</th><th class="n">Counted</th><th class="n">Total used</th></tr></thead>
+    <tbody>
+      <tr><td>Fri 6 Mar</td><td>13:00–24:00</td><td>Laytime counts</td><td class="n">11 h 00 m</td><td class="n">11 h 00 m</td></tr>
+      <tr><td>Sat 7 Mar</td><td>00:00–08:00</td><td>Saturday, excepted</td><td class="n">—</td><td class="n">11 h 00 m</td></tr>
+      <tr><td></td><td>08:00–20:00</td><td>Excepted, but worked: counts under “unless used”</td><td class="n">12 h 00 m</td><td class="n">23 h 00 m</td></tr>
+      <tr><td></td><td>20:00–24:00</td><td>Saturday, excepted</td><td class="n">—</td><td class="n">23 h 00 m</td></tr>
+      <tr><td>Sun 8 Mar</td><td>00:00–24:00</td><td>Sunday, excepted</td><td class="n">—</td><td class="n">23 h 00 m</td></tr>
+      <tr><td>Mon 9 Mar</td><td>00:00–10:00</td><td>Laytime counts</td><td class="n">10 h 00 m</td><td class="n">33 h 00 m</td></tr>
+      <tr><td></td><td>10:00–14:30</td><td>Rain, loading suspended</td><td class="n">—</td><td class="n">33 h 00 m</td></tr>
+      <tr><td></td><td>14:30–24:00</td><td>Laytime counts</td><td class="n">9 h 30 m</td><td class="n">42 h 30 m</td></tr>
+      <tr><td>Tue 10 Mar</td><td>00:00–24:00</td><td>Laytime counts</td><td class="n">24 h 00 m</td><td class="n">66 h 30 m</td></tr>
+      <tr><td>Wed 11 Mar</td><td>00:00–16:00</td><td>Laytime counts and runs out at 16:00</td><td class="n">16 h 00 m</td><td class="n">82 h 30 m</td></tr>
+      <tr class="sum"><td></td><td>16:00–21:00</td><td>On demurrage</td><td class="n">5 h 00 m</td><td class="n"></td></tr>
+    </tbody>
+  </table></div>
+  <p>Laytime expired at 16:00 on Wednesday 11 March. Loading was completed at 21:00, five hours later.</p>
+
+  <h2>Step 4. Demurrage at the loading port</h2>
+  <p class="formula">5 hours ÷ 24 = 0.20833 day
+0.20833 day × USD 14,500 = USD 3,020.83</p>
+
+  <h2>Step 5. The discharge port</h2>
+  <p>The same method applies at the other end, with its own terms: 5,000 MT per day, Fridays and holidays excepted, even if used.</p>
+  <p class="formula">27,500 MT ÷ 5,000 MT per day = 5.5 days = 132 h 00 m</p>
+  <ul>
+    <li>Notice tendered Sunday 15 March at 10:00; laytime from 13:00.</li>
+    <li>Monday 06:00–09:00, shifting from anchorage to berth: does not count.</li>
+    <li>Wednesday 14:00–16:00, the ship’s crane out of order: does not count.</li>
+    <li>Friday 20 March is excepted; Saturday 21 March is a public holiday.</li>
+    <li>Laytime runs out on Monday 23 March at 06:00. Discharge is completed on Tuesday 24 March at 18:00.</li>
+  </ul>
+  <p class="formula">36 hours ÷ 24 = 1.5 days
+1.5 days × USD 14,500 = USD 21,750.00</p>
+
+  <h2>Step 6. The amount due</h2>
+  <div class="tbl"><table>
+    <tbody>
+      <tr><td>Demurrage, loading port (5 h)</td><td class="n">USD 3,020.83</td></tr>
+      <tr><td>Demurrage, discharge port (36 h)</td><td class="n">USD 21,750.00</td></tr>
+      <tr><td>Total demurrage (1 d 17 h = 1.70833 days)</td><td class="n">USD 24,770.83</td></tr>
+      <tr><td>Less commission 3.75%</td><td class="n">− USD 928.91</td></tr>
+      <tr class="sum"><td>Demurrage due to Owners</td><td class="n">USD 23,841.93</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Four rules that change the answer</h2>
+  <h3>Once on demurrage, always on demurrage</h3>
+  <p>After laytime has expired, weekends, holidays and weather no longer stop the clock, unless the charter party says its exceptions apply to demurrage as well. Delays caused by the vessel herself are different: time lost to the ship’s own breakdown is not charged, before or after expiry.</p>
+  <h3>Unless used and even if used</h3>
+  <p>Under “unless used”, the twelve hours worked on Saturday count. Under “even if used”, they would not: laytime would have lasted twelve hours longer, loading would have finished seven hours inside it, and the same facts would produce despatch of USD 2,114.58 instead of demurrage of USD 3,020.83.</p>
+  <h3>Reversible laytime</h3>
+  <p>If the charter party makes laytime reversible, the two allowances are added together (82 h 30 m + 132 h = 214 h 30 m) and one running total goes through both ports. Here the result is the same, 41 hours on demurrage, because both ports overran. When one port saves time and the other loses it, reversible and non-reversible laytime give different answers.</p>
+  <h3>Despatch</h3>
+  <p>Had loading been completed on Tuesday 10 March at 12:00, only 54 h 30 m would have been used and 28 hours saved:</p>
+  <p class="formula">28 hours ÷ 24 = 1.16667 days
+1.16667 days × USD 7,250 = USD 8,458.33 despatch</p>
+
+  <h2>Mistakes worth checking for</h2>
+  <ul>
+    <li>Counting from the time of the notice instead of the time laytime commences.</li>
+    <li>Deducting rain or a weekend after laytime has already expired.</li>
+    <li>Reading “unless used” as “even if used”, or the other way round.</li>
+    <li>Using one time zone for two ports. Each port’s time sheet is kept in local time.</li>
+    <li>Converting to days at every step. Add up minutes and convert once, at the end.</li>
+  </ul>
+
+  <div class="callout"><p>The charter party decides what counts. A calculator applies the rules you give it; whether weather, shifting or a holiday interrupts laytime in your case depends on the wording of your charter.</p></div>
+
+  <div class="try">
+    <p>This exact example is built into the calculator. Change any time and watch the result move.</p>
+    <a class="btn btn-primary" href="../app/?lang=en&amp;example=bulk">Open the example</a>
+  </div>
+</main>
+
+<div class="scale" aria-hidden="true"></div>
+<footer class="site-foot">
+  <div class="wrap">
+    <div><h4>Stalia</h4><ul><li><a href="../app/?lang=en">Calculator</a></li><li><a href="../#pricing">Pricing</a></li></ul></div>
+    <div><h4>Guides</h4><ul><li><a href="how-to-calculate-laytime.html">How to calculate laytime and demurrage</a></li><li><a href="shinc-shex-sshex-fhex.html">SHINC, SHEX, SSHEX, FHEX explained</a></li></ul></div>
+    <p class="fine">© <span data-year>2026</span> Stalia. This guide explains arithmetic and is not legal advice.</p>
+  </div>
+</footer>
+<script src="../app/config.js"></script>
+<script src="../assets/site.js"></script>
+</body>
+</html>

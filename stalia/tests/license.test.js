@@ -192,3 +192,89 @@ test('keygen: config.js markers are read and rewritten as valid JSON', () => {
   assert.deepEqual(K.readConfigKeys(tmp).keys, []);
   assert.deepEqual(K.publicJwkOf(kp.privatePem), kp.publicJwk);
 });
+
+// ---------------------------------------------------------------- the free trial
+test('trial: starts once, lasts 14 days to the minute, survives a reload', async () => {
+  const storage = L.memoryStorage();
+  let clock = T0;
+  const mk = () => L.create({ config: {}, storage, now: () => clock });
+  const m = mk();
+  await m.init();
+  assert.equal(m.get().pro, false);
+  assert.deepEqual(m.trial(), { state: 'available', days: 14, endsAt: null, daysLeft: 14 });
+  const seen = [];
+  m.onChange((s) => seen.push(s.type + ':' + s.pro));
+  assert.deepEqual(m.startTrial(), { ok: true });
+  assert.deepEqual(seen, ['trial:true']);
+  const s = m.get();
+  assert.equal(s.pro, true); assert.equal(s.type, 'trial'); assert.equal(s.plan, 'trial'); assert.equal(s.licensee, '');
+  assert.equal(m.trial().endsAt, T0 + 14 * DAYMS);
+  assert.equal(m.trial().daysLeft, 14);
+  assert.deepEqual(m.startTrial(), { ok: false, error: 'used' });
+  assert.equal(m.storedKey(), '');                      // a trial is not a licence key: the reading server sees a free visitor
+
+  clock = T0 + 6.5 * DAYMS;
+  const again = mk();                                    // the page is opened again a week later
+  assert.equal((await again.init()).pro, true);
+  assert.equal(again.trial().daysLeft, 8);
+  clock = T0 + 14 * DAYMS - 60000;
+  assert.equal(again.get().pro, true); assert.equal(again.trial().daysLeft, 1);
+  const flips = [];
+  again.onChange((st) => flips.push(st.pro));
+  clock = T0 + 14 * DAYMS;                               // the page is still open when the trial runs out
+  assert.equal(again.get().pro, false);
+  assert.deepEqual(flips, [false]);
+  assert.equal(again.trial().state, 'ended');
+  assert.deepEqual(again.startTrial(), { ok: false, error: 'used' });
+  assert.equal((await mk().init()).pro, false);
+});
+
+test('trial: setting the clock back does not bring days back', async () => {
+  const storage = L.memoryStorage();
+  let clock = T0;
+  const m = L.create({ config: {}, storage, now: () => clock });
+  await m.init();
+  m.startTrial();
+  clock = T0 + 13 * DAYMS; assert.equal(m.trial().daysLeft, 1);
+  clock = T0 + 2 * DAYMS;                                // the date on the device is moved back eleven days
+  assert.equal(m.trial().daysLeft, 1);
+  clock = T0 + 20 * DAYMS; assert.equal(m.get().pro, false);
+  clock = T0 + 1 * DAYMS;
+  const later = L.create({ config: {}, storage, now: () => clock });
+  assert.equal((await later.init()).pro, false);
+  assert.equal(later.trial().state, 'ended');
+});
+
+test('trial: a licence comes first, and the trial fills in when the licence stops', async () => {
+  const storage = L.memoryStorage();
+  let clock = T0;
+  const m = L.create({ config: { licensePublicKeys: [kp.publicJwk] }, storage, now: () => clock });
+  await m.init();
+  assert.deepEqual(await m.activate(K.issueKey(kp.privatePem, { name: 'ACME Shipping', exp: '2026-11-20' })), { ok: true });
+  assert.deepEqual(m.startTrial(), { ok: false, error: 'licensed' });   // nothing to try while Pro is paid for
+  assert.equal(m.trial().state, 'available');
+  await m.remove();
+  assert.equal(m.get().pro, false);
+  assert.deepEqual(m.startTrial(), { ok: true });
+  assert.equal(m.get().type, 'trial');
+  assert.deepEqual(await m.activate(K.issueKey(kp.privatePem, { name: 'ACME Shipping' })), { ok: true });
+  assert.equal(m.get().type, 'offline'); assert.equal(m.get().licensee, 'ACME Shipping');
+  await m.remove();
+  assert.equal(m.get().type, 'trial');                   // the trial days are still running underneath
+  clock = T0 + 15 * DAYMS;
+  assert.equal(m.get().pro, false);
+});
+
+test('trial: a site can switch it off or change its length', async () => {
+  const off = L.create({ config: { trialDays: 0 }, storage: L.memoryStorage(), now: () => T0 });
+  await off.init();
+  assert.equal(off.trial().state, 'off');
+  assert.deepEqual(off.startTrial(), { ok: false, error: 'off' });
+  assert.equal(off.get().pro, false);
+  let clock = T0;
+  const week = L.create({ config: { trialDays: 7 }, storage: L.memoryStorage(), now: () => clock });
+  await week.init();
+  week.startTrial();
+  clock = T0 + 7 * DAYMS - 1; assert.equal(week.get().pro, true);
+  clock = T0 + 7 * DAYMS; assert.equal(week.get().pro, false);
+});

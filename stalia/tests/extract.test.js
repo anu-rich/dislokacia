@@ -161,6 +161,17 @@ test('what the documents do not say is left at the default and flagged', () => {
   assert.equal(X.notePath({ field: 'laytime_allowed', port: 0 }, r2.calc), 'ports.0.allowed.quantity');
 });
 
+test('a notice rule without its hours is flagged, not filled in silently', () => {
+  const a = extractionOf(examples()[1].calc);
+  a.ports.forEach((p) => { p.notice.rule = 'hours_after_notice'; p.notice.hours_after_notice = '0'; });
+  assert.deepEqual(X.toCalc(a).notes.filter((n) => n.field === 'notice_rule'), [], 'laytime from the moment notice is tendered is a complete rule');
+  assert.deepEqual(X.toCalc(a).calc.ports.map((p) => p.nor.turnHours), ['0', '0']);
+  a.ports[1].notice.hours_after_notice = '';
+  const r = X.toCalc(a);
+  assert.equal(r.calc.ports[1].nor.turnHours, '6', 'the form keeps its default');
+  assert.deepEqual(r.notes.filter((n) => n.field === 'notice_rule').map((n) => n.port + '/' + n.status), ['1/not_found'], 'and the user is sent to check it');
+});
+
 test('“72 hours in total” for two ports reads as reversible; separate allowances read as separate', () => {
   const tanker = extractionOf(examples()[1].calc);
   tanker.laytime.between_ports = 'unknown';

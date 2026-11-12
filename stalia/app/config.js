@@ -45,6 +45,9 @@
 
     // Limits of the free version.
     free: { maxSaved: 3, maxPorts: 2 },
+
+    // Free trial of Pro, in days: one per device, started by the visitor from the Pro dialog. 0 switches the trial off.
+    trialDays: 14,
   };
 
   if (typeof module === 'object' && module.exports) module.exports = config;

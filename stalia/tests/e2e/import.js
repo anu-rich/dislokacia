@@ -383,6 +383,9 @@ function serveSite(configFor) {
   await addTo(page, 'cp', { name: 'broken.pdf', mimeType: 'application/pdf', buffer: Buffer.from('%PDF-1.4 this is not a real pdf') });
   await page.waitForFunction(() => !window.__stalia.imp._state.busy && /PDF could not be opened/.test(document.querySelector('#imp-body .note-err') ? document.querySelector('#imp-body .note-err').innerText : ''));
   check('a broken PDF is turned away with advice', true);
+  await addTo(page, 'cp', { name: 'Charter party.doc', mimeType: 'application/msword', buffer: Buffer.from('\xd0\xcf\x11\xe0 not a picture', 'latin1') });
+  await page.waitForFunction(() => !window.__stalia.imp._state.busy && /Save the document as PDF/.test(document.querySelector('#imp-body .note-err') ? document.querySelector('#imp-body .note-err').innerText : ''));
+  check('a Word file is turned away with the way round it: save as PDF', true);
   await page.click('[data-act="imp-close"]');
 
   console.log('every language');

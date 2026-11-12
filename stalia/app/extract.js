@@ -179,7 +179,7 @@
       if (isNaN(mins) || (mins <= 0 && (i === 0 || calc.laytimeMode !== 'reversible'))) missing('laytime_allowed', i);
       if (M.CAL_PRESETS.indexOf((src.working_time || {}).regime) < 0) missing('working_time', i);
       const rule = (src.notice || {}).rule;
-      if (rule !== 'hours_after_notice' && rule !== 'noon_rule' && p.nor.rule !== 'manual') missing('notice_rule', i);
+      if ((rule !== 'hours_after_notice' && rule !== 'noon_rule' && p.nor.rule !== 'manual') || (rule === 'hours_after_notice' && numText((src.notice || {}).hours_after_notice) === '')) missing('notice_rule', i);
       if (!p.nor.tendered) missing('nor_tendered', i);
       if (!p.completed) missing('operations_completed', i);
     });

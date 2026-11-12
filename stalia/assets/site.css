@@ -130,6 +130,7 @@
 .site-foot .wrap { padding-block: 24px 36px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px 32px; color: var(--ink-2); font-size: var(--fs-sm); }
 .site-foot h4 { font-size: var(--fs-xs); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
 .site-foot ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
+.plan .trial-line { font-size: var(--fs-sm); color: var(--ink-2); margin: 0; }
 .site-foot .fine { grid-column: 1 / -1; color: var(--ink-3); font-size: var(--fs-xs); max-width: 70ch; }
 
 /* ---------- guides (articles) ---------- */

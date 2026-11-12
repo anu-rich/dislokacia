@@ -6,6 +6,8 @@
  *   node tools/keygen.js issue --name "ACME Shipping" --days 365
  *   node tools/keygen.js issue --name "ACME Shipping" --until 2027-12-31
  *   node tools/keygen.js issue --name "ACME Shipping" --perpetual
+ *   node tools/keygen.js batch --count 10 --days 180            ten keys "Tester 01" … "Tester 10" for people who try Pro for free
+ *   node tools/keygen.js batch --names "Aigerim, Daniyar" --days 90 --plan tester --out keys.txt
  *   node tools/keygen.js verify STL1.xxxxx.yyyyy   check a key against app/config.js
  *   node tools/keygen.js pubkey                    print the public key of your master key
  *
@@ -118,24 +120,51 @@ async function main(argv) {
     console.log('Back the master key file up somewhere private. Do not publish it.');
     return;
   }
-  if (cmd === 'issue') {
-    const pem = loadPrivate(a);
-    let exp = null;
-    if (a.until) exp = String(a.until);
-    else if (!a.perpetual) {
-      const days = a.days == null ? 365 : Number(a.days);
-      if (!(days > 0)) throw new Error('--days must be a positive number.');
-      exp = new Date(Date.now() + days * 86400000).toISOString().slice(0, 10);
-    }
-    const key = issueKey(pem, { name: a.name, plan: a.plan, exp });
+  /** The expiry the command line asks for: --until, --perpetual, or --days (a year unless `fallbackDays` says otherwise). */
+  const expiryOf = (fallbackDays) => {
+    if (a.until) return String(a.until);
+    if (a.perpetual) return null;
+    const days = a.days == null ? fallbackDays : Number(a.days);
+    if (!(days > 0)) throw new Error('--days must be a positive number.');
+    return new Date(Date.now() + days * 86400000).toISOString().slice(0, 10);
+  };
+  /** Issue one key and write it down in the ledger. */
+  const issueAndRecord = (pem, lic) => {
+    const key = issueKey(pem, lic);
     const payload = JSON.parse(Buffer.from(key.split('.')[1], 'base64url').toString('utf8'));
     try {
       fs.mkdirSync(PRIVATE_DIR, { recursive: true });
       if (!fs.existsSync(LEDGER)) fs.writeFileSync(LEDGER, 'id,issued,expires,plan,licensee\n');
       fs.appendFileSync(LEDGER, [payload.id, payload.iat, payload.exp || 'perpetual', payload.p, JSON.stringify(payload.n)].join(',') + '\n');
     } catch (e) { /* the ledger is a convenience only */ }
+    return { key, payload };
+  };
+  if (cmd === 'issue') {
+    const { key, payload } = issueAndRecord(loadPrivate(a), { name: a.name, plan: a.plan, exp: expiryOf(365) });
     console.error('Licensee: ' + payload.n + ' · plan: ' + payload.p + ' · valid until: ' + (payload.exp || 'no expiry') + ' · id: ' + payload.id);
     console.log(key);
+    return;
+  }
+  if (cmd === 'batch') {
+    // free Pro for colleagues and testers: one key a person, all in one file that is ready to be passed on
+    const pem = loadPrivate(a);
+    let names = String(a.names || '').split(',').map((n) => n.trim()).filter(Boolean);
+    if (!names.length) {
+      const count = a.count == null ? 5 : Number(a.count);
+      if (!(Number.isInteger(count) && count > 0 && count <= 500)) throw new Error('--count must be a whole number from 1 to 500 (or give --names "A, B, C").');
+      names = Array.from({ length: count }, (_, i) => (a.name || 'Tester') + ' ' + String(i + 1).padStart(2, '0'));
+    }
+    const exp = expiryOf(90), plan = a.plan || 'tester';
+    const out = path.resolve(a.out || path.join(PRIVATE_DIR, 'keys-' + today() + '.txt'));
+    const lines = ['Stalia Pro: ' + names.length + ' key' + (names.length === 1 ? '' : 's') + ', issued ' + today() + ', valid until ' + (exp || 'no expiry') + '.',
+      'To switch Pro on: open the calculator, press "Pro" at the top, paste the key under "I have a licence key", press "Activate".', ''];
+    for (const name of names) {
+      const { key } = issueAndRecord(pem, { name, plan, exp });
+      lines.push(name, key, '');
+    }
+    fs.mkdirSync(path.dirname(out), { recursive: true });
+    fs.writeFileSync(out, lines.join('\n'), { mode: 0o600 });
+    console.log(names.length + ' key' + (names.length === 1 ? '' : 's') + ' written to ' + out);
     return;
   }
   if (cmd === 'verify') {

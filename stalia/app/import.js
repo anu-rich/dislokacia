@@ -113,6 +113,8 @@
       return pdfLib;
     }
     const isPdf = (f) => f.type === 'application/pdf' || /\.pdf$/i.test(f.name || '');
+    /** Word, Excel and the like: they are not pictures of pages, so they have to be saved as PDF first. */
+    const isOffice = (f) => /\.(docx?|rtf|odt|xlsx?|ods|pptx?)$/i.test(f.name || '') || /msword|officedocument|opendocument|ms-excel|rtf/.test(f.type || '');
     const isImage = (f) => /^image\//.test(f.type || '') || /\.(jpe?g|png|webp|gif|bmp|heic|heif)$/i.test(f.name || '');
 
     async function addPdf(file, doc) {
@@ -152,7 +154,7 @@
         try {
           if (isPdf(f)) await addPdf(f, doc);
           else if (isImage(f)) await addImage(f, doc);
-          else problem = t('imp.imgFail');
+          else problem = t(isOffice(f) ? 'imp.officeFile' : 'imp.imgFail');
         } catch (e) { problem = t(isPdf(f) ? 'imp.pdfFail' : 'imp.imgFail'); }
       }
       st.busy = ''; st.error = problem;

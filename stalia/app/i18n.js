@@ -243,7 +243,7 @@
     'warn.commenced_before_nor': 'Port {n}: operations commenced before NOR was tendered.',
     'warn.worked_no_effect': 'Port {n}: “work in an excepted period” has no effect here — the terms are SHINC or “even if used”.',
     'warn.event_outside': 'Port {n}: an event lies outside laytime and is ignored.',
-    'warn.ports_not_chronological': 'Port {n} starts before the previous port is completed — check the order of ports.',
+    'warn.ports_not_chronological': 'Port {n} starts before the previous port is completed — check the dates and the order of ports.',
     'warn.demurrage_rate_missing': 'Demurrage rate is empty — amounts are shown as zero.',
     'warn.despatch_rate_missing': 'Despatch rate is empty — despatch is shown as zero.',
     'warn.commission_invalid': 'Commission must be between 0 and 100 %.',
@@ -454,6 +454,7 @@
     'imp.tooMany': 'That is more than {n} pages. Remove the pages that have no laytime terms.',
     'imp.pdfFail': 'This PDF could not be opened. Try a photo or a screenshot of the pages you need.',
     'imp.imgFail': 'This image could not be opened.',
+    'imp.officeFile': 'Word and Excel files cannot be read as they are. Save the document as PDF (File → Save as → PDF) and add the PDF.',
     'imp.review.title': 'Check what was read',
     'imp.review.lead': 'Nothing is applied until you confirm. Anything not found or blacked out is listed below; fill it in by hand afterwards.',
     'imp.review.found': 'Read from the documents',
@@ -506,6 +507,12 @@
     'help.start': 'Start',
     'help.lang': 'Language',
     'pro.f7': '200 document readings a month',
+    'trial.start': 'Try Pro free for {n} days',
+    'trial.note': 'No card and no sign-up: Pro switches on straight away on this device. Document reading keeps the free allowance during the trial.',
+    'trial.started': 'Pro is on for {n} days, until {date}',
+    'trial.active': 'Pro trial: until {date}, days left: {n}.',
+    'trial.ended': 'The free Pro trial has ended. Your calculations are all here; Pro features open again with a licence key.',
+    'trial.pill': 'Pro · trial, {n} d',
 
     // misc
     'dow.0': 'Sunday', 'dow.1': 'Monday', 'dow.2': 'Tuesday', 'dow.3': 'Wednesday', 'dow.4': 'Thursday', 'dow.5': 'Friday', 'dow.6': 'Saturday',
@@ -538,7 +545,7 @@
   };
 
   /** Languages shipped in lang/, in the order they appear in the language menu. */
-  const LANGUAGE_FILES = ['ru', 'kk', 'uk', 'tr', 'el', 'zh'];
+  const LANGUAGE_FILES = ['zh', 'ru', 'kk', 'uk', 'tr', 'el'];
 
   const STRINGS = {}, LANG_LABELS = {}, LANG_NAMES = {}, FORMATS = {}, EXAMPLES = {};
   const LANGS = [];
@@ -550,7 +557,12 @@
    */
   function add(pack) {
     if (!pack || !pack.code || !pack.strings) return;
-    if (LANGS.indexOf(pack.code) < 0) LANGS.push(pack.code);
+    if (LANGS.indexOf(pack.code) < 0) {
+      // the menu order is the one above, whatever order the files were loaded in
+      const rank = (c) => { const i = c === 'en' ? 0 : LANGUAGE_FILES.indexOf(c) + 1; return i > 0 || c === 'en' ? i : 999; };
+      LANGS.push(pack.code);
+      LANGS.sort((x, y) => rank(x) - rank(y));
+    }
     STRINGS[pack.code] = pack.strings;
     LANG_LABELS[pack.code] = pack.label || pack.code.toUpperCase();
     LANG_NAMES[pack.code] = pack.name || pack.code;

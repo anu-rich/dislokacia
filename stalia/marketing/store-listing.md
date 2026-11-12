@@ -27,7 +27,7 @@ What you get
 • A day-by-day time sheet
 • A statement with the terms applied, the facts, the totals and signature lines — as PDF, as a Word document, or as an Excel sheet that recalculates when the other side changes a time or a rate
 • From documents: photograph the charter party and the statement of facts or add the PDFs, black out what is private, and the terms and times are filled in for you to check
-• English, Russian, Kazakh, Ukrainian, Turkish, Greek and Chinese
+• English, Chinese, Russian, Kazakh, Ukrainian, Turkish and Greek
 
 Calculations work without the internet and stay on your device: no account, no tracking. Only reading documents needs a connection: the pages you choose are sent to be read after you have blacked out what should stay with you.
 
@@ -58,7 +58,7 @@ Stalia рассчитывает сталийное время, демередж 
 • Таймшит по дням
 • Документ с применёнными условиями, фактами, итогами и местом для подписей — в PDF, в Word или в Excel, где итог пересчитывается, если контрагент поменяет время или ставку
 • Из документов: сфотографируйте чартер и стейтмент или добавьте PDF, замажьте лишнее — условия и время подставятся сами, вам останется проверить
-• Русский, английский, казахский, украинский, турецкий, греческий и китайский языки
+• Русский, английский, китайский, казахский, украинский, турецкий и греческий языки
 
 Расчёты работают без интернета и остаются на вашем устройстве: без регистрации и отслеживания. Интернет нужен только для чтения документов: выбранные страницы отправляются на чтение после того, как вы замазали то, что должно остаться у вас.
 

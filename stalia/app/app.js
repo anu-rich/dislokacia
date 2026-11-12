@@ -26,7 +26,7 @@
   const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
 
   // ---------------------------------------------------------------- storage (never throws)
-  const K = { current: 'stalia.current.v1', saved: 'stalia.saved.v1', lang: 'stalia.lang', brand: 'stalia.brand.v1', seen: 'stalia.welcome.v1' };
+  const K = { current: 'stalia.current.v1', saved: 'stalia.saved.v1', lang: 'stalia.lang', brand: 'stalia.brand.v1', seen: 'stalia.welcome.v1', trialEnd: 'stalia.trialEndSeen' };
   const store = {
     get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } },
@@ -453,7 +453,7 @@
   function renderHeader() {
     $('#lang-select').innerHTML = I.LANGS.map((l) => '<option value="' + l + '" lang="' + l + '"' + (l === state.lang ? ' selected' : '') + '>' + esc(I.t(l, 'lang.name')) + '</option>').join('');
     const s = lic.get(), b = $('#lic');
-    if (s.pro) { b.className = 'lic pill pill-lay'; b.textContent = 'Pro' + (s.licensee ? ' · ' + s.licensee.slice(0, 28) : ''); }
+    if (s.pro) { b.className = 'lic pill pill-lay'; b.textContent = s.type === 'trial' ? t('trial.pill', { n: lic.trial().daysLeft }) : 'Pro' + (s.licensee ? ' · ' + s.licensee.slice(0, 28) : ''); }
     else { b.className = 'lic pill pill-pro'; b.textContent = STORE ? 'Pro' : t('nav.upgrade'); }
   }
   function applyI18n() {
@@ -661,19 +661,26 @@
     return local ? V.fmtNumber(v, state.lang, 0) + ' ₸' : '$' + V.fmtNumber(v, 'en', 0);
   }
   function renderPro(notice) {
-    const s = lic.get(), d = $('#dlg'), co = CFG.checkout || {}, email = CFG.contactEmail || '';
+    const s = lic.get(), d = $('#dlg'), co = CFG.checkout || {}, email = CFG.contactEmail || '', tr = lic.trial();
+    const trialEnd = () => V.fmtDate(E.parseDT(s.expires), state.lang);
     let h = '<div class="dlg-h"><h2>' + esc(t('pro.title')) + '</h2><button type="button" class="btn btn-sm" data-act="dlg-close">' + esc(t('common.close')) + '</button></div><div class="dlg-b">';
     if (notice) h += '<p class="note note-warn">' + esc(notice) + '</p>';
-    if (s.pro) {
+    if (s.pro && s.type !== 'trial') {
       h += '<p class="note note-ok">' + esc(t('pro.active')) + '</p>';
       if (s.status === 'grace') h += '<p class="note note-warn">' + esc(t('pro.status.grace')) + '</p>';
       h += '<dl class="kv"><dt>' + esc(t('pro.licensee')) + '</dt><dd>' + esc(s.licensee || '—') + '</dd><dt>' + esc(t('pro.plan')) + '</dt><dd>' + esc(s.plan || 'Pro') + '</dd><dt>' + esc(t('pro.expires')) + '</dt><dd>' +
         esc(s.expires ? V.fmtDate(E.parseDT(s.expires), state.lang) : t('pro.noExpiry')) + '</dd></dl>' +
         '<div><button type="button" class="btn btn-sm" data-act="lic-remove">' + esc(t('pro.remove')) + '</button></div>';
     } else {
-      if (s.status === 'expired') h += '<p class="note note-warn">' + esc(t('pro.status.expired')) + '</p>';
+      if (s.type === 'trial') h += '<p class="note note-ok">' + esc(t('trial.active', { n: tr.daysLeft, date: trialEnd() })) + '</p>';
+      else if (s.status === 'expired') h += '<p class="note note-warn">' + esc(t('pro.status.expired')) + '</p>';
       else if (s.error === 'offline_too_long') h += '<p class="note note-warn">' + esc(t('pro.err.offline_too_long')) + '</p>';
+      else if (tr.state === 'ended' && !notice) h += '<p class="note note-warn">' + esc(t('trial.ended')) + '</p>';
       h += '<p>' + esc(STORE ? t('pro.storeNote') : t('pro.lead')) + '</p><ul>' + ['f1', 'f2', 'f3', 'f4', 'f5', 'f7', 'f6'].map((k) => '<li>' + esc(t('pro.' + k)) + '</li>').join('') + '</ul>';
+      if (tr.state === 'available') {
+        h += '<div class="trialbox"><button type="button" class="btn btn-primary btn-lg" data-act="trial-start">' + esc(t('trial.start', { n: tr.days })) + '</button>' +
+          '<p class="f-hint">' + esc(t('trial.note')) + '</p></div>';
+      }
       if (!STORE) {
       h += '<div class="plans">';
       [['monthly', 'pro.monthly', 'pro.perMonth', co.monthlyUrl, 'pro.buyMonthly'], ['yearly', 'pro.yearly', 'pro.perYear', co.yearlyUrl, 'pro.buyYearly']].forEach((x) => {
@@ -842,6 +849,11 @@
     'dlg-close'() { $('#dlg').close(); },
     'lic-activate'() { activateKey($('#lic-key').value); },
     'lic-remove'() { lic.remove().then(() => { toast(t('toast.licenseRemoved')); renderPro(); }); },
+    'trial-start'() {
+      if (!lic.startTrial().ok) { renderPro(); return; }
+      $('#dlg').close();
+      toast(t('trial.started', { n: lic.trial().days, date: V.fmtDate(E.parseDT(lic.get().expires), state.lang) }));
+    },
     'copy-email'() { copyText(CFG.contactEmail || ''); },
     'logo-remove'() { const b = getBrand(); delete b.logo; store.set(K.brand, b); renderStatementSide(); renderStatement(); },
     'notes-close'() { state.notes = []; if (state.source === 'import') state.source = 'edited'; renderBanner(); recalc(); },
@@ -1091,6 +1103,11 @@
     // First visit: choose the language, then read how it works. Not in front of a calculation somebody
     // shared or a licence being activated: those visitors came for something else, and the button is always there.
     if (!store.get(K.seen, false) && !shared && !activating) openHelp('lang', true);
+    // the free trial ran out since the last visit: say so once, with the ways to keep Pro
+    else if (lic.trial().state === 'ended' && !isPro() && !activating && !store.get(K.trialEnd, false)) {
+      store.set(K.trialEnd, true);
+      if (!shared) renderPro();
+    }
   }
   start();
   // the preview's host says a little later whether it can save files for the page

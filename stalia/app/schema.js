@@ -50,7 +50,7 @@
     money: obj({
       currency: str('ISO 4217 code of the demurrage rate, e.g. "USD". "" if not stated.'),
       demurrage_per_day: str('Demurrage rate per day. ' + NUM),
-      despatch: str('How despatch is paid: half the demurrage rate, its own stated rate, none ("free despatch"), or unknown.', ['half_demurrage', 'own_rate', 'none', 'unknown']),
+      despatch: str('How despatch is paid: half the demurrage rate, its own stated rate, none ("free despatch", or a charter party with no despatch clause), or unknown.', ['half_demurrage', 'own_rate', 'none', 'unknown']),
       despatch_per_day: str('Despatch rate per day when it has its own rate. ' + NUM),
       despatch_basis: str('Despatch on working time saved or on all time saved.', ['working_time_saved', 'all_time_saved', 'unknown']),
       commission_percent: str('Total commission in percent that the charter party makes payable on demurrage (address commission plus brokerage where both apply to demurrage). ' + NUM),
@@ -87,7 +87,7 @@
       notice: obj({
         tendered: str('When notice of readiness was tendered. ' + DT),
         rule: str('hours_after_notice = laytime starts a fixed number of hours after NOR; noon_rule = NOR before noon starts laytime the same day, later NOR the next working day (Gencon); stated_time = no rule can be read, but a time sheet states when laytime commenced; unknown.', ['hours_after_notice', 'noon_rule', 'stated_time', 'unknown']),
-        hours_after_notice: str('Notice (turn) time in hours. ' + NUM),
+        hours_after_notice: str('Notice (turn) time in hours; "0" when laytime starts as soon as notice is tendered. ' + NUM),
         noon_rule_morning_start: str('Noon rule: the time laytime starts when NOR is given up to noon (Gencon: 13:00). ' + HM),
         noon_rule_afternoon_start: str('Noon rule: the time laytime starts on the next working day when NOR is given after noon (Gencon: 06:00). ' + HM),
         laytime_commenced_at: str('stated_time only: when laytime commenced according to the time sheet. ' + DT),
@@ -98,7 +98,7 @@
         office_saturday_to: str('Office hours end on Saturday. ' + HM),
       }),
       operations_commenced: str('When loading or discharging actually commenced. ' + DT),
-      operations_completed: str('When loading or discharging was completed (tankers: hoses disconnected). ' + DT),
+      operations_completed: str('The moment laytime stops at this port: the event the charter party names, otherwise completion of loading or discharging (tankers: hoses disconnected). ' + DT),
       events: list(obj({
         type: str('weather = rain or bad weather; shifting = shifting between anchorage and berth or between berths; awaiting = awaiting tide, daylight, pilot or tugs; breakdown = breakdown of the vessel or her gear; owner = ballasting, bunkering, stores and other Owners’ purposes; survey = draft survey, inspection, sampling; strike = strike or force majeure; worked = cargo work actually done during a weekend or holiday that is excepted; note = a fact kept for the record that has no effect on the count; custom = anything else.', EVENT_TYPES),
         from: str('Start. ' + DT),

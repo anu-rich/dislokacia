@@ -131,7 +131,7 @@ test('normalizeCalc: hostile and broken input becomes a safe, well-typed calcula
 
 test('i18n: every language defines exactly the same keys and placeholders as English', () => {
   const en = I.STRINGS.en;
-  assert.deepEqual(I.LANGS, ['en', 'ru', 'kk', 'uk', 'tr', 'el', 'zh']);
+  assert.deepEqual(I.LANGS, ['en', 'zh', 'ru', 'kk', 'uk', 'tr', 'el']);
   const ph = (s) => (s.match(/\{\w+\}/g) || []).sort().join(',');
   for (const lang of I.LANGS) {
     const d = I.STRINGS[lang];

@@ -346,8 +346,8 @@ const norm = (s) => String(s).replace(/[  ]/g, ' ').replace(/\s+/g, ' ').trim
   const w = await newPage({ viewport: { width: 390, height: 844 }, locale: 'de-DE' }, true);
   await w.goto(base + '/app/', { waitUntil: 'networkidle' });
   check('a first visit opens on the choice of language', await w.locator('#help').isVisible() && (await w.locator('#help [data-act="help-lang"]').count()) === 7);
-  check('“language” is written in every language', /Language · Язык · Тіл · Мова · Dil · Γλώσσα · 语言/.test(await text(w, '#help')));
-  check('each language is offered under its own name', norm(await w.locator('#help .help-langs').innerText()) === 'English Русский Қазақша Українська Türkçe Ελληνικά 中文');
+  check('“language” is written in every language', /Language · 语言 · Язык · Тіл · Мова · Dil · Γλώσσα/.test(await text(w, '#help')));
+  check('each language is offered under its own name', norm(await w.locator('#help .help-langs').innerText()) === 'English 中文 Русский Қазақша Українська Türkçe Ελληνικά');
   check('the language screen fits a phone', await w.evaluate(() => document.getElementById('help').scrollWidth <= document.getElementById('help').clientWidth + 1));
   await shot(w, '20-welcome-language');
   await w.click('#help [data-act="help-lang"][data-lang="ru"]');
@@ -390,6 +390,37 @@ const norm = (s) => String(s).replace(/[  ]/g, ' ').replace(/\s+/g, ' ').trim
   check('a shared link opens the calculation, not the welcome screen', !(await wr.locator('#help').isVisible()) && /USD 23,841\.93/.test(await text(wr, '#summary')));
   check('the button is still there for them', (await wr.locator('.bar [data-act="help"]').count()) === 1);
   await wr.context().close();
+
+  console.log('free trial');
+  const tp = await newPage();
+  await tp.goto(base + '/app/', { waitUntil: 'networkidle' });
+  await tp.click('#lic');
+  check('Pro dialog offers the free trial', /Try Pro free for 14 days/.test(await text(tp, '#dlg')) && /No card and no sign-up/.test(await text(tp, '#dlg')));
+  await shot(tp, '12-trial-offer');
+  await tp.click('[data-act="trial-start"]');
+  await tp.waitForFunction(() => /trial/.test(document.querySelector('#lic').textContent));
+  check('trial starts: the dialog closes and the header counts the days', !(await tp.locator('#dlg').isVisible()) && /Pro · trial, 14 d/.test(await text(tp, '#lic')), await text(tp, '#lic'));
+  await tp.click('[data-act="statement"]');
+  check('trial: no free-version line, the letterhead is open', !/free version/.test(await text(tp, '#st-paper')) && !(await tp.locator('#br-company').isDisabled()));
+  await tp.keyboard.press('Escape');
+  await tp.click('#lic');
+  let trialDlg = await text(tp, '#dlg');
+  check('trial: the dialog says how long is left and still sells Pro', /days left: 14/.test(trialDlg) && !/Try Pro free/.test(trialDlg) && /\$19/.test(trialDlg) && (await tp.locator('#lic-key').count()) === 1, trialDlg.slice(0, 200));
+  await shot(tp, '13-trial-active');
+  await tp.click('[data-act="dlg-close"]');
+  // fifteen days later
+  await tp.evaluate(() => { const r = JSON.parse(localStorage.getItem('stalia.trial.v1')); r.startedAt -= 15 * 864e5; r.seenAt = r.startedAt; localStorage.setItem('stalia.trial.v1', JSON.stringify(r)); });
+  await tp.reload({ waitUntil: 'networkidle' });
+  await tp.waitForSelector('#dlg[open]');
+  trialDlg = await text(tp, '#dlg');
+  check('after 14 days Pro is off and the visitor is told, with the ways to keep it', /free Pro trial has ended/.test(trialDlg) && /\$19/.test(trialDlg) && !/Try Pro free/.test(trialDlg) && /Get Pro/.test(await text(tp, '#lic')), trialDlg.slice(0, 200));
+  await tp.click('[data-act="dlg-close"]');
+  await tp.click('[data-act="statement"]');
+  check('after the trial the statement is the free one again', /free version/.test(await text(tp, '#st-paper')) && (await tp.locator('#br-company').isDisabled()));
+  await tp.keyboard.press('Escape');
+  await tp.reload({ waitUntil: 'networkidle' });
+  check('the end-of-trial notice is shown once', !(await tp.locator('#dlg').isVisible()));
+  await tp.context().close();
 
   console.log('dark theme');
   const d = await newPage({ colorScheme: 'dark' });

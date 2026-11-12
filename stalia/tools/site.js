@@ -21,12 +21,12 @@ const ROOT = path.resolve(__dirname, '..');
 /** Every public page. Pages with the same `group` are translations of one another. */
 const PAGES = [
   { file: 'index.html', url: '/', lang: 'en', group: 'home', priority: '1.0' },
+  { file: 'zh/index.html', url: '/zh/', lang: 'zh', group: 'home', priority: '1.0' },
   { file: 'ru/index.html', url: '/ru/', lang: 'ru', group: 'home', priority: '1.0' },
   { file: 'kk/index.html', url: '/kk/', lang: 'kk', group: 'home', priority: '1.0' },
   { file: 'uk/index.html', url: '/uk/', lang: 'uk', group: 'home', priority: '1.0' },
   { file: 'tr/index.html', url: '/tr/', lang: 'tr', group: 'home', priority: '1.0' },
   { file: 'el/index.html', url: '/el/', lang: 'el', group: 'home', priority: '1.0' },
-  { file: 'zh/index.html', url: '/zh/', lang: 'zh', group: 'home', priority: '1.0' },
   { file: 'app/index.html', url: '/app/', lang: 'en', group: 'app', priority: '0.9' },
   { file: 'guides/how-to-calculate-laytime.html', url: '/guides/how-to-calculate-laytime.html', lang: 'en', group: 'howto', priority: '0.8' },
   { file: 'ru/guides/raschet-staliynogo-vremeni.html', url: '/ru/guides/raschet-staliynogo-vremeni.html', lang: 'ru', group: 'howto', priority: '0.8' },
@@ -39,8 +39,8 @@ const PAGES = [
 
 /** Short label and native name of each language, in the order the language switch shows them. */
 const LANGUAGES = [
-  ['en', 'EN', 'English'], ['ru', 'RU', 'Русский'], ['kk', 'ҚАЗ', 'Қазақша'], ['uk', 'УКР', 'Українська'],
-  ['tr', 'TR', 'Türkçe'], ['el', 'EL', 'Ελληνικά'], ['zh', '中文', '中文'],
+  ['en', 'EN', 'English'], ['zh', '中文', '中文'], ['ru', 'RU', 'Русский'], ['kk', 'ҚАЗ', 'Қазақша'],
+  ['uk', 'УКР', 'Українська'], ['tr', 'TR', 'Türkçe'], ['el', 'EL', 'Ελληνικά'],
 ];
 const langOrder = (code) => LANGUAGES.findIndex((l) => l[0] === code);
 

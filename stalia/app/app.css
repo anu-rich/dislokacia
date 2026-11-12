@@ -258,6 +258,8 @@ dialog.dlg::backdrop { background: var(--scrim); }
 .plan .price small { font-size: var(--fs-sm); font-weight: 400; color: var(--ink-2); }
 .copyline { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .copyline code { font-family: var(--font-mono); background: var(--surface-2); padding: 0.3rem 0.5rem; border-radius: var(--r-sm); user-select: all; overflow-wrap: anywhere; }
+.trialbox { display: grid; gap: 6px; justify-items: start; padding: 12px 14px; border: 1px solid var(--line-strong); border-radius: var(--r-md); background: var(--surface-2, transparent); }
+.trialbox .f-hint { margin: 0; }
 .keybox { display: grid; gap: 8px; }
 .keybox textarea { font-family: var(--font-mono); font-size: var(--fs-xs); min-height: 4.2rem; word-break: break-all; }
 .note { font-size: var(--fs-sm); padding: 8px 12px; border-radius: var(--r-sm); }

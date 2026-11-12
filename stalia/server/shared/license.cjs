@@ -8,6 +8,9 @@
  *  2. Lemon Squeezy licence keys — activated and re-validated through the public
  *     Lemon Squeezy License API (no API key needed, CORS enabled).
  *
+ * Without a key, Pro can be tried once for TRIAL_DAYS days: the trial is a date kept in this
+ * browser's storage, starts when the user asks for it and cannot be started again.
+ *
  * This is honest-user licensing: everything runs in the browser, so it keeps
  * honest customers honest and nothing more.
  */
@@ -23,6 +26,9 @@
   const HOUR = 3600 * 1000;
   const RECHECK_MS = 24 * HOUR;       // re-validate online keys once a day
   const GRACE_MS = 14 * 24 * HOUR;    // keep Pro this long if the licence server is unreachable
+  const TRIAL_KEY = 'stalia.trial.v1';
+  const TRIAL_DAYS = 14;
+  const DAY = 24 * HOUR;
 
   // ------------------------------------------------------------ base64url / utf-8
   function b64uToBytes(s) {
@@ -113,7 +119,59 @@
 
     const load = () => { try { return JSON.parse(storage.getItem(STORE_KEY) || 'null'); } catch (e) { return null; } };
     const save = (rec) => { try { rec ? storage.setItem(STORE_KEY, JSON.stringify(rec)) : storage.removeItem(STORE_KEY); } catch (e) { /* private mode */ } };
-    const set = (s) => { state = Object.assign({}, NONE, s); listeners.forEach((fn) => { try { fn(state); } catch (e) { /* listener error */ } }); return state; };
+    const notify = () => { listeners.forEach((fn) => { try { fn(state); } catch (e) { /* listener error */ } }); };
+    /** What the licence alone gives; a running trial fills in where it gives nothing. */
+    let own = Object.assign({}, NONE);
+    const set = (s) => { own = Object.assign({}, NONE, s); state = withTrial(own); notify(); return state; };
+
+    // ---------------------------------------------------------- the free trial
+    const trialDays = cfg.trialDays === 0 ? 0 : (Number(cfg.trialDays) > 0 ? Number(cfg.trialDays) : TRIAL_DAYS);
+    const loadTrial = () => { try { const r = JSON.parse(storage.getItem(TRIAL_KEY) || 'null'); return r && r.startedAt > 0 ? r : null; } catch (e) { return null; } };
+    /** The clock as the trial sees it: it never runs backwards, so setting the date back does not bring days back. */
+    function trialNow(rec) {
+      const t = now();
+      if (!rec) return t;
+      if (t > (rec.seenAt || 0) + HOUR) { rec.seenAt = t; try { storage.setItem(TRIAL_KEY, JSON.stringify(rec)); } catch (e) { /* private mode */ } }
+      return Math.max(t, rec.seenAt || 0);
+    }
+    /**
+     * @returns {{state:'off'|'available'|'active'|'ended', days:number, endsAt:(number|null), daysLeft:number}}
+     *   'off' when this site gives no trial; daysLeft counts the day in progress (1 on the last day)
+     */
+    function trial() {
+      if (!trialDays) return { state: 'off', days: 0, endsAt: null, daysLeft: 0 };
+      const rec = loadTrial();
+      if (!rec) return { state: 'available', days: trialDays, endsAt: null, daysLeft: trialDays };
+      const endsAt = rec.startedAt + trialDays * DAY, left = endsAt - trialNow(rec);
+      return left > 0 ? { state: 'active', days: trialDays, endsAt, daysLeft: Math.ceil(left / DAY) } : { state: 'ended', days: trialDays, endsAt, daysLeft: 0 };
+    }
+    /** The calendar day, where the user is, on which the trial ends. */
+    const dateOf = (ms) => { const d = new Date(ms), two = (n) => String(n).padStart(2, '0'); return d.getFullYear() + '-' + two(d.getMonth() + 1) + '-' + two(d.getDate()); };
+    function withTrial(s) {
+      if (s.pro) return s;
+      const tr = trial();
+      if (tr.state !== 'active') return s;
+      return Object.assign({}, NONE, { pro: true, type: 'trial', status: 'trial', plan: 'trial', expires: dateOf(tr.endsAt) });
+    }
+    /**
+     * Start the trial. One per browser, and only while no licence is active.
+     * @returns {{ok:boolean, error?:'off'|'used'|'licensed'}}
+     */
+    function startTrial() {
+      if (!trialDays) return { ok: false, error: 'off' };
+      if (own.pro) return { ok: false, error: 'licensed' };
+      if (loadTrial()) return { ok: false, error: 'used' };
+      const t = now();
+      try { storage.setItem(TRIAL_KEY, JSON.stringify({ startedAt: t, seenAt: t })); } catch (e) { /* private mode: the trial lasts for this visit */ }
+      if (!loadTrial()) return { ok: false, error: 'off' };
+      state = withTrial(own); notify();
+      return { ok: true };
+    }
+    /** The state right now: a trial that ran out while the page was open stops counting as Pro. */
+    function current() {
+      if (state.type === 'trial' && trial().state !== 'active') { state = withTrial(own); notify(); }
+      return state;
+    }
 
     const lsCfg = () => cfg.lemonSqueezy || {};
     function lsMatches(meta) {
@@ -248,12 +306,12 @@
     }
 
     return {
-      init, activate, remove, revalidate,
-      get: () => state,
+      init, activate, remove, revalidate, trial, startTrial,
+      get: current,
       onChange: (fn) => { listeners.push(fn); },
       storedKey: () => { const r = load(); return r ? r.key : ''; },
     };
   }
 
-  return { PREFIX, STORE_KEY, create, verifyOfflineKey, isOfflineKey, b64uToBytes, bytesToB64u, memoryStorage, expiryMs };
+  return { PREFIX, STORE_KEY, TRIAL_KEY, TRIAL_DAYS, create, verifyOfflineKey, isOfflineKey, b64uToBytes, bytesToB64u, memoryStorage, expiryMs };
 });

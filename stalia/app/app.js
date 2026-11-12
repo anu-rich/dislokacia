@@ -425,7 +425,7 @@
       d.innerHTML = '<div class="dlg-h"><h2>' + esc(t('act.copyText')) + '</h2><button type="button" class="btn btn-sm" data-act="dlg-close">' + esc(t('common.close')) + '</button></div>' +
         '<div class="dlg-b"><p class="note note-warn">' + esc(t('toast.copyFailed')) + '</p><textarea id="copy-area" rows="8" readonly></textarea></div>';
       $('#copy-area').value = text;
-      if (!d.open) d.showModal();
+      showDialog();
       $('#copy-area').select();
     };
     try {
@@ -481,12 +481,49 @@
     el.hidden = false; el.scrollTop = 0;
     fitPaper();
     document.body.style.overflow = 'hidden';
+    overlayOpened('statement');
   }
-  function closeStatement() {
+  function hideStatement() {
     state.stOpen = false;
     $('#statement').hidden = true;
     document.body.style.overflow = '';
   }
+  function closeStatement() {
+    hideStatement();
+    overlayClosed('statement');
+  }
+
+  // ---------------------------------------------------------------- overlays and the Back button
+  // Each open overlay (statement, dialog) owns one history entry. Back — the phone's button or
+  // gesture, or the browser's — closes the top overlay instead of leaving the calculator.
+  const overlays = [];
+  let skipPop = 0;
+  function overlayOpened(name) {
+    let pushed = false;
+    try { history.pushState({ staliaOverlay: overlays.length + 1 }, ''); pushed = true; } catch (e) { /* sandboxed page */ }
+    overlays.push({ name, pushed });
+  }
+  /** The page itself closed an overlay: drop its history entry too. */
+  function overlayClosed(name) {
+    let i = -1;
+    for (let k = overlays.length - 1; k >= 0; k--) if (overlays[k].name === name) { i = k; break; }
+    if (i < 0) return;
+    const entry = overlays.splice(i, 1)[0];
+    if (entry.pushed) { skipPop++; try { history.back(); } catch (e) { skipPop--; } }
+  }
+  window.addEventListener('popstate', () => {
+    if (skipPop > 0) { skipPop--; return; }
+    const top = overlays.pop();
+    if (!top) return;
+    if (top.name === 'dialog') { if ($('#dlg').open) $('#dlg').close(); } else hideStatement();
+  });
+  function showDialog() {
+    const d = $('#dlg');
+    if (d.open) return;
+    d.showModal();
+    overlayOpened('dialog');
+  }
+  $('#dlg').addEventListener('close', () => overlayClosed('dialog'));
 
   // ---------------------------------------------------------------- Pro dialog
   function priceText(period) {
@@ -528,7 +565,7 @@
         '<div id="lic-msg"></div><div><button type="button" class="btn btn-primary" data-act="lic-activate" id="lic-btn">' + esc(t('pro.activate')) + '</button></div></div>';
     }
     d.innerHTML = h + '</div>';
-    if (!d.open) d.showModal();
+    showDialog();
   }
   /** @returns {Promise<string>} empty string on success, otherwise the message shown to the user */
   async function activateKey(key, quiet) {
@@ -646,7 +683,7 @@
         h += '<p>' + esc(t('app.install.store')) + '</p><p class="copyline">' + stores.map((x) => '<a class="btn" href="' + esc(apps[x[0]]) + '" target="_blank" rel="noopener">' + x[1] + '</a>').join('') + '</p>';
       }
       d.innerHTML = h + '</div>';
-      if (!d.open) d.showModal();
+      showDialog();
     },
     share() {
       if (!state.shareHash) { toast(t('toast.copyFailed')); return; }

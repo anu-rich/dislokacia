@@ -258,6 +258,34 @@ const norm = (s) => String(s).replace(/[  ]/g, ' ').replace(/\s+/g, ' ').trim
   check('offline: any address of the app resolves to the cached page', (await o.getAttribute('html', 'lang')) === 'ru');
   await octx.close();
 
+  console.log('back button');
+  const bp = await newPage({ viewport: { width: 390, height: 844 } });
+  await bp.goto(base + '/app/', { waitUntil: 'networkidle' });
+  const settle = () => bp.waitForTimeout(150);
+  await bp.click('[data-act="statement"]');
+  await bp.goBack(); await settle();
+  check('Back closes the statement and stays in the calculator', !(await bp.locator('#statement').isVisible()) && /\/app\/$/.test(bp.url()) && /USD 23,841\.93/.test(await text(bp, '#summary')));
+  await bp.click('#lic');
+  await bp.goBack(); await settle();
+  check('Back closes a dialog', !(await bp.locator('#dlg').isVisible()) && /\/app\/$/.test(bp.url()));
+  await bp.click('[data-act="statement"]');
+  await bp.click('#st-side [data-act="pro"]');
+  await bp.goBack(); await settle();
+  check('Back closes only the dialog on top of the statement', !(await bp.locator('#dlg').isVisible()) && (await bp.locator('#statement').isVisible()));
+  await bp.goBack(); await settle();
+  check('the next Back closes the statement', !(await bp.locator('#statement').isVisible()) && /\/app\/$/.test(bp.url()));
+  await bp.click('[data-act="statement"]');
+  await bp.click('[data-act="st-close"]'); await settle();
+  await bp.click('#lic');
+  await bp.click('#dlg [data-act="dlg-close"]'); await settle();
+  await bp.click('[data-act="statement"]');
+  await bp.keyboard.press('Escape'); await settle();
+  check('closing with buttons or Escape leaves the calculator as it was', !(await bp.locator('#statement').isVisible()) && !(await bp.locator('#dlg').isVisible()) && /USD 23,841\.93/.test(await text(bp, '#summary')));
+  await bp.click('[data-act="statement"]');
+  await bp.goBack(); await settle();
+  check('Back still works after overlays were closed by hand', !(await bp.locator('#statement').isVisible()) && /\/app\/$/.test(bp.url()));
+  await bp.context().close();
+
   console.log('site pages');
   const SITE = require('../../tools/site.js');
   for (const width of [390, 1280]) {

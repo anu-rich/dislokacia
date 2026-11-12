@@ -13,6 +13,8 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:background">@null</item>
+        <!-- shows behind the status and navigation bars: the colour of the app header -->
+        <item name="android:windowBackground">@color/stalia_bars</item>
     </style>
 
 

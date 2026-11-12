@@ -32,7 +32,11 @@ html = html
   .replace(/(href|src)="\.\.\/assets\//g, '$1="assets/')
   .replace(/^<link rel="(canonical|manifest|apple-touch-icon)"[^>]*>\n/gm, '')
   .replace(/^<meta http-equiv="Content-Security-Policy"[^>]*>\n/gm, '')
-  .replace(/^<meta name="(mobile-web-app-capable|apple-mobile-web-app-[a-z-]+)"[^>]*>\n/gm, '');
+  .replace(/^<meta name="(mobile-web-app-capable|apple-mobile-web-app-[a-z-]+)"[^>]*>\n/gm, '')
+  // Without "viewport-fit=cover" the native shell keeps the page clear of the status and navigation bars
+  // on every WebView version, so nothing has to be padded by hand.
+  .replace(', viewport-fit=cover', '');
+if (/viewport-fit/.test(html)) throw new Error('viewport-fit is still in the app page');
 if (/\.\.\//.test(html.replace(/href="\.\.\/"/g, ''))) throw new Error('index.html still points outside the bundle');
 fs.writeFileSync(path.join(OUT, 'index.html'), html);
 

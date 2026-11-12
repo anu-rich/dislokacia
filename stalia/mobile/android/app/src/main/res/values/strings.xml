@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Stalia</string>
+    <string name="title_activity_main">Stalia</string>
+    <string name="package_name">app.stalia.laytime</string>
+    <string name="custom_url_scheme">app.stalia.laytime</string>
+</resources>

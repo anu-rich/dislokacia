@@ -233,6 +233,31 @@ const norm = (s) => String(s).replace(/[  ]/g, ' ').replace(/\s+/g, ' ').trim
   await shot(m, '09-phone-statement', false);
   await m.context().close();
 
+  console.log('installable, works offline');
+  const octx = await browser.newContext({ viewport: { width: 390, height: 844 }, locale: 'en-US' });
+  const o = await octx.newPage();
+  await o.goto(base + '/app/', { waitUntil: 'networkidle' });
+  const manifest = await o.evaluate(async () => (await fetch(document.querySelector('link[rel=manifest]').href)).json());
+  check('manifest: name, standalone display, three icons', manifest.short_name === 'Stalia' && manifest.display === 'standalone' && manifest.icons.length === 3 && manifest.icons.some((i) => i.purpose === 'maskable'));
+  const iconsOk = await o.evaluate(async (icons) => (await Promise.all(icons.map((i) => fetch(new URL(i.src, document.querySelector('link[rel=manifest]').href)).then((r) => r.ok && /image\/png/.test(r.headers.get('content-type')))))).every(Boolean), manifest.icons);
+  check('manifest icons exist', iconsOk);
+  await o.evaluate(() => navigator.serviceWorker.ready);
+  await o.waitForFunction(async () => (await (await caches.open('stalia-v1')).keys()).length >= 27, null, { timeout: 15000 });
+  check('install button is offered in the browser', await o.locator('#btn-install').isVisible());
+  await o.click('#btn-install');
+  check('install instructions name Android and iPhone', /Android/.test(await text(o, '#dlg')) && /iPhone/.test(await text(o, '#dlg')));
+  await o.click('#dlg [data-act="dlg-close"]');
+  await octx.setOffline(true);
+  await o.reload({ waitUntil: 'load' });
+  await o.waitForSelector('#summary .res-amount');
+  check('offline: the calculator opens and computes', /USD 23,841\.93/.test(await text(o, '#summary')));
+  check('offline: fonts and styles are there', await o.evaluate(() => document.fonts.check('700 20px "Fira Condensed"') && getComputedStyle(document.querySelector('.fix')).borderRadius !== '0px'));
+  await o.fill('#f-demurrageRate', '10000');
+  check('offline: editing still recalculates', /USD 16,442\.71/.test(await text(o, '#summary')), await text(o, '#summary'));
+  await o.goto(base + '/app/?lang=ru', { waitUntil: 'load' });
+  check('offline: any address of the app resolves to the cached page', (await o.getAttribute('html', 'lang')) === 'ru');
+  await octx.close();
+
   console.log('dark theme');
   const d = await newPage({ colorScheme: 'dark' });
   await d.goto(base + '/app/', { waitUntil: 'networkidle' });

@@ -33,6 +33,9 @@
       {"kty":"EC","crv":"P-256","x":"MjW50tm09YP5o6PzV_B_qmR8kqlEilw3khrtjykmNBo","y":"vRAYNDCr99lOHrIfefH1xZc8QBF5EimhHt88PjqQGFY"}
     ]/*KEYS-END*/,
 
+    // Links to the store apps, once they are published (shown in "Install app" and on the site).
+    apps: { android: '', ios: '' },
+
     // Limits of the free version.
     free: { maxSaved: 3, maxPorts: 2 },
   };

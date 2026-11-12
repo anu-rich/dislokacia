@@ -1,0 +1,23 @@
+{
+  "name": "stalia-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Stalia for Android and iOS: the web calculator packaged with Capacitor",
+  "scripts": {
+    "web": "node scripts/build-web.js",
+    "sync": "npm run web && cap sync",
+    "icons": "capacitor-assets generate --android --ios",
+    "android:debug": "npm run sync && cd android && ./gradlew assembleDebug",
+    "android:release": "npm run sync && cd android && ./gradlew bundleRelease",
+    "ios:open": "npm run sync && cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.6.0",
+    "@capacitor/core": "8.6.0",
+    "@capacitor/ios": "8.6.0"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "3.0.5",
+    "@capacitor/cli": "8.6.0"
+  }
+}

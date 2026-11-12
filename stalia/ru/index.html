@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Калькулятор сталийного времени и демереджа онлайн — Stalia</title>
+<meta name="description" content="Бесплатный расчёт сталийного времени онлайн: SHINC, SHEX, SSHEX, FHEX, нотис о готовности, погода и праздники, реверсивная сталия, демередж и диспач. Таймшит для печати на русском, английском и казахском.">
+<meta name="theme-color" content="#0C2231">
+<!--SEO-->
+<link rel="canonical" href="./">
+<!--/SEO-->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Stalia — сталия и демередж с точностью до минуты">
+<meta property="og:description" content="Введите условия чартер-партии и факты из стейтмента. Получите таймшит, момент истечения сталии и документ, который подпишут обе стороны.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/base.css">
+<link rel="stylesheet" href="../assets/site.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Stalia","applicationCategory":"BusinessApplication","operatingSystem":"Web","inLanguage":["ru","en","kk"],"description":"Онлайн-калькулятор сталийного времени и демереджа с таймшитом для печати.","offers":{"@type":"Offer","price":"0","priceCurrency":"KZT"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Калькулятор действительно бесплатный?","acceptedAnswer":{"@type":"Answer","text":"Да. Расчёты, шкала времени и таймшит бесплатны и без ограничений. Pro добавляет бланк вашей компании, чистый PDF, выгрузку и неограниченную библиотеку расчётов."}},
+{"@type":"Question","name":"Подходит ли он для танкеров?","acceptedAnswer":{"@type":"Answer","text":"Да. Укажите сталийное время в часах, например 72 часа всего, выберите реверсивную сталию, задайте шесть часов после нотиса с оговоркой unless sooner commenced и добавьте переход к причалу или простои насосов как перерывы."}},
+{"@type":"Question","name":"Где хранятся мои расчёты?","acceptedAnswer":{"@type":"Answer","text":"В вашем браузере. На сервер ничего не загружается. Файл-копия переносит расчёт на другой компьютер, а ссылка содержит сам расчёт."}},
+{"@type":"Question","name":"Можно ли опираться на результат в претензии?","acceptedAnswer":{"@type":"Answer","text":"Так же, как на собственную таблицу. Арифметика проверена, но главное слово за чартер-партией: проверьте, какие исключения применяются и действуют ли они на демередже."}}
+]}
+</script>
+</head>
+<body>
+
+<header class="site-top">
+  <div class="wrap">
+    <a class="brand" href="./"><b>STALIA</b></a>
+    <nav class="site-nav" aria-label="Сайт">
+      <a href="#counts">Что он считает</a>
+      <a href="#pricing">Цены</a>
+      <a href="guides/raschet-staliynogo-vremeni.html">Статьи</a>
+      <span class="langs-links" aria-label="Язык"><a href="../" lang="en" hreflang="en">EN</a><a href="./" aria-current="true" lang="ru">RU</a><a href="../kk/" lang="kk" hreflang="kk">ҚАЗ</a></span>
+      <a class="btn btn-primary btn-sm" href="../app/?lang=ru">Открыть калькулятор</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <h1>Сталия и демередж — с точностью до минуты</h1>
+      <p class="lead">Введите условия чартер-партии и факты из стейтмента. Stalia посчитает время по дням, покажет момент, когда сталия истекла, и подготовит таймшит, который подпишут обе стороны.</p>
+      <div class="cta">
+        <a class="btn btn-primary btn-lg" href="../app/?lang=ru">Открыть калькулятор</a>
+        <small>Бесплатно. Без регистрации.</small>
+      </div>
+    </div>
+    <div class="demo" aria-label="Пример расчёта">
+      <div class="demo-cap"><span>Пример: 27 500 т пшеницы, Новороссийск — Александрия</span><a href="../app/?lang=ru">Открыть в калькуляторе →</a></div>
+      <div id="demo-body" data-example="bulk" style="display:grid;grid-template-columns:minmax(0,1fr);gap:14px">
+        <div class="res res-dem"><p class="res-label">Демередж в пользу судовладельца</p><p class="res-amount"><span class="res-cur">USD</span> 23 841,93</p><p class="res-sub">1 сут 17 ч 00 мин на демередже · 1,70833 сут.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="scale" aria-hidden="true"></div>
+</section>
+
+<section class="sec" id="counts">
+  <div class="wrap">
+    <div class="sec-h">
+      <h2>Что он считает</h2>
+      <p>Каждое правило ниже — настройка, которую вы выбираете для каждого порта.</p>
+    </div>
+    <dl class="rider">
+      <div><dt>Рабочее время</dt><dd>SHINC, SHEX, SSHEX, FHEX, «с субботы 12:00 до понедельника 08:00» или любой недельный период. Праздники со своим временем начала накануне и окончания наутро. Unless used или even if used.</dd></div>
+      <div><dt>Начало сталии</dt><dd>Нотисное время после подачи нотиса или правило Gencon: нотис до полудня — сталия с 13:00, после полудня — со следующего рабочего дня. Нотис только в рабочие часы. Unless sooner commenced.</dd></div>
+      <div><dt>Перерывы</dt><dd>Дождь, переход к причалу, ожидание лоцмана, поломки, сюрвей, забастовки. Каждый считается на 0%, 50% или любую долю — и вы указываете, действует ли он на демередже.</dd></div>
+      <div><dt>Несколько портов</dt><dd>Реверсивная сталия, раздельный учёт или усреднение. Если судно пришло уже на демередже, время идёт с подачи нотиса — или после нотисного времени, если так сказано в чартере.</dd></div>
+      <div><dt>Деньги</dt><dd>Демередж пропорционально времени. Диспач в половину ставки или по своей, за спасённое рабочее или всё спасённое время. Комиссия вычитается.</dd></div>
+      <div><dt>Документ</dt><dd>Таймшит по дням и расчёт с применёнными условиями, фактами, итогами и двумя подписями. На русском, английском или казахском.</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-h"><h2>Три шага</h2></div>
+    <ol class="steps">
+      <li><h3>Условия</h3><p>Норма или часы по чартеру, рабочие дни, порядок начала сталии, ставка демереджа.</p></li>
+      <li><h3>Факты</h3><p>Нотис, швартовка, окончание работ и все перерывы из стейтмента.</p></li>
+      <li><h3>Документ</h3><p>Проверьте шкалу времени, распечатайте PDF и отправьте контрагенту.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-h"><h2>Почему расчёту можно доверять</h2></div>
+    <div class="trust">
+      <div><h3>Проверен дважды</h3><p>Перед каждым выпуском сотни случайных рейсов проходят через два независимых расчёта: основной и простой поминутный. Они обязаны совпасть до минуты.</p></div>
+      <div><h3>Ничего скрытого</h3><p>В документе рядом с цифрами напечатаны применённые условия — контрагент может проверить их строка за строкой.</p></div>
+      <div><h3>Данные остаются у вас</h3><p>Расчёты хранятся в вашем браузере. Ссылка на расчёт содержит сам расчёт. На сервере ничего не хранится.</p></div>
+    </div>
+    <p class="aside-note">Stalia считает арифметику. Что именно идёт в счёт, решает чартер-партия: сверьте результат с её формулировками, прежде чем предъявлять или оплачивать.</p>
+  </div>
+</section>
+
+<section class="sec" id="pricing">
+  <div class="wrap">
+    <div class="sec-h">
+      <h2>Цены</h2>
+      <p>Сам калькулятор бесплатный. Pro нужен, когда расчёт уходит контрагенту.</p>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <h3>Free</h3>
+        <p class="price">0 ₸</p>
+        <ul>
+          <li>Расчёты без ограничений</li>
+          <li>Все условия и правила сталии</li>
+          <li>Шкала времени и таймшит на экране</li>
+          <li>Документ для печати со строкой «бесплатная версия»</li>
+          <li>3 сохранённых расчёта, 2 порта в рейсе</li>
+          <li>Ссылки на расчёт</li>
+        </ul>
+        <div class="buy"><a class="btn" href="../app/?lang=ru">Открыть калькулятор</a></div>
+      </div>
+      <div class="plan plan-pro">
+        <h3>Pro <span class="pill pill-pro">на пользователя</span></h3>
+        <p class="price"><span data-price="kzt.monthly">9 900 ₸</span> <small>в месяц</small></p>
+        <p class="price-alt">или <b data-price="kzt.yearly">79 000 ₸</b> в год · картой онлайн: <span data-price="usd.monthly">$19</span> и <span data-price="usd.yearly">$149</span></p>
+        <ul>
+          <li>Таймшит на бланке компании: название, реквизиты, логотип</li>
+          <li>Чистый PDF без строки «бесплатная версия»</li>
+          <li>Сколько угодно сохранённых расчётов и файлы-копии</li>
+          <li>Любое число портов в рейсе</li>
+          <li>Выгрузка таймшита в Excel (CSV)</li>
+          <li>Ответы по почте в первую очередь</li>
+        </ul>
+        <div class="buy"><a class="btn btn-primary" data-buy="monthly" href="#contact">Купить на месяц</a><a class="btn" data-buy="yearly" href="#contact">Купить на год</a></div>
+      </div>
+    </div>
+    <div class="contact" id="contact">
+      <p>Нужен счёт для ТОО или ИП, оплата переводом или остались вопросы? Напишите — пришлём счёт и лицензионный ключ.</p>
+      <p class="copyline"><code id="contact-email" data-contact="email">hello@example.com</code><button type="button" class="btn btn-sm" data-copy="#contact-email">Скопировать</button><a class="btn btn-sm" data-contact="telegram" href="#" target="_blank" rel="noopener" hidden>Telegram</a></p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="faq">
+  <div class="wrap">
+    <div class="sec-h"><h2>Вопросы</h2></div>
+    <dl class="faq">
+      <div><dt>Калькулятор действительно бесплатный?</dt><dd>Да. Расчёты, шкала времени и таймшит бесплатны и без ограничений. Pro добавляет бланк вашей компании, чистый PDF, выгрузку и неограниченную библиотеку расчётов.</dd></div>
+      <div><dt>Подходит ли он для танкеров?</dt><dd>Да. Укажите сталийное время в часах, например 72 часа всего, выберите реверсивную сталию, задайте шесть часов после нотиса с оговоркой unless sooner commenced и добавьте переход к причалу или простои насосов как перерывы.</dd></div>
+      <div><dt>Где хранятся мои расчёты?</dt><dd>В вашем браузере. На сервер ничего не загружается. «Файл-копия» переносит расчёт на другой компьютер, а «Скопировать ссылку» отправляет его коллеге.</dd></div>
+      <div><dt>Можно ли опираться на результат в претензии?</dt><dd>Так же, как на собственную таблицу. Арифметика проверена, но главное слово за чартер-партией: проверьте, какие исключения применяются и действуют ли они на демередже.</dd></div>
+      <div><dt>Как купить Pro?</dt><dd>Картой онлайн — ключ придёт на почту, его нужно вставить в калькулятор. Если нужен счёт или оплата переводом, напишите нам.</dd></div>
+      <div><dt>На каких языках он работает?</dt><dd>Калькулятор и документ — на русском, английском и казахском. Язык документа можно выбрать отдельно от языка экрана.</dd></div>
+    </dl>
+  </div>
+</section>
+</main>
+
+<div class="scale" aria-hidden="true"></div>
+<footer class="site-foot">
+  <div class="wrap">
+    <div><h4>Stalia</h4><ul><li><a href="../app/?lang=ru">Калькулятор</a></li><li><a href="#pricing">Цены</a></li><li><a href="#contact">Контакты</a></li></ul></div>
+    <div><h4>Статьи</h4><ul><li><a href="guides/raschet-staliynogo-vremeni.html">Как рассчитать сталийное время и демередж</a></li><li><a href="guides/shinc-shex-sshex-fhex.html">SHINC, SHEX, SSHEX, FHEX: что входит в счёт</a></li></ul></div>
+    <div><h4>Языки</h4><ul><li><a href="../" lang="en" hreflang="en">English</a></li><li><a href="../kk/" lang="kk" hreflang="kk">Қазақша</a></li></ul></div>
+    <p class="fine">© <span data-year>2026</span> Stalia. Калькулятор выполняет арифметику и не является юридической консультацией. Шрифты: IBM Plex и Fira Sans, лицензия SIL Open Font License.</p>
+  </div>
+</footer>
+
+<div class="tip" id="tip" hidden><b></b><span></span></div>
+<script src="../app/config.js"></script>
+<script src="../app/engine.js"></script>
+<script src="../app/i18n.js"></script>
+<script src="../app/model.js"></script>
+<script src="../app/view.js"></script>
+<script src="../assets/site.js"></script>
+</body>
+</html>

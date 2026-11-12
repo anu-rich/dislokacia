@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Laytime &amp; Demurrage Calculator Online — Stalia</title>
+<meta name="description" content="Free online laytime calculator. SHINC, SHEX, SSHEX and FHEX terms, NOR rules, weather and holidays, reversible laytime, demurrage and despatch. Prints a time sheet both sides can sign.">
+<meta name="theme-color" content="#0C2231">
+<!--SEO-->
+<link rel="canonical" href="./">
+<!--/SEO-->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Stalia — laytime and demurrage, counted to the minute">
+<meta property="og:description" content="Enter the charter party terms and the statement of facts. Get the time sheet, the moment laytime ran out and a statement both sides can sign.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/site.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Stalia","applicationCategory":"BusinessApplication","operatingSystem":"Web","inLanguage":["en","ru","kk"],"description":"Online laytime and demurrage calculator with a printable time sheet.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Is the calculator really free?","acceptedAnswer":{"@type":"Answer","text":"Yes. Calculations, the time line and the time sheet are free and unlimited. Pro adds your letterhead, a clean PDF, exports and an unlimited library."}},
+{"@type":"Question","name":"Does it work for tankers?","acceptedAnswer":{"@type":"Answer","text":"Yes. Enter the hours allowed, for example 72 hours in total, choose reversible laytime, set six hours after NOR unless sooner commenced, and add shifting or pumping delays as interruptions."}},
+{"@type":"Question","name":"Where are my calculations stored?","acceptedAnswer":{"@type":"Answer","text":"In your browser. Nothing is uploaded. A backup file moves a calculation to another computer, and a share link carries the calculation inside the link."}},
+{"@type":"Question","name":"Can I rely on the result in a claim?","acceptedAnswer":{"@type":"Answer","text":"Use it as you would use your own spreadsheet. The arithmetic is tested, but the charter party governs: check which exceptions apply and whether they apply on demurrage."}}
+]}
+</script>
+</head>
+<body>
+
+<header class="site-top">
+  <div class="wrap">
+    <a class="brand" href="./"><b>STALIA</b></a>
+    <nav class="site-nav" aria-label="Site">
+      <a href="#counts">What it counts</a>
+      <a href="#pricing">Pricing</a>
+      <a href="guides/how-to-calculate-laytime.html">Guides</a>
+      <span class="langs-links" aria-label="Language"><a href="./" aria-current="true" lang="en">EN</a><a href="ru/" lang="ru" hreflang="ru">RU</a><a href="kk/" lang="kk" hreflang="kk">ҚАЗ</a></span>
+      <a class="btn btn-primary btn-sm" href="app/?lang=en">Open the calculator</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <h1>Laytime and demurrage, counted to the minute</h1>
+      <p class="lead">Enter the charter party terms and the statement of facts. Stalia counts the time day by day, shows the moment laytime ran out, and prints a statement both sides can sign.</p>
+      <div class="cta">
+        <a class="btn btn-primary btn-lg" href="app/?lang=en">Open the calculator</a>
+        <small>Free. No sign-up.</small>
+      </div>
+    </div>
+    <div class="demo" aria-label="Example calculation">
+      <div class="demo-cap"><span>Example: 27,500 MT wheat, Novorossiysk to Alexandria</span><a href="app/?lang=en">Open it in the calculator →</a></div>
+      <div id="demo-body" data-example="bulk" style="display:grid;grid-template-columns:minmax(0,1fr);gap:14px">
+        <div class="res res-dem"><p class="res-label">Demurrage due to Owners</p><p class="res-amount"><span class="res-cur">USD</span> 23,841.93</p><p class="res-sub">1d 17h 00m on demurrage · 1.70833 days</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="scale" aria-hidden="true"></div>
+</section>
+
+<section class="sec" id="counts">
+  <div class="wrap">
+    <div class="sec-h">
+      <h2>What it counts</h2>
+      <p>Each rule below is a setting you choose for every port.</p>
+    </div>
+    <dl class="rider">
+      <div><dt>Working time</dt><dd>SHINC, SHEX, SSHEX, FHEX, Saturday noon to Monday 08:00, or any weekly period you define. Holidays with their own eve and next-morning times. Unless used or even if used.</dd></div>
+      <div><dt>Commencement</dt><dd>A fixed turn time after NOR, or the Gencon rule: notice by noon starts laytime at 13:00, later notice starts it on the next working day. NOR in office hours only. Unless sooner commenced.</dd></div>
+      <div><dt>Interruptions</dt><dd>Rain, shifting, awaiting pilot, breakdowns, surveys, strikes. Count each at 0%, 50% or any share, and say whether it still applies once the vessel is on demurrage.</dd></div>
+      <div><dt>Between ports</dt><dd>Reversible, non-reversible or averaged laytime. A vessel that arrives already on demurrage is charged from NOR, or after notice time if the charter says so.</dd></div>
+      <div><dt>Money</dt><dd>Demurrage pro rata. Despatch at half rate or your own, on working time saved or all time saved. Commission deducted.</dd></div>
+      <div><dt>Paper</dt><dd>A day-by-day time sheet and a statement with the terms applied, the facts, the totals and two signature lines. In English, Russian or Kazakh.</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-h"><h2>Three steps</h2></div>
+    <ol class="steps">
+      <li><h3>Terms</h3><p>Rate or hours allowed, working days, how laytime starts, the demurrage rate.</p></li>
+      <li><h3>Facts</h3><p>NOR, berthing, completion and every interruption from the statement of facts.</p></li>
+      <li><h3>Statement</h3><p>Check the time line, print the PDF, send it to the other side.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-h"><h2>Why trust the arithmetic</h2></div>
+    <div class="trust">
+      <div><h3>Checked twice</h3><p>Before each release, hundreds of random voyages go through two independent calculations: the engine and a plain minute-by-minute count. They must agree to the minute.</p></div>
+      <div><h3>Nothing hidden</h3><p>The statement prints the rules that were applied next to the figures, so the other side can check them line by line.</p></div>
+      <div><h3>Your data stays with you</h3><p>Calculations live in your browser. A share link carries the calculation inside the link itself. Nothing is stored on a server.</p></div>
+    </div>
+    <p class="aside-note">Stalia does the arithmetic. The charter party decides what counts: check the result against its wording before you claim or pay.</p>
+  </div>
+</section>
+
+<section class="sec" id="pricing">
+  <div class="wrap">
+    <div class="sec-h">
+      <h2>Pricing</h2>
+      <p>The calculator is free. Pro is for statements you send to the other side.</p>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <h3>Free</h3>
+        <p class="price">$0</p>
+        <ul>
+          <li>Unlimited calculations</li>
+          <li>All laytime terms and rules</li>
+          <li>Time line and time sheet on screen</li>
+          <li>Printable statement with a “free version” line</li>
+          <li>3 saved calculations, 2 ports per voyage</li>
+          <li>Share links</li>
+        </ul>
+        <div class="buy"><a class="btn" href="app/?lang=en">Open the calculator</a></div>
+      </div>
+      <div class="plan plan-pro">
+        <h3>Pro <span class="pill pill-pro">per user</span></h3>
+        <p class="price"><span data-price="usd.monthly">$19</span> <small>per month</small></p>
+        <p class="price-alt">or <b data-price="usd.yearly">$149</b> per year</p>
+        <ul>
+          <li>Statements on your letterhead: name, details, logo</li>
+          <li>Clean PDF without the “free version” line</li>
+          <li>Unlimited saved calculations and backup files</li>
+          <li>Any number of ports per voyage</li>
+          <li>Time sheet export to Excel (CSV)</li>
+          <li>Priority answers by e-mail</li>
+        </ul>
+        <div class="buy"><a class="btn btn-primary" data-buy="monthly" href="#contact">Buy monthly</a><a class="btn" data-buy="yearly" href="#contact">Buy yearly</a></div>
+      </div>
+    </div>
+    <div class="contact" id="contact">
+      <p>Need an invoice or a bank transfer, or have a question? Write to us and we will reply with an invoice and your licence key.</p>
+      <p class="copyline"><code id="contact-email" data-contact="email">hello@example.com</code><button type="button" class="btn btn-sm" data-copy="#contact-email">Copy</button><a class="btn btn-sm" data-contact="telegram" href="#" target="_blank" rel="noopener" hidden>Telegram</a></p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="faq">
+  <div class="wrap">
+    <div class="sec-h"><h2>Questions</h2></div>
+    <dl class="faq">
+      <div><dt>Is the calculator really free?</dt><dd>Yes. Calculations, the time line and the time sheet are free and unlimited. Pro adds your letterhead, a clean PDF, exports and an unlimited library.</dd></div>
+      <div><dt>Does it work for tankers?</dt><dd>Yes. Enter the hours allowed, for example 72 hours in total, choose reversible laytime, set six hours after NOR “unless sooner commenced”, and add shifting or pumping delays as interruptions.</dd></div>
+      <div><dt>Where are my calculations stored?</dt><dd>In your browser. Nothing is uploaded. “Backup file” moves a calculation to another computer, and “Copy link” sends it to a colleague.</dd></div>
+      <div><dt>Can I rely on the result in a claim?</dt><dd>Use it as you would use your own spreadsheet. The arithmetic is tested, but the charter party governs: check which exceptions apply and whether they apply on demurrage.</dd></div>
+      <div><dt>How do I get Pro?</dt><dd>Buy online by card and the licence key arrives by e-mail; paste it into the calculator. For an invoice or a bank transfer, write to us.</dd></div>
+      <div><dt>Which languages are there?</dt><dd>The calculator and the statement come in English, Russian and Kazakh. The statement can be in a different language from the screen.</dd></div>
+    </dl>
+  </div>
+</section>
+</main>
+
+<div class="scale" aria-hidden="true"></div>
+<footer class="site-foot">
+  <div class="wrap">
+    <div><h4>Stalia</h4><ul><li><a href="app/?lang=en">Calculator</a></li><li><a href="#pricing">Pricing</a></li><li><a href="#contact">Contact</a></li></ul></div>
+    <div><h4>Guides</h4><ul><li><a href="guides/how-to-calculate-laytime.html">How to calculate laytime and demurrage</a></li><li><a href="guides/shinc-shex-sshex-fhex.html">SHINC, SHEX, SSHEX, FHEX explained</a></li></ul></div>
+    <div><h4>Languages</h4><ul><li><a href="ru/" lang="ru" hreflang="ru">Русский</a></li><li><a href="kk/" lang="kk" hreflang="kk">Қазақша</a></li></ul></div>
+    <p class="fine">© <span data-year>2026</span> Stalia. The calculator does arithmetic and is not legal advice. Fonts: IBM Plex and Fira Sans, SIL Open Font License.</p>
+  </div>
+</footer>
+
+<div class="tip" id="tip" hidden><b></b><span></span></div>
+<script src="app/config.js"></script>
+<script src="app/engine.js"></script>
+<script src="app/i18n.js"></script>
+<script src="app/model.js"></script>
+<script src="app/view.js"></script>
+<script src="assets/site.js"></script>
+</body>
+</html>

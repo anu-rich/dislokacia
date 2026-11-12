@@ -4,6 +4,12 @@
   const E = window.StaliaEngine, I = window.StaliaI18n, M = window.StaliaModel, V = window.StaliaView, L = window.StaliaLicense;
   const CFG = window.STALIA_CONFIG || {};
   const PREVIEW = !!CFG.preview; // sandboxed preview: no printing, downloads or share links
+  const NATIVE = !!CFG.native;   // packaged Android / iOS app (set by mobile/scripts/build-web.js)
+  const STORE = !!CFG.store;     // app-store build: no prices or purchase links inside the app
+  const capBridge = () => (NATIVE && window.Capacitor && typeof window.Capacitor.nativePromise === 'function' ? window.Capacitor : null);
+  const hasNativePrint = () => { const c = capBridge(); return !!(c && (c.PluginHeaders || []).some((h) => h.name === 'StaliaPrint')); };
+  const canPrint = () => !PREVIEW && (!NATIVE || hasNativePrint());
+  const canDownload = !PREVIEW && !NATIVE; // file downloads need a browser
   const FREE = Object.assign({ maxSaved: 3, maxPorts: 2 }, CFG.free || {});
   const esc = V.esc;
   const $ = (s, r) => (r || document).querySelector(s);
@@ -269,9 +275,9 @@
     const ok = state.result && state.result.ok, dis = ok ? '' : ' disabled';
     const proTag = isPro() ? '' : ' <span class="pill pill-pro">Pro</span>';
     let h = '<button type="button" class="btn btn-primary" data-act="statement"' + dis + '>' + esc(t('act.statement')) + '</button>';
-    if (!PREVIEW) h += '<button type="button" class="btn btn-sm" data-act="share"' + dis + '>' + esc(t('act.share')) + '</button>';
+    if (!PREVIEW && (!NATIVE || CFG.siteUrl)) h += '<button type="button" class="btn btn-sm" data-act="share"' + dis + '>' + esc(t('act.share')) + '</button>';
     h += '<button type="button" class="btn btn-sm" data-act="copy-summary"' + dis + '>' + esc(t('act.copyText')) + '</button>';
-    if (!PREVIEW) {
+    if (canDownload) {
       h += '<button type="button" class="btn btn-sm" data-act="csv"' + dis + '>' + esc(t('act.csv')) + proTag + '</button>' +
         '<button type="button" class="btn btn-sm" data-act="json">' + esc(t('act.json')) + proTag + '</button>' +
         '<button type="button" class="btn btn-sm" data-act="open-file">' + esc(t('act.open')) + '</button>';
@@ -375,7 +381,7 @@
     $('#langs').innerHTML = I.LANGS.map((l) => '<button type="button" data-act="lang" data-lang="' + l + '" aria-pressed="' + (l === state.lang) + '" title="' + esc(I.t(l, 'lang.name')) + '">' + esc(I.LANG_LABELS[l]) + '</button>').join('');
     const s = lic.get(), b = $('#lic');
     if (s.pro) { b.className = 'lic pill pill-lay'; b.textContent = 'Pro' + (s.licensee ? ' · ' + s.licensee.slice(0, 28) : ''); }
-    else { b.className = 'lic pill pill-pro'; b.textContent = t('nav.upgrade'); }
+    else { b.className = 'lic pill pill-pro'; b.textContent = STORE ? 'Pro' : t('nav.upgrade'); }
   }
   function applyI18n() {
     document.documentElement.lang = state.lang;
@@ -440,12 +446,21 @@
   function renderStatement() {
     const site = CFG.siteUrl || (/^https?:/.test(location.protocol) && !PREVIEW ? location.origin : '');
     $('#st-paper').innerHTML = V.statementHTML(state.calc, state.result, state.stLang || state.lang, { pro: isPro(), brand: getBrand(), siteUrl: site, today: todayStr() });
+    fitPaper();
   }
+  /** On a phone the A4 sheet is shown whole, scaled down to the screen (print always uses full size). */
+  function fitPaper() {
+    const box = $('#st-paper'), paper = box && box.querySelector('.paper');
+    if (!paper) return;
+    const k = box.clientWidth ? Math.min(1, box.clientWidth / 620) : 1;
+    paper.style.zoom = k < 0.999 ? String(Math.round(k * 1000) / 1000) : '';
+  }
+  window.addEventListener('resize', () => { if (state.stOpen) fitPaper(); });
   function renderStatementSide() {
     const b = getBrand(), pro = isPro();
     const logoOk = /^data:image\/(png|jpeg|webp|gif);base64,/.test(b.logo || '');
     $('#st-lang').innerHTML = I.LANGS.map((l) => '<option value="' + l + '"' + (l === (state.stLang || state.lang) ? ' selected' : '') + '>' + esc(I.t(l, 'lang.name')) + '</option>').join('');
-    $('#btn-print').hidden = PREVIEW;
+    $('#btn-print').hidden = !canPrint();
     $('#st-side').innerHTML =
       '<fieldset' + (pro ? '' : ' disabled') + '><legend>' + esc(t('st.brand')) + (pro ? '' : ' <span class="pill pill-pro">Pro</span>') + '</legend>' +
       '<div class="f"><label class="f-l" for="br-company">' + esc(t('st.brand.company')) + '</label><input id="br-company" data-brand="company" maxlength="120" value="' + esc(b.company || '') + '"></div>' +
@@ -453,7 +468,7 @@
       '<div class="f"><span class="f-l">' + esc(t('st.brand.logo')) + '</span><div class="logo-row">' + (logoOk ? '<img src="' + b.logo + '" alt="">' : '') +
       '<label class="btn btn-sm">' + esc(t('st.brand.logoPick')) + '<input type="file" id="br-logo" accept="image/png,image/jpeg,image/webp,image/gif" hidden></label>' +
       (logoOk ? '<button type="button" class="btn btn-sm btn-ghost" data-act="logo-remove">' + esc(t('st.brand.logoRemove')) + '</button>' : '') + '</div></div></fieldset>' +
-      (pro ? '' : '<p class="f-hint">' + esc(t('st.brand.proOnly')) + ' <button type="button" class="btn btn-sm" data-act="pro">' + esc(t('nav.upgrade')) + '</button></p>') +
+      (pro ? '' : '<p class="f-hint">' + esc(t('st.brand.proOnly')) + ' <button type="button" class="btn btn-sm" data-act="pro">' + esc(STORE ? 'Pro' : t('nav.upgrade')) + '</button></p>') +
       '<fieldset><legend>' + esc(t('st.remarks')) + '</legend><textarea id="' + idOf('meta.remarks') + '" data-path="meta.remarks" maxlength="2000" rows="4" aria-label="' + esc(t('st.remarks')) + '">' + esc(state.calc.meta.remarks || '') + '</textarea></fieldset>';
   }
   function openStatement() {
@@ -464,6 +479,7 @@
     renderStatement();
     const el = $('#statement');
     el.hidden = false; el.scrollTop = 0;
+    fitPaper();
     document.body.style.overflow = 'hidden';
   }
   function closeStatement() {
@@ -492,7 +508,9 @@
     } else {
       if (s.status === 'expired') h += '<p class="note note-warn">' + esc(t('pro.status.expired')) + '</p>';
       else if (s.error === 'offline_too_long') h += '<p class="note note-warn">' + esc(t('pro.err.offline_too_long')) + '</p>';
-      h += '<p>' + esc(t('pro.lead')) + '</p><ul>' + ['f1', 'f2', 'f3', 'f4', 'f5', 'f6'].map((k) => '<li>' + esc(t('pro.' + k)) + '</li>').join('') + '</ul><div class="plans">';
+      h += '<p>' + esc(STORE ? t('pro.storeNote') : t('pro.lead')) + '</p><ul>' + ['f1', 'f2', 'f3', 'f4', 'f5', 'f6'].map((k) => '<li>' + esc(t('pro.' + k)) + '</li>').join('') + '</ul>';
+      if (!STORE) {
+      h += '<div class="plans">';
       [['monthly', 'pro.monthly', 'pro.perMonth', co.monthlyUrl, 'pro.buyMonthly'], ['yearly', 'pro.yearly', 'pro.perYear', co.yearlyUrl, 'pro.buyYearly']].forEach((x) => {
         const price = priceText(x[0]);
         h += '<div class="plan"><h3>' + esc(t(x[1])) + '</h3>' + (price ? '<p class="price">' + esc(price) + ' <small>' + esc(t(x[2])) + '</small></p>' : '') +
@@ -504,6 +522,7 @@
         h += '<div><p>' + esc(hasCheckout ? t('pro.invoice', { email }) : t('pro.contact')) + '</p><p class="copyline"><code id="contact-email">' + esc(email) + '</code>' +
           '<button type="button" class="btn btn-sm" data-act="copy-email">' + esc(t('common.copy')) + '</button>' +
           (CFG.telegram ? '<a class="btn btn-sm" href="https://t.me/' + esc(String(CFG.telegram).replace(/^@/, '')) + '" target="_blank" rel="noopener">Telegram</a>' : '') + '</p></div>';
+      }
       }
       h += '<div class="keybox"><label class="f-l" for="lic-key"><b>' + esc(t('pro.haveKey')) + '</b></label><textarea id="lic-key" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="' + esc(t('pro.keyPlaceholder')) + '"></textarea>' +
         '<div id="lic-msg"></div><div><button type="button" class="btn btn-primary" data-act="lic-activate" id="lic-btn">' + esc(t('pro.activate')) + '</button></div></div>';
@@ -612,10 +631,27 @@
     'del-holiday'(el) { state.calc.ports[+el.dataset.port].calendar.holidays.splice(+el.dataset.idx, 1); touched(); renderForm(); recalc(); },
     statement() { openStatement(); },
     'st-close'() { closeStatement(); },
-    print() { window.print(); },
+    print() {
+      const c = capBridge();
+      if (c && hasNativePrint()) c.nativePromise('StaliaPrint', 'print', { name: fileStem() }).catch(() => window.print());
+      else window.print();
+    },
+    install() {
+      if (installEvent) { installEvent.prompt(); installEvent = null; return; }
+      const d = $('#dlg'), apps = CFG.apps || {};
+      let h = '<div class="dlg-h"><h2>' + esc(t('app.install.title')) + '</h2><button type="button" class="btn btn-sm" data-act="dlg-close">' + esc(t('common.close')) + '</button></div><div class="dlg-b">' +
+        '<p>' + esc(t('app.install.lead')) + '</p><ul><li>' + esc(t('app.install.android')) + '</li><li>' + esc(t('app.install.ios')) + '</li><li>' + esc(t('app.install.desktop')) + '</li></ul>';
+      const stores = [['android', 'Google Play'], ['ios', 'App Store']].filter((x) => /^https:\/\//.test(apps[x[0]] || ''));
+      if (stores.length) {
+        h += '<p>' + esc(t('app.install.store')) + '</p><p class="copyline">' + stores.map((x) => '<a class="btn" href="' + esc(apps[x[0]]) + '" target="_blank" rel="noopener">' + x[1] + '</a>').join('') + '</p>';
+      }
+      d.innerHTML = h + '</div>';
+      if (!d.open) d.showModal();
+    },
     share() {
       if (!state.shareHash) { toast(t('toast.copyFailed')); return; }
-      copyText(location.href.split('#')[0] + '#c=' + state.shareHash, 'toast.linkCopied');
+      const base = NATIVE ? String(CFG.siteUrl).replace(/\/+$/, '') + '/app/' : location.href.split('#')[0];
+      copyText(base + '#c=' + state.shareHash, 'toast.linkCopied');
     },
     'copy-summary'() { copyText(V.summaryText(state.calc, state.result, state.lang)); },
     csv() {
@@ -737,12 +773,32 @@
   document.addEventListener('focusout', (e) => { if (e.target.classList && e.target.classList.contains('seg')) tip.hidden = true; });
   window.addEventListener('scroll', () => { tip.hidden = true; }, true);
 
+  // ---------------------------------------------------------------- install as an app, work offline
+  let installEvent = null;
+  function setupInstall() {
+    if (PREVIEW || NATIVE) return;
+    const standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+    const btn = $('#btn-install');
+    btn.hidden = standalone;
+    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); installEvent = e; btn.hidden = false; });
+    window.addEventListener('appinstalled', () => { installEvent = null; btn.hidden = true; });
+    const secure = location.protocol === 'https:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+    if ('serviceWorker' in navigator && secure) {
+      window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => { /* offline mode is optional */ }); });
+    }
+  }
+
   // ---------------------------------------------------------------- start
   async function start() {
+    // language: "?lang=ru" from the site wins, then the last choice, then the browser's language
     const storedLang = store.get(K.lang, null);
-    state.lang = I.STRINGS[storedLang] ? storedLang : I.detect();
+    let urlLang = null;
+    try { urlLang = new URLSearchParams(location.search).get('lang'); } catch (e) { /* sandboxed */ }
+    if (I.STRINGS[urlLang]) { state.lang = urlLang; store.set(K.lang, urlLang); }
+    else state.lang = I.STRINGS[storedLang] ? storedLang : I.detect();
     $('#year').textContent = String(new Date().getFullYear());
-    if (PREVIEW) { $('#site-link').hidden = true; $('#brand-link').removeAttribute('href'); }
+    if (PREVIEW || NATIVE) { $('#site-link').hidden = true; $('#brand-link').removeAttribute('href'); }
+    setupInstall();
     applyI18n(); renderHeader(); renderMenus();
     lic.onChange(() => {
       renderHeader();
@@ -752,7 +808,11 @@
 
     if (!(await loadFromHash())) {
       const cur = store.get(K.current, null);
-      if (cur && cur.calc && Array.isArray(cur.calc.ports)) {
+      // "?example=tanker" — links from the guides open a specific built-in example
+      let urlExample = null;
+      try { urlExample = new URLSearchParams(location.search).get('example'); } catch (e) { /* sandboxed */ }
+      if (urlExample && M.examples(state.lang).some((x) => x.id === urlExample)) loadExample(urlExample);
+      else if (cur && cur.calc && Array.isArray(cur.calc.ports)) {
         if (cur.source === 'example' && cur.pristine !== false) loadExample(cur.exampleId);
         else setCalc(M.normalizeCalc(cur.calc), { source: cur.source === 'shared' ? 'edited' : cur.source, calcId: cur.calcId, exampleId: cur.exampleId, pristine: cur.pristine });
       } else loadExample('bulk');

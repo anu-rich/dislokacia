@@ -8,6 +8,12 @@
 <meta name="theme-color" content="#0C2231">
 <link rel="canonical" href="./">
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Stalia">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="stylesheet" href="../assets/base.css">
 <link rel="stylesheet" href="app.css">
 </head>
@@ -36,6 +42,7 @@
     </details>
     <button type="button" class="btn btn-sm" data-act="save" data-i18n="nav.save">Save</button>
     <span class="grow"></span>
+    <button type="button" class="btn btn-sm btn-ghost" data-act="install" id="btn-install" data-i18n="app.install" hidden>Install app</button>
     <a class="btn btn-sm btn-ghost" href="../" id="site-link" data-i18n="nav.site">About &amp; pricing</a>
   </div>
 </nav>

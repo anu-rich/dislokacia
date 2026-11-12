@@ -1,0 +1,7 @@
+{
+  "appId": "app.stalia.laytime",
+  "appName": "Stalia",
+  "webDir": "www",
+  "server": { "androidScheme": "https" },
+  "android": { "allowMixedContent": false }
+}

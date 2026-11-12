@@ -124,6 +124,9 @@ function serveSite(configFor) {
   };
   const shot = async (page, name) => { if (SHOTS) await page.screenshot({ path: path.join(SHOTS, name + '.png') }); };
   const text = async (page, sel) => norm(await page.locator(sel).first().innerText());
+  // Closing a dialog, the statement or another overlay makes the page take a step back in its history. A reload issued
+  // within a few milliseconds of that step is cancelled by it (net::ERR_ABORTED), so the step is waited for first.
+  const steppedBack = (p) => p.waitForFunction(() => !history.state);
   const docsDir = SHOTS ? path.join(SHOTS, 'documents') : path.join(TMP, 'documents');
   const docs = await makeSampleDocs(browser, docsDir);
 
@@ -459,6 +462,7 @@ function serveSite(configFor) {
   scenario.name = 'full';
   await off.click('.bar [data-act="imp-open"]');
   await off.click('[data-act="imp-close"]');
+  await steppedBack(off);
   await off.reload({ waitUntil: 'networkidle' });
   await off.click('.bar [data-act="imp-open"]');
   check('with a key saved the option is folded away', !(await off.locator('#imp-key').evaluate((d) => d.open)));

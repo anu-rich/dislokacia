@@ -63,6 +63,9 @@ const norm = (s) => String(s).replace(/[  ]/g, ' ').replace(/\s+/g, ' ').trim
   };
   const shot = async (page, name, full) => { if (SHOTS) await page.screenshot({ path: path.join(SHOTS, name + '.png'), fullPage: !!full }); };
   const text = async (page, sel) => norm(await page.locator(sel).first().innerText());
+  // Closing a dialog, the statement or another overlay makes the page take a step back in its history. A reload issued
+  // within a few milliseconds of that step is cancelled by it (net::ERR_ABORTED), so the step is waited for first.
+  const steppedBack = (p) => p.waitForFunction(() => !history.state);
 
   const page = await newPage();
   await page.goto(base + '/app/', { waitUntil: 'networkidle' });
@@ -312,6 +315,7 @@ const norm = (s) => String(s).replace(/[  ]/g, ' ').replace(/\s+/g, ' ').trim
   await o.click('#btn-install');
   check('install instructions name Android and iPhone', /Android/.test(await text(o, '#dlg')) && /iPhone/.test(await text(o, '#dlg')));
   await o.click('#dlg [data-act="dlg-close"]');
+  await steppedBack(o);
   await octx.setOffline(true);
   await o.reload({ waitUntil: 'load' });
   await o.waitForSelector('#summary .res-amount');
@@ -416,6 +420,7 @@ const norm = (s) => String(s).replace(/[  ]/g, ' ').replace(/\s+/g, ' ').trim
   check('the button says “Start” on a first visit', (await text(w, '#help [data-act="help-close"]')) === 'Начать');
   await w.click('#help [data-act="help-close"]');
   check('“Start” leads to the calculator in that language', !(await w.locator('#help').isVisible()) && /Демередж в пользу судовладельца/i.test(await text(w, '#summary')));
+  await steppedBack(w);
   await w.reload({ waitUntil: 'networkidle' });
   check('it does not come back on the next visit', !(await w.locator('#help').isVisible()) && (await w.getAttribute('html', 'lang')) === 'ru');
   await w.click('.bar [data-act="help"]');
@@ -458,6 +463,7 @@ const norm = (s) => String(s).replace(/[  ]/g, ' ').replace(/\s+/g, ' ').trim
   check('trial: the dialog says how long is left and still sells Pro', /days left: 14/.test(trialDlg) && !/Try Pro free/.test(trialDlg) && /\$19/.test(trialDlg) && (await tp.locator('#lic-key').count()) === 1, trialDlg.slice(0, 200));
   await shot(tp, '13-trial-active');
   await tp.click('[data-act="dlg-close"]');
+  await steppedBack(tp);
   // fifteen days later
   await tp.evaluate(() => { const r = JSON.parse(localStorage.getItem('stalia.trial.v1')); r.startedAt -= 15 * 864e5; r.seenAt = r.startedAt; localStorage.setItem('stalia.trial.v1', JSON.stringify(r)); });
   await tp.reload({ waitUntil: 'networkidle' });
@@ -468,6 +474,7 @@ const norm = (s) => String(s).replace(/[  ]/g, ' ').replace(/\s+/g, ' ').trim
   await tp.click('[data-act="statement"]');
   check('after the trial the statement is the free one again', /free version/.test(await text(tp, '#st-paper')) && (await tp.locator('#br-company').isDisabled()));
   await tp.keyboard.press('Escape');
+  await steppedBack(tp);
   await tp.reload({ waitUntil: 'networkidle' });
   check('the end-of-trial notice is shown once', !(await tp.locator('#dlg').isVisible()));
   await tp.context().close();

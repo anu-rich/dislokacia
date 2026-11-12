@@ -178,6 +178,7 @@ tools/
   sync-server.js  копии общих файлов для сервера чтения
   build-reader.js сборка чтения «со своим ключом» для браузера (после правок в server/src/)
   og-image.js     картинки для ссылок в мессенджерах
+  store-assets.js значок, баннер и снимки экрана для Google Play (в marketing/play/)
   check-export.py, export-fixtures.js   проверка выгрузки в Excel в LibreOffice
 tests/          проверки
 ```

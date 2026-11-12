@@ -247,6 +247,7 @@
    * Laytime commencement for a port.
    * nor.rule: 'turn'   — N hours after NOR (turn / notice time)
    *           'gencon' — NOR up to noon -> starts `amStart` same day; after noon -> `pmStart` next working day
+ *           'nextday' — at `nextDayStart` on the first working day after the day of the notice, whatever its hour
    *           'manual' — explicit date-time
    * unlessSoonerCommenced: if operations start before that moment, laytime starts with them.
    */
@@ -273,6 +274,12 @@
         for (let i = 0; i < 70 && inWindows(wins, c); i++) c += DAY;
         start = c;
       }
+    } else if (rule === 'nextday') {
+      const day = startOfDay(norEff), at = timeToMin(nor.nextDayStart, 8 * 60);
+      const wins = calendarWindows(cal, day, day + 75 * DAY);
+      let c = day + DAY + at;
+      for (let i = 0; i < 70 && inWindows(wins, c); i++) c += DAY;
+      start = c;
     } else {
       const th = nor.turnHours === '' || nor.turnHours == null ? 0 : num(nor.turnHours);
       if (!(th >= 0)) return { start: null, norRaw, norEff, error: 'turn_invalid' };

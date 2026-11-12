@@ -36,9 +36,9 @@ function extractionOf(calc) {
       holidays: c.holidays.map((h) => ({ date: h.date, name: h.name })),
     };
     o.notice = {
-      tendered: n.tendered, rule: { turn: 'hours_after_notice', gencon: 'noon_rule', manual: 'stated_time' }[n.rule],
+      tendered: n.tendered, rule: { turn: 'hours_after_notice', gencon: 'noon_rule', nextday: 'next_working_day', manual: 'stated_time' }[n.rule],
       hours_after_notice: n.rule === 'turn' ? n.turnHours : '', noon_rule_morning_start: n.rule === 'gencon' ? n.amStart : '',
-      noon_rule_afternoon_start: n.rule === 'gencon' ? n.pmStart : '', laytime_commenced_at: n.rule === 'manual' ? n.manualStart : '',
+      noon_rule_afternoon_start: n.rule === 'gencon' ? n.pmStart : '', next_working_day_start: n.rule === 'nextday' ? n.nextDayStart : '', laytime_commenced_at: n.rule === 'manual' ? n.manualStart : '',
       unless_sooner_commenced: n.unlessSoonerCommenced ? 'yes' : 'no',
       office_hours_only: n.officeHours.enabled ? 'yes' : 'no', office_from: n.officeHours.enabled ? n.officeHours.from : '',
       office_to: n.officeHours.enabled ? n.officeHours.to : '', office_saturday_to: n.officeHours.enabled ? n.officeHours.satTo : '',

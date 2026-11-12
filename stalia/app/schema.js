@@ -86,10 +86,11 @@
       }),
       notice: obj({
         tendered: str('When notice of readiness was tendered. ' + DT),
-        rule: str('hours_after_notice = laytime starts a fixed number of hours after NOR; noon_rule = NOR before noon starts laytime the same day, later NOR the next working day (Gencon); stated_time = no rule can be read, but a time sheet states when laytime commenced; unknown.', ['hours_after_notice', 'noon_rule', 'stated_time', 'unknown']),
+        rule: str('hours_after_notice = laytime starts a fixed number of hours after NOR; noon_rule = NOR before noon starts laytime the same day, later NOR the next working day (Gencon); next_working_day = laytime starts at a set time on the next working day after NOR, whatever the hour of the notice; stated_time = no rule can be read, but a time sheet states when laytime commenced; unknown.', ['hours_after_notice', 'noon_rule', 'next_working_day', 'stated_time', 'unknown']),
         hours_after_notice: str('Notice (turn) time in hours; "0" when laytime starts as soon as notice is tendered. ' + NUM),
         noon_rule_morning_start: str('Noon rule: the time laytime starts when NOR is given up to noon (Gencon: 13:00). ' + HM),
         noon_rule_afternoon_start: str('Noon rule: the time laytime starts on the next working day when NOR is given after noon (Gencon: 06:00). ' + HM),
+        next_working_day_start: str('next_working_day only: the time laytime starts on that day (e.g. 08:00). ' + HM),
         laytime_commenced_at: str('stated_time only: when laytime commenced according to the time sheet. ' + DT),
         unless_sooner_commenced: str('Whether laytime starts earlier if cargo work starts before the notice time has run.', YNU),
         office_hours_only: str('Whether NOR counts only if tendered within office hours.', YNU),
@@ -135,7 +136,7 @@
         holiday_from_previous_day_at: '', holiday_until_next_day_at: '', work_in_excepted_time: 'unknown', holidays: [],
       },
       notice: {
-        tendered: '', rule: 'unknown', hours_after_notice: '', noon_rule_morning_start: '', noon_rule_afternoon_start: '', laytime_commenced_at: '',
+        tendered: '', rule: 'unknown', hours_after_notice: '', noon_rule_morning_start: '', noon_rule_afternoon_start: '', next_working_day_start: '', laytime_commenced_at: '',
         unless_sooner_commenced: 'unknown', office_hours_only: 'unknown', office_from: '', office_to: '', office_saturday_to: '',
       },
       operations_commenced: '', operations_completed: '', events: [],

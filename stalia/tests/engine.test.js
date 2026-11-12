@@ -225,6 +225,46 @@ test('non-reversible vs averaging', () => {
   near(rev.totals.usedMin, 96 * H); near(rev.totals.demMin, 0); near(rev.totals.desMin, 0);
 });
 
+test('next working day at a set time: whatever the hour of the notice, weekends and holidays skipped', () => {
+  const start = (nor, cal) => E.fmtDT(E.laytimeStart({ nor: Object.assign({ rule: 'nextday' }, nor) }, E.resolveCalendar(cal || { preset: 'SSHEX' })).start);
+  assert.equal(start({ tendered: '2026-03-03T10:00', nextDayStart: '08:00' }), '2026-03-04T08:00'); // Tuesday morning -> Wednesday, not the same day
+  assert.equal(start({ tendered: '2026-03-03T23:50', nextDayStart: '08:00' }), '2026-03-04T08:00'); // late on Tuesday -> still Wednesday
+  assert.equal(start({ tendered: '2026-03-06T15:00', nextDayStart: '08:00' }), '2026-03-09T08:00'); // Friday -> Monday under SSHEX
+  assert.equal(start({ tendered: '2026-03-06T15:00', nextDayStart: '08:00' }, { preset: 'SHEX' }), '2026-03-07T08:00'); // Saturday works under SHEX
+  assert.equal(start({ tendered: '2026-03-07T09:00', nextDayStart: '08:00' }, { preset: 'SHEX' }), '2026-03-09T08:00'); // Sunday skipped
+  assert.equal(start({ tendered: '2026-03-06T15:00', nextDayStart: '08:00' }, { preset: 'SHINC' }), '2026-03-07T08:00');
+  assert.equal(start({ tendered: '2026-03-03T10:00' }), '2026-03-04T08:00', '08:00 unless another time is given');
+  assert.equal(start({ tendered: '2026-03-03T10:00', nextDayStart: '14:00' }), '2026-03-04T14:00');
+  // a holiday on the next day pushes the start on
+  assert.equal(start({ tendered: '2026-03-03T10:00', nextDayStart: '08:00' }, { preset: 'SSHEX', holidaysExcluded: true, holidays: [{ date: '2026-03-04' }] }), '2026-03-05T08:00');
+  // Thursday noon to Saturday 08:00 excepted (a Friday weekend): notice on Wednesday -> Thursday 08:00, notice on Thursday -> Saturday 08:00
+  const fri = { preset: 'CUSTOM', weekly: { fromDow: 4, fromTime: '12:00', toDow: 6, toTime: '08:00' } };
+  assert.equal(start({ tendered: '2026-03-04T16:00', nextDayStart: '08:00' }, fri), '2026-03-05T08:00');
+  assert.equal(start({ tendered: '2026-03-05T09:00', nextDayStart: '08:00' }, fri), '2026-03-07T08:00');
+  // notice outside office hours counts from the next opening, and the day after that is the "next" one
+  const oh = { enabled: true, from: '08:00', to: '17:00' };
+  const late = E.laytimeStart({ nor: { rule: 'nextday', tendered: '2026-03-03T19:00', nextDayStart: '08:00', officeHours: oh } }, E.resolveCalendar({ preset: 'SSHEX' }));
+  assert.equal(E.fmtDT(late.norEff), '2026-03-04T08:00');
+  assert.equal(E.fmtDT(late.start), '2026-03-05T08:00');
+});
+
+test('next working day: cargo work that starts sooner starts laytime; the count runs from the rule', () => {
+  const mk = (usc) => E.compute(fix({
+    laytimeMode: 'separate',
+    ports: [port({
+      calendar: { preset: 'SSHEX' },
+      nor: { rule: 'nextday', tendered: '2026-03-03T10:00', nextDayStart: '08:00', unlessSoonerCommenced: usc },
+      commenced: '2026-03-03T16:00', completed: '2026-03-05T08:00',
+    })],
+  }));
+  const later = mk(false), sooner = mk(true);
+  assert.ok(later.ok && sooner.ok, JSON.stringify(later.errors || sooner.errors));
+  assert.equal(E.fmtDT(later.ports[0].start), '2026-03-04T08:00');
+  near(later.ports[0].usedMin, 24 * H);                 // Wednesday 08:00 to Thursday 08:00
+  assert.equal(E.fmtDT(sooner.ports[0].start), '2026-03-03T16:00');
+  near(sooner.ports[0].usedMin, 40 * H);                // from the start of cargo work on Tuesday 16:00
+});
+
 test('Gencon: afternoon NOR rolls to next working day; Saturday-noon weekend', () => {
   const shex = E.laytimeStart({ nor: { rule: 'gencon', tendered: '2026-03-07T15:00', amStart: '13:00', pmStart: '06:00' } }, E.resolveCalendar({ preset: 'SHEX' }));
   assert.equal(E.fmtDT(shex.start), '2026-03-09T06:00'); // Sunday skipped

@@ -114,6 +114,17 @@ const norm = (s) => String(s).replace(/[  ]/g, ' ').replace(/\s+/g, ' ').trim
   await page.selectOption('#f-laytimeMode', 'reversible');
   check('reversible mode shows the next-port rule', (await page.locator('#f-demurrageAtNextPort').count()) === 1 && /USD 23,841\.93/.test(await text(page, '#summary')));
   await page.selectOption('#f-laytimeMode', 'separate');
+  await page.selectOption('#f-ports-0-nor-rule', 'nextday');
+  check('“next working day” rule: its time field appears with 08:00, cargo work that started sooner still starts laytime',
+    (await page.inputValue('#f-ports-0-nor-nextDayStart')) === '08:00' && /USD 23,163\.50/.test(await text(page, '#summary')), await text(page, '#summary'));
+  await page.uncheck('#f-ports-0-nor-unlessSoonerCommenced');
+  check('“next working day” rule: Friday’s notice starts laytime on Monday 08:00', /USD 13,080\.21/.test(await text(page, "#summary")) && /Time on demurrage 1d 12h 00m/.test(await text(page, "#summary")), await text(page, "#summary"));
+  await page.click('[data-act="statement"]');
+  check('the statement states the rule', /laytime to commence at 08:00 on the next working day after NOR/.test(await text(page, '#st-paper')));
+  await page.keyboard.press('Escape');
+  await page.check('#f-ports-0-nor-unlessSoonerCommenced');
+  await page.selectOption('#f-ports-0-nor-rule', 'gencon');
+  check('back to the noon rule, back to the first result', /USD 23,841\.93/.test(await text(page, '#summary')));
   await page.fill('#f-meta-vessel', '<img src=x onerror="window.__xss=1"> MV TEST');
   check('markup typed by the user stays text', (await page.evaluate(() => window.__xss)) === undefined);
   await page.fill('#f-meta-vessel', 'MV EXAMPLE TRADER');

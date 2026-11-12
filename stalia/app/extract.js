@@ -117,6 +117,9 @@
         p.nor.rule = 'gencon';
         p.nor.amStart = timeText(n.noon_rule_morning_start) || '13:00';
         p.nor.pmStart = timeText(n.noon_rule_afternoon_start) || '06:00';
+      } else if (n.rule === 'next_working_day') {
+        p.nor.rule = 'nextday';
+        p.nor.nextDayStart = timeText(n.next_working_day_start) || '08:00';
       } else if (n.rule === 'stated_time' && dtText(n.laytime_commenced_at)) {
         p.nor.rule = 'manual';
         p.nor.manualStart = dtText(n.laytime_commenced_at);
@@ -179,7 +182,7 @@
       if (isNaN(mins) || (mins <= 0 && (i === 0 || calc.laytimeMode !== 'reversible'))) missing('laytime_allowed', i);
       if (M.CAL_PRESETS.indexOf((src.working_time || {}).regime) < 0) missing('working_time', i);
       const rule = (src.notice || {}).rule;
-      if ((rule !== 'hours_after_notice' && rule !== 'noon_rule' && p.nor.rule !== 'manual') || (rule === 'hours_after_notice' && numText((src.notice || {}).hours_after_notice) === '')) missing('notice_rule', i);
+      if ((rule !== 'hours_after_notice' && rule !== 'noon_rule' && rule !== 'next_working_day' && p.nor.rule !== 'manual') || (rule === 'hours_after_notice' && numText((src.notice || {}).hours_after_notice) === '')) missing('notice_rule', i);
       if (!p.nor.tendered) missing('nor_tendered', i);
       if (!p.completed) missing('operations_completed', i);
     });

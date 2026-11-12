@@ -5,7 +5,7 @@
  * are never touched.
  */
 'use strict';
-const VERSION = 'stalia-v4';
+const VERSION = 'stalia-v5';
 const FONTS = [
   'ibm-plex-sans-latin-wght-normal', 'ibm-plex-sans-latin-ext-wght-normal', 'ibm-plex-sans-cyrillic-wght-normal', 'ibm-plex-sans-cyrillic-ext-wght-normal',
   'ibm-plex-sans-greek-wght-normal', 'fira-sans-extra-condensed-greek-700-normal',

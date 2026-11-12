@@ -316,6 +316,7 @@
     bits.push(calendarText(p.calendar, lang));
     let nor;
     if (n.rule === 'gencon') nor = t('st.term.nor.gencon', { am: n.amStart || '13:00', pm: n.pmStart || '06:00' });
+    else if (n.rule === 'nextday') nor = t('st.term.nor.nextday', { at: n.nextDayStart || '08:00' });
     else if (n.rule === 'manual') nor = t('st.term.nor.manual');
     else nor = t('st.term.nor.turn', { h: fmtNumber(E.num(n.turnHours) || 0, lang, (E.num(n.turnHours) || 0) % 1 ? 1 : 0) });
     if (n.rule !== 'manual' && n.unlessSoonerCommenced !== false) nor += ', ' + t('st.term.sooner');

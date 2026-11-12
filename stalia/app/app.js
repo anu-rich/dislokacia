@@ -189,9 +189,10 @@
     // NOR and commencement
     h += '<div class="blk"><div class="blk-h">' + esc(t('n.title')) + '</div><div class="fg">' +
       dtf(pre + 'nor.tendered', 'n.tendered', n.tendered) +
-      fld(pre + 'nor.rule', 'n.rule', sel(pre + 'nor.rule', n.rule, [['turn', t('n.rule.turn')], ['gencon', t('n.rule.gencon')], ['manual', t('n.rule.manual')]], { rr: 1 }), { cls: 'f-2' });
+      fld(pre + 'nor.rule', 'n.rule', sel(pre + 'nor.rule', n.rule, [['turn', t('n.rule.turn')], ['gencon', t('n.rule.gencon')], ['nextday', t('n.rule.nextday')], ['manual', t('n.rule.manual')]], { rr: 1 }), { cls: 'f-2' });
     if (n.rule === 'turn') h += numf(pre + 'nor.turnHours', 'n.turnHours', n.turnHours, { max: 6 });
     if (n.rule === 'gencon') h += timef(pre + 'nor.amStart', 'n.amStart', n.amStart) + timef(pre + 'nor.pmStart', 'n.pmStart', n.pmStart);
+    if (n.rule === 'nextday') h += timef(pre + 'nor.nextDayStart', 'n.nextDayStart', n.nextDayStart);
     if (n.rule === 'manual') h += dtf(pre + 'nor.manualStart', 'n.manualStart', n.manualStart);
     h += dtf(pre + 'commenced', 'n.commenced', p.commenced) + dtf(pre + 'completed', 'n.completed', p.completed) + '</div>';
     if (n.rule !== 'manual') {

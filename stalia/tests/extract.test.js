@@ -172,6 +172,23 @@ test('a notice rule without its hours is flagged, not filled in silently', () =>
   assert.deepEqual(r.notes.filter((n) => n.field === 'notice_rule').map((n) => n.port + '/' + n.status), ['1/not_found'], 'and the user is sent to check it');
 });
 
+test('“08:00 on the next working day after notice” is its own rule, there and back', () => {
+  const a = extractionOf(examples()[0].calc);
+  a.ports[1].notice = Object.assign(a.ports[1].notice, { rule: 'next_working_day', next_working_day_start: '0800', hours_after_notice: '', noon_rule_morning_start: '', noon_rule_afternoon_start: '' });
+  const r = X.toCalc(a), nor = r.calc.ports[1].nor;
+  assert.equal(nor.rule, 'nextday'); assert.equal(nor.nextDayStart, '08:00');
+  assert.deepEqual(r.notes.filter((n) => n.field === 'notice_rule'), []);
+  assert.equal(E.compute(r.calc).ok, true);
+  const back = extractionOf(r.calc).ports[1].notice;       // what the form holds reads back as the same answer
+  assert.equal(back.rule, 'next_working_day'); assert.equal(back.next_working_day_start, '08:00');
+  a.ports[1].notice.next_working_day_start = '';            // the time left out: the usual 08:00
+  assert.equal(X.toCalc(a).calc.ports[1].nor.nextDayStart, '08:00');
+  // an older calculation without the field still opens
+  const old = M.normalizeCalc(JSON.parse(JSON.stringify(examples()[0].calc)));
+  delete old.ports[0].nor.nextDayStart;
+  assert.equal(M.normalizeCalc(old).ports[0].nor.nextDayStart, '08:00');
+});
+
 test('“72 hours in total” for two ports reads as reversible; separate allowances read as separate', () => {
   const tanker = extractionOf(examples()[1].calc);
   tanker.laytime.between_ports = 'unknown';

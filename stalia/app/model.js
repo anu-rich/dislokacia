@@ -42,7 +42,7 @@
       allowed: { type: 'fixed', quantity: '', rate: '', rateUnit: 'day', days: '', hours: '', minutes: '' },
       calendar: blankCalendar(),
       nor: {
-        tendered: '', rule: 'turn', turnHours: '6', amStart: '13:00', pmStart: '06:00', manualStart: '',
+        tendered: '', rule: 'turn', turnHours: '6', amStart: '13:00', pmStart: '06:00', nextDayStart: '08:00', manualStart: '',
         unlessSoonerCommenced: true, officeHours: { enabled: false, from: '08:00', to: '17:00', satTo: '12:00' },
       },
       commenced: '', completed: '', events: [],
@@ -126,9 +126,9 @@
         },
         nor: {
           tendered: dtStr(n.tendered),
-          rule: oneOf(n.rule, ['turn', 'gencon', 'manual'], 'turn'),
+          rule: oneOf(n.rule, ['turn', 'gencon', 'nextday', 'manual'], 'turn'),
           turnHours: numStr(n.turnHours === 0 ? '0' : n.turnHours) || (n.turnHours === '' ? '' : bp.nor.turnHours),
-          amStart: timeStr(n.amStart, bp.nor.amStart), pmStart: timeStr(n.pmStart, bp.nor.pmStart),
+          amStart: timeStr(n.amStart, bp.nor.amStart), pmStart: timeStr(n.pmStart, bp.nor.pmStart), nextDayStart: timeStr(n.nextDayStart, bp.nor.nextDayStart),
           manualStart: dtStr(n.manualStart),
           unlessSoonerCommenced: bool(n.unlessSoonerCommenced, true),
           officeHours: {

@@ -75,18 +75,18 @@ const norm = (s) => String(s).replace(/[  ]/g, ' ').replace(/\s+/g, ' ').trim
   await shot(page, '01-desktop-en');
 
   console.log('languages');
-  await page.click('#langs button[data-lang="ru"]');
+  await page.selectOption("#lang-select", "ru");
   check('Russian: result label', /Демередж в пользу судовладельца/i.test(await text(page, '#summary')));
   check('Russian: example text is localised', (await page.inputValue('#f-name')) === 'Пшеница, Новороссийск — Александрия');
   check('Russian: html lang', (await page.getAttribute('html', 'lang')) === 'ru');
   await shot(page, '02-desktop-ru');
-  await page.click('#langs button[data-lang="kk"]');
+  await page.selectOption("#lang-select", "kk");
   check('Kazakh: result label', /Кеме иесінің пайдасына демередж/i.test(await text(page, '#summary')));
   check('Kazakh: example text is localised', (await page.inputValue('#f-name')) === 'Бидай, Новороссийск — Александрия');
   check('Kazakh: port caption', /1-порт · Тиеу · Novorossiysk/i.test(await text(page, '#ptitle-0')));
   check('Kazakh letters render in the heading font', await page.evaluate(() => document.fonts.check('700 20px "Fira Condensed"', 'ҚОРЫТЫНДЫ әғқңөұүһі')));
   await shot(page, '03-desktop-kk');
-  await page.click('#langs button[data-lang="en"]');
+  await page.selectOption("#lang-select", "en");
 
   console.log('editing');
   await page.fill('#f-demurrageRate', '20,000');

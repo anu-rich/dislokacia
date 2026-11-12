@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>装卸时间与滞期费在线计算器 (Laytime Calculator) — Stalia</title>
+<meta name="description" content="免费的在线装卸时间 (laytime) 计算器，可计算滞期费和速遣费。支持 SHINC、SHEX、SSHEX、FHEX 条款，NOR 起算规则，坏天气与节假日，以及装卸时间可调剂使用。生成可供双方签字的装卸时间计算表 (Time Sheet)。">
+<meta name="theme-color" content="#0C2231">
+<!--SEO-->
+<link rel="canonical" href="./">
+<!--/SEO-->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Stalia：装卸时间与滞期费计算，精确到分钟">
+<meta property="og:description" content="输入租船合同条款和装卸时间事实记录，即可得到装卸时间计算表、装卸时间届满的时刻，以及可供双方签字的计算书。">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/base.css">
+<link rel="stylesheet" href="../assets/site.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Stalia","applicationCategory":"BusinessApplication","operatingSystem":"Web","inLanguage":["zh","en","ru","kk","uk","tr","el"],"description":"在线装卸时间与滞期费计算器，可生成用于打印的装卸时间计算表。","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"计算器真的免费吗？","acceptedAnswer":{"@type":"Answer","text":"是的。计算、时间轴和装卸时间计算表均免费，且不限次数。Pro 增加公司抬头、整洁的 PDF、导出功能，以及不限数量的计算保存。"}},
+{"@type":"Question","name":"适用于油轮吗？","acceptedAnswer":{"@type":"Answer","text":"适用。填写允许的小时数，例如共 72 小时；选择装卸时间可调剂使用；设置 NOR 递交后 6 小时起算，并勾选“除非已提前开始作业”；再将移泊或泵送延误作为中断添加。"}},
+{"@type":"Question","name":"我的计算保存在哪里？","acceptedAnswer":{"@type":"Answer","text":"保存在您的浏览器中，不会上传任何内容。“备份文件”可将计算转移到另一台电脑，“复制链接”可将计算发给同事。"}},
+{"@type":"Question","name":"索赔时可以依据这一结果吗？","acceptedAnswer":{"@type":"Answer","text":"可以像使用您自己的电子表格一样使用它。计算本身经过测试，但应以租船合同为准：请核对适用哪些除外条款，以及这些条款在滞期期间是否适用。"}}
+]}
+</script>
+</head>
+<body>
+
+<header class="site-top">
+  <div class="wrap">
+    <a class="brand" href="./"><b>STALIA</b></a>
+    <nav class="site-nav" aria-label="网站导航">
+      <a href="#counts">计算规则</a>
+      <a href="#pricing">价格</a>
+      <a href="../guides/how-to-calculate-laytime.html">指南</a>
+      <span class="langs-links" aria-label="语言"><!--LANGS--><a href="../" lang="en" hreflang="en">EN</a><a href="../ru/" lang="ru" hreflang="ru">RU</a><a href="../kk/" lang="kk" hreflang="kk">ҚАЗ</a><a href="../uk/" lang="uk" hreflang="uk">УКР</a><a href="../tr/" lang="tr" hreflang="tr">TR</a><a href="../el/" lang="el" hreflang="el">EL</a><a href="./" aria-current="true" lang="zh">中文</a><!--/LANGS--></span>
+      <a class="btn btn-primary btn-sm" href="../app/?lang=zh">打开计算器</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <h1>装卸时间与滞期费计算精确到分钟</h1>
+      <p class="lead">输入租船合同 (C/P) 的条款和装卸时间事实记录 (SOF) 的内容。Stalia 逐日计算时间，标出装卸时间届满的时刻，并生成可供双方签字的计算书。</p>
+      <div class="cta">
+        <a class="btn btn-primary btn-lg" href="../app/?lang=zh">打开计算器</a>
+        <small>免费使用，无需注册。</small>
+      </div>
+    </div>
+    <div class="demo" aria-label="计算示例">
+      <div class="demo-cap"><span>示例：27,500 吨小麦，新罗西斯克—亚历山大</span><a href="../app/?lang=zh">在计算器中打开 →</a></div>
+      <div id="demo-body" data-example="bulk" style="display:grid;grid-template-columns:minmax(0,1fr);gap:14px">
+        <div class="res res-dem"><p class="res-label">应付船东滞期费</p><p class="res-amount"><span class="res-cur">USD</span> 23,841.93</p><p class="res-sub">1天 17时 00分 滞期 · 1.70833 天</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="scale" aria-hidden="true"></div>
+</section>
+
+<section class="sec" id="documents">
+  <div class="wrap">
+    <div class="sec-h">
+      <h2>提供两份文件，即可得出结果</h2>
+      <p>为租船合同和装卸时间事实记录拍照，或添加 PDF 文件。Stalia 读取其中的条款和时间，并填好计算。</p>
+    </div>
+    <div class="trust">
+      <div><h3>先涂黑</h3><p>标出名称、费率及其他保密内容。标记区域在页面离开您的设备之前即被涂黑。</p></div>
+      <div><h3>自动读取</h3><p>允许装卸时间、工作日、通知时间规则、滞期费、装卸准备就绪通知书 (NOR)、作业完毕时间以及每一次中断。</p></div>
+      <div><h3>由您核对和更正</h3><p>您可以看到哪些内容已读取、哪些内容缺失。每个数值都填入常规表单，可以手动修改。</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="counts">
+  <div class="wrap">
+    <div class="sec-h">
+      <h2>计算规则</h2>
+      <p>以下每条规则都是一项设置，可为每个港口分别选择。</p>
+    </div>
+    <dl class="rider">
+      <div><dt>工作时间</dt><dd>SHINC、SHEX、SSHEX、FHEX，星期六中午至星期一 08:00 除外，或自行设定的任意每周除外时间。节假日可单独设定前夕开始和次日早晨结束的时间。除非已使用 (UU) 或即使已使用 (EIU)。</dd></div>
+      <div><dt>起算</dt><dd>NOR 递交后经过固定的通知时间 (turn time) 起算，或按 Gencon 规则：通知书在中午前递交，装卸时间自 13:00 起算；中午后递交，自下一工作日起算。可设定 NOR 须在办公时间内递交。除非已提前开始作业 (unless sooner commenced)。</dd></div>
+      <div><dt>中断</dt><dd>下雨、移泊、等候引航员、故障、检验、罢工。每项可按 0%、50% 或任意比例计入，并可指定在船舶进入滞期后是否仍然适用。</dd></div>
+      <div><dt>多港之间</dt><dd>装卸时间可调剂使用 (reversible)、各港分别计算或平均计算。船舶抵港时如已进入滞期，滞期自 NOR 递交起算；如租船合同另有约定，则自通知时间届满后起算。</dd></div>
+      <div><dt>金额</dt><dd>滞期费不足一天按比例计算。速遣费按滞期费率的一半或自定费率，按节省的工作时间 (WTS) 或节省的全部时间 (ATS) 计算。佣金相应扣除。</dd></div>
+      <div><dt>书面文件</dt><dd>逐日的装卸时间计算表 (Time Sheet)，以及一份计算书，列明所适用的条款、事实、合计和双方签字栏。可选中文、英文、俄文、哈萨克文、乌克兰文、土耳其文或希腊文。</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-h"><h2>三个步骤</h2></div>
+    <ol class="steps">
+      <li><h3>条款</h3><p>装卸率或允许的小时数、工作日、装卸时间起算方式、滞期费率。</p></li>
+      <li><h3>事实</h3><p>NOR、靠泊、作业完毕，以及装卸时间事实记录中的每一次中断。</p></li>
+      <li><h3>计算书</h3><p>核对时间轴，打印 PDF，发送给对方。</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-h"><h2>计算结果为何可信</h2></div>
+    <div class="trust">
+      <div><h3>双重校验</h3><p>每次发布前，数百个随机航次都要经过两套独立的计算：计算引擎和逐分钟的简单累计。两者的结果必须一致，精确到分钟。</p></div>
+      <div><h3>毫无隐藏</h3><p>计算书在数字旁列出所适用的规则，对方可以逐行核对。</p></div>
+      <div><h3>数据留在您手中</h3><p>计算保存在您的浏览器中。分享链接本身就包含整份计算。服务器上不存储任何内容。</p></div>
+    </div>
+    <p class="aside-note">Stalia 只负责计算。哪些时间计入，由租船合同决定：提出索赔或付款之前，请对照合同措辞核对结果。</p>
+  </div>
+</section>
+
+<section class="sec" id="mobile">
+  <div class="wrap">
+    <div class="sec-h"><h2>在手机上使用</h2><p>同一个计算器可以像应用一样安装，无需联网即可使用。</p></div>
+    <div class="trust">
+      <div><h3>Android</h3><p>在 Chrome 中打开计算器，然后点击菜单 ⋮ →“安装应用”。</p></div>
+      <div><h3>iPhone 和 iPad</h3><p>在 Safari 中打开计算器，然后点击分享按钮 →“添加到主屏幕”。</p></div>
+      <div><h3>电脑</h3><p>在 Chrome 或 Edge 中，点击地址栏右端的安装图标。</p></div>
+    </div>
+    <p class="copyline" data-stores hidden style="margin-top:20px"><span>也可从应用商店获取：</span></p>
+  </div>
+</section>
+
+<section class="sec" id="pricing">
+  <div class="wrap">
+    <div class="sec-h">
+      <h2>价格</h2>
+      <p>计算器免费使用。Pro 适用于需要发给对方的计算书。</p>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <h3>免费版</h3>
+        <p class="price">$0</p>
+        <ul>
+          <li>计算次数不限</li>
+          <li>全部装卸时间条款和规则</li>
+          <li>在屏幕上查看时间轴和装卸时间计算表</li>
+          <li>可打印的计算书，带“免费版”字样</li>
+          <li>保存 3 份计算，每航次 2 个港口</li>
+          <li>分享链接</li>
+          <li>读取文件：有限的免费额度</li>
+        </ul>
+        <div class="buy"><a class="btn" href="../app/?lang=zh">打开计算器</a></div>
+      </div>
+      <div class="plan plan-pro">
+        <h3>Pro <span class="pill pill-pro">每位用户</span></h3>
+        <p class="price"><span data-price="usd.monthly">$19</span> <small>每月</small></p>
+        <p class="price-alt">或每年 <b data-price="usd.yearly">$149</b></p>
+        <ul>
+          <li>计算书使用贵公司抬头：名称、联系方式、Logo</li>
+          <li>不带“免费版”字样的整洁 PDF</li>
+          <li>保存的计算数量不限，并可生成备份文件</li>
+          <li>每航次港口数量不限</li>
+          <li>装卸时间计算表导出到 Excel (CSV)</li>
+          <li>每日可读取更多文件</li>
+          <li>邮件咨询优先答复</li>
+        </ul>
+        <div class="buy"><a class="btn btn-primary" data-buy="monthly" href="#contact">按月购买</a><a class="btn" data-buy="yearly" href="#contact">按年购买</a></div>
+      </div>
+    </div>
+    <div class="contact" id="contact">
+      <p>需要账单 (invoice) 或银行转账付款，或有其他问题？请来信联系，我们会回复账单和您的许可证密钥。</p>
+      <p class="copyline"><code id="contact-email" data-contact="email">hello@example.com</code><button type="button" class="btn btn-sm" data-copy="#contact-email">复制</button><a class="btn btn-sm" data-contact="telegram" href="#" target="_blank" rel="noopener" hidden>Telegram</a></p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="faq">
+  <div class="wrap">
+    <div class="sec-h"><h2>常见问题</h2></div>
+    <dl class="faq">
+      <div><dt>计算器真的免费吗？</dt><dd>是的。计算、时间轴和装卸时间计算表均免费，且不限次数。Pro 增加公司抬头、整洁的 PDF、导出功能，以及不限数量的计算保存。</dd></div>
+      <div><dt>适用于油轮吗？</dt><dd>适用。填写允许的小时数，例如共 72 小时；选择装卸时间可调剂使用；设置 NOR 递交后 6 小时起算，并勾选“除非已提前开始作业”；再将移泊或泵送延误作为中断添加。</dd></div>
+      <div><dt>我的计算保存在哪里？</dt><dd>保存在您的浏览器中，不会上传任何内容。“备份文件”可将计算转移到另一台电脑，“复制链接”可将计算发给同事。</dd></div>
+      <div><dt>索赔时可以依据这一结果吗？</dt><dd>可以像使用您自己的电子表格一样使用它。计算本身经过测试，但应以租船合同为准：请核对适用哪些除外条款，以及这些条款在滞期期间是否适用。</dd></div>
+      <div><dt>如何升级到 Pro？</dt><dd>在线用银行卡购买，许可证密钥会通过电子邮件发送给您，将其粘贴到计算器中即可。如需账单或银行转账，请来信联系。</dd></div>
+      <div><dt>支持哪些语言？</dt><dd>计算器和计算书均提供中文、英文、俄文、哈萨克文、乌克兰文、土耳其文和希腊文。计算书的语言可以与界面语言不同。</dd></div>
+      <div><dt>上传租船合同安全吗？</dt><dd>哪些内容离开您的设备，由您决定。请先涂黑名称、费率及其他保密内容：涂黑区域直接写入页面图像，只有这些图像会被发送给 AI 模型读取。我们不保留这些图像。</dd></div>
+      <div><dt>读取结果有多可靠？</dt><dd>凡是未找到或不确定的内容，都会标示出来。结果须经您确认，任何数值都可以手动更正，与您自己输入的完全一样。手写内容和质量较差的照片需要仔细核对。</dd></div>
+    </dl>
+  </div>
+</section>
+</main>
+
+<div class="scale" aria-hidden="true"></div>
+<footer class="site-foot">
+  <div class="wrap">
+    <div><h4>Stalia</h4><ul><li><a href="../app/?lang=zh">计算器</a></li><li><a href="#pricing">价格</a></li><li><a href="#contact">联系我们</a></li><li><a href="../privacy.html">隐私政策</a></li><li><a href="../terms.html">使用条款</a></li></ul></div>
+    <div><h4>指南</h4><ul><li><a href="../guides/how-to-calculate-laytime.html">如何计算装卸时间和滞期费（英文）</a></li><li><a href="../guides/shinc-shex-sshex-fhex.html">SHINC、SHEX、SSHEX、FHEX 详解（英文）</a></li></ul></div>
+    <div><h4>语言</h4><!--LANGLIST--><ul><li><a href="../" lang="en" hreflang="en">English</a></li><li><a href="../ru/" lang="ru" hreflang="ru">Русский</a></li><li><a href="../kk/" lang="kk" hreflang="kk">Қазақша</a></li><li><a href="../uk/" lang="uk" hreflang="uk">Українська</a></li><li><a href="../tr/" lang="tr" hreflang="tr">Türkçe</a></li><li><a href="../el/" lang="el" hreflang="el">Ελληνικά</a></li></ul><!--/LANGLIST--></div>
+    <p class="fine">© <span data-year>2026</span> Stalia。计算器仅作算术计算，不构成法律意见。字体：IBM Plex 和 Fira Sans，采用 SIL Open Font License 许可。</p>
+  </div>
+</footer>
+
+<div class="tip" id="tip" hidden><b></b><span></span></div>
+<script src="../app/config.js"></script>
+<script src="../app/engine.js"></script>
+<script src="../app/i18n.js"></script>
+<script src="../app/lang/zh.js"></script>
+<script src="../app/model.js"></script>
+<script src="../app/view.js"></script>
+<script src="../assets/site.js"></script>
+</body>
+</html>

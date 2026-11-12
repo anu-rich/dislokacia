@@ -14,7 +14,17 @@ const copy = (from, to) => { fs.mkdirSync(path.dirname(to), { recursive: true })
 fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(OUT, { recursive: true });
 
-for (const f of ['app.css', 'engine.js', 'license.js', 'i18n.js', 'model.js', 'view.js', 'app.js']) copy(path.join(ROOT, 'app', f), path.join(OUT, f));
+for (const f of ['app.css', 'engine.js', 'license.js', 'i18n.js', 'model.js', 'view.js', 'schema.js', 'extract.js', 'import.js', 'app.js']) copy(path.join(ROOT, 'app', f), path.join(OUT, f));
+// languages, and the PDF reader that "From documents" loads when a PDF is added
+(function copyDir(from, to) {
+  for (const e of fs.readdirSync(from, { withFileTypes: true })) {
+    if (e.isDirectory()) copyDir(path.join(from, e.name), path.join(to, e.name)); else copy(path.join(from, e.name), path.join(to, e.name));
+  }
+})(path.join(ROOT, 'app', 'lang'), path.join(OUT, 'lang'));
+for (const f of ['pdf.min.js', 'pdf.worker.min.js', 'LICENSE']) copy(path.join(ROOT, 'app', 'vendor', 'pdfjs', f), path.join(OUT, 'vendor', 'pdfjs', f));
+for (const d of ['standard_fonts', 'cmaps']) {
+  for (const f of fs.readdirSync(path.join(ROOT, 'app', 'vendor', 'pdfjs', d))) copy(path.join(ROOT, 'app', 'vendor', 'pdfjs', d, f), path.join(OUT, 'vendor', 'pdfjs', d, f));
+}
 copy(path.join(ROOT, 'assets', 'base.css'), path.join(OUT, 'assets', 'base.css'));
 copy(path.join(ROOT, 'assets', 'favicon.svg'), path.join(OUT, 'assets', 'favicon.svg'));
 for (const f of fs.readdirSync(path.join(ROOT, 'assets', 'fonts'))) copy(path.join(ROOT, 'assets', 'fonts', f), path.join(OUT, 'assets', 'fonts', f));

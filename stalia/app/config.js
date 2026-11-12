@@ -36,6 +36,11 @@
     // Links to the store apps, once they are published (shown in "Install app" and on the site).
     apps: { android: '', ios: '' },
 
+    // "From documents": the address of your reading server, e.g. 'https://stalia-reader.example.workers.dev'
+    // (how to start one: server/README.md). While it is empty, pages can be added and blacked out, but not read.
+    // maxPages must not be larger than MAX_PAGES of the server.
+    ai: { endpoint: '', maxPages: 20 },
+
     // Limits of the free version.
     free: { maxSaved: 3, maxPorts: 2 },
   };

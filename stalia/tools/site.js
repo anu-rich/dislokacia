@@ -6,8 +6,11 @@
  *   node tools/site.js                            re-apply the address already stored in app/config.js
  *
  * It writes siteUrl into app/config.js, fills the <!--SEO--> block of every page
- * (canonical address, language alternates, link-preview image) and creates
+ * (canonical address, language alternates, link-preview image), rebuilds the language
+ * switch and the footer language list from the page list below, and creates
  * sitemap.xml and robots.txt for search engines.
+ *
+ * To add a language: add its pages to PAGES and its label to LANGUAGES, then run this tool.
  */
 'use strict';
 const fs = require('node:fs');
@@ -20,6 +23,10 @@ const PAGES = [
   { file: 'index.html', url: '/', lang: 'en', group: 'home', priority: '1.0' },
   { file: 'ru/index.html', url: '/ru/', lang: 'ru', group: 'home', priority: '1.0' },
   { file: 'kk/index.html', url: '/kk/', lang: 'kk', group: 'home', priority: '1.0' },
+  { file: 'uk/index.html', url: '/uk/', lang: 'uk', group: 'home', priority: '1.0' },
+  { file: 'tr/index.html', url: '/tr/', lang: 'tr', group: 'home', priority: '1.0' },
+  { file: 'el/index.html', url: '/el/', lang: 'el', group: 'home', priority: '1.0' },
+  { file: 'zh/index.html', url: '/zh/', lang: 'zh', group: 'home', priority: '1.0' },
   { file: 'app/index.html', url: '/app/', lang: 'en', group: 'app', priority: '0.9' },
   { file: 'guides/how-to-calculate-laytime.html', url: '/guides/how-to-calculate-laytime.html', lang: 'en', group: 'howto', priority: '0.8' },
   { file: 'ru/guides/raschet-staliynogo-vremeni.html', url: '/ru/guides/raschet-staliynogo-vremeni.html', lang: 'ru', group: 'howto', priority: '0.8' },
@@ -30,13 +37,44 @@ const PAGES = [
   { file: 'terms.html', url: '/terms.html', lang: 'en', group: 'legal', priority: '0.3' },
 ];
 
+/** Short label and native name of each language, in the order the language switch shows them. */
+const LANGUAGES = [
+  ['en', 'EN', 'English'], ['ru', 'RU', 'Русский'], ['kk', 'ҚАЗ', 'Қазақша'], ['uk', 'УКР', 'Українська'],
+  ['tr', 'TR', 'Türkçe'], ['el', 'EL', 'Ελληνικά'], ['zh', '中文', '中文'],
+];
+const langOrder = (code) => LANGUAGES.findIndex((l) => l[0] === code);
+
 /** 'https://x.com/' -> 'https://x.com'; anything that is not an http(s) address -> ''. */
 function cleanSite(s) {
   s = String(s || '').trim().replace(/\/+$/, '');
   return /^https?:\/\/[a-z0-9.-]+(:\d+)?(\/[\w./-]*)?$/i.test(s) ? s : '';
 }
 
-const alternates = (page) => PAGES.filter((p) => p.group === page.group);
+const alternates = (page) => PAGES.filter((p) => p.group === page.group).sort((a, b) => langOrder(a.lang) - langOrder(b.lang));
+
+/** Relative address of page `to` as seen from page `from` ("./", "../ru/", "../guides/x.html"). */
+function relLink(from, to) {
+  const dir = path.posix.dirname('/' + from.file);
+  let rel = path.posix.relative(dir, '/' + to.file).replace(/(^|\/)index\.html$/, '$1');
+  if (rel === '') rel = './';
+  return rel;
+}
+
+/** Links of the language switch in the page header. */
+function langSwitch(page) {
+  return alternates(page).map((a) => {
+    const label = LANGUAGES[langOrder(a.lang)][1];
+    return a === page
+      ? '<a href="' + relLink(page, a) + '" aria-current="true" lang="' + a.lang + '">' + label + '</a>'
+      : '<a href="' + relLink(page, a) + '" lang="' + a.lang + '" hreflang="' + a.lang + '">' + label + '</a>';
+  }).join('');
+}
+
+/** The other languages, by native name, for the page footer. */
+function langList(page) {
+  return '<ul>' + alternates(page).filter((a) => a !== page).map((a) =>
+    '<li><a href="' + relLink(page, a) + '" lang="' + a.lang + '" hreflang="' + a.lang + '">' + LANGUAGES[langOrder(a.lang)][2] + '</a></li>').join('') + '</ul>';
+}
 const relativeSelf = (page) => (page.url.endsWith('/') ? './' : path.posix.basename(page.url));
 
 /** The lines that go between <!--SEO--> and <!--/SEO--> on a page. */
@@ -74,7 +112,10 @@ function applyTo(root, site) {
     const file = path.join(root, page.file);
     const src = fs.readFileSync(file, 'utf8');
     if (!/<!--SEO-->[\s\S]*?<!--\/SEO-->/.test(src)) throw new Error('No <!--SEO--> block in ' + page.file);
-    const next = src.replace(/<!--SEO-->[\s\S]*?<!--\/SEO-->/, () => '<!--SEO-->\n' + seoBlock(page, site) + '\n<!--/SEO-->');
+    const next = src
+      .replace(/<!--SEO-->[\s\S]*?<!--\/SEO-->/, () => '<!--SEO-->\n' + seoBlock(page, site) + '\n<!--/SEO-->')
+      .replace(/<!--LANGS-->[\s\S]*?<!--\/LANGS-->/, () => '<!--LANGS-->' + langSwitch(page) + '<!--/LANGS-->')
+      .replace(/<!--LANGLIST-->[\s\S]*?<!--\/LANGLIST-->/, () => '<!--LANGLIST-->' + langList(page) + '<!--/LANGLIST-->');
     if (next !== src) { fs.writeFileSync(file, next); changed.push(page.file); }
   }
   fs.writeFileSync(path.join(root, 'robots.txt'), robots(site));
@@ -94,7 +135,7 @@ function writeConfigSite(root, site) {
   fs.writeFileSync(file, src.replace(/siteUrl:\s*'[^']*'/, () => "siteUrl: '" + site + "'"));
 }
 
-module.exports = { PAGES, cleanSite, seoBlock, sitemap, robots, applyTo, readConfigSite, writeConfigSite };
+module.exports = { PAGES, LANGUAGES, cleanSite, seoBlock, langSwitch, langList, relLink, sitemap, robots, applyTo, readConfigSite, writeConfigSite };
 
 if (require.main === module) {
   const arg = process.argv[2];

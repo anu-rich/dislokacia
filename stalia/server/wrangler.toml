@@ -1,0 +1,27 @@
+# Stalia reading server on Cloudflare Workers.
+#   npx wrangler secret put ANTHROPIC_API_KEY     (once: paste the key when asked)
+#   npx wrangler deploy
+name = "stalia-reader"
+main = "worker.js"
+compatibility_date = "2026-10-01"
+
+[vars]
+# The address of your site, e.g. "https://stalia.example". Empty = any site may call the server.
+ALLOWED_ORIGINS = ""
+# Which Claude model reads the documents: with a Pro licence, and for free readings (Haiku costs about twenty times less).
+STALIA_MODEL = "claude-sonnet-5-5"
+STALIA_MODEL_FREE = "claude-haiku-5-5"
+# How thoroughly the model works: low | medium | high | xhigh | max.
+STALIA_EFFORT = "high"
+# Readings per day: without a licence (per visitor), with a Pro licence (per licence), and for everybody together.
+FREE_PER_DAY = "2"
+PRO_PER_DAY = "20"
+GLOBAL_PER_DAY = "150"
+# Readings per calendar month for one Pro licence.
+PRO_PER_MONTH = "200"
+
+# Recommended: counters that all copies of the Worker share.
+#   npx wrangler kv namespace create LIMITS      -> prints an id; put it below and remove the three "#"
+# [[kv_namespaces]]
+# binding = "LIMITS"
+# id = ""

@@ -4,6 +4,10 @@
 <dict>
   <key>CAPACITOR_DEBUG</key>
 	<string>$(CAPACITOR_DEBUG)</string>
+	<key>NSCameraUsageDescription</key>
+	<string>To photograph a charter party or a statement of facts that you want read into the calculation.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>To pick a photo of a charter party or a statement of facts that you want read into the calculation.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>

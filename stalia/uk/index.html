@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Калькулятор сталійного часу та демереджу онлайн — Stalia</title>
+<meta name="description" content="Безкоштовний онлайн-калькулятор сталійного часу (laytime) і демереджу: SHINC, SHEX, SSHEX, FHEX, нотис про готовність, погода та святкові дні, реверсивна сталія, диспач. Таймшит для друку, який підпишуть обидві сторони.">
+<meta name="theme-color" content="#0C2231">
+<!--SEO-->
+<link rel="canonical" href="./">
+<!--/SEO-->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Stalia — сталія та демередж із точністю до хвилини">
+<meta property="og:description" content="Введіть умови чартер-партії та факти зі стейтменту. Отримайте таймшит, момент закінчення сталії та документ, який підпишуть обидві сторони.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/base.css">
+<link rel="stylesheet" href="../assets/site.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Stalia","applicationCategory":"BusinessApplication","operatingSystem":"Web","inLanguage":["uk","en","ru","kk","tr","el","zh"],"description":"Онлайн-калькулятор сталійного часу та демереджу з таймшитом для друку.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Калькулятор справді безкоштовний?","acceptedAnswer":{"@type":"Answer","text":"Так. Розрахунки, часова шкала й таймшит безкоштовні та без обмежень. Pro додає бланк вашої компанії, чистий PDF, експорт і необмежену бібліотеку розрахунків."}},
+{"@type":"Question","name":"Чи підходить він для танкерів?","acceptedAnswer":{"@type":"Answer","text":"Так. Укажіть сталійний час у годинах, наприклад 72 години загалом, виберіть реверсивну сталію, задайте шість годин після нотису з умовою unless sooner commenced і додайте перешвартування або простої через насоси як перерви."}},
+{"@type":"Question","name":"Де зберігаються мої розрахунки?","acceptedAnswer":{"@type":"Answer","text":"У вашому браузері. На сервер нічого не завантажується. «Файл-копія» переносить розрахунок на інший комп’ютер, а «Скопіювати посилання» надсилає його колезі."}},
+{"@type":"Question","name":"Чи можна спиратися на результат у претензії?","acceptedAnswer":{"@type":"Answer","text":"Так само, як на власну таблицю. Арифметику перевірено, але вирішальне слово за чартер-партією: перевірте, які винятки застосовуються і чи діють вони на демереджі."}}
+]}
+</script>
+</head>
+<body>
+
+<header class="site-top">
+  <div class="wrap">
+    <a class="brand" href="./"><b>STALIA</b></a>
+    <nav class="site-nav" aria-label="Сайт">
+      <a href="#counts">Що він рахує</a>
+      <a href="#pricing">Ціни</a>
+      <a href="../guides/how-to-calculate-laytime.html" hreflang="en">Статті</a>
+      <span class="langs-links" aria-label="Мова"><!--LANGS--><a href="../" lang="en" hreflang="en">EN</a><a href="../ru/" lang="ru" hreflang="ru">RU</a><a href="../kk/" lang="kk" hreflang="kk">ҚАЗ</a><a href="./" aria-current="true" lang="uk">УКР</a><a href="../tr/" lang="tr" hreflang="tr">TR</a><a href="../el/" lang="el" hreflang="el">EL</a><a href="../zh/" lang="zh" hreflang="zh">中文</a><!--/LANGS--></span>
+      <a class="btn btn-primary btn-sm" href="../app/?lang=uk">Відкрити калькулятор</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <h1>Розрахунок сталійного часу та демереджу — до хвилини</h1>
+      <p class="lead">Введіть умови чартер-партії та факти зі стейтменту. Stalia порахує час по днях, покаже момент, коли сталія закінчилася, і підготує таймшит, який підпишуть обидві сторони.</p>
+      <div class="cta">
+        <a class="btn btn-primary btn-lg" href="../app/?lang=uk">Відкрити калькулятор</a>
+        <small>Безкоштовно. Без реєстрації.</small>
+      </div>
+    </div>
+    <div class="demo" aria-label="Приклад розрахунку">
+      <div class="demo-cap"><span>Приклад: 27 500 т пшениці, Новоросійськ — Александрія</span><a href="../app/?lang=uk">Відкрити в калькуляторі →</a></div>
+      <div id="demo-body" data-example="bulk" style="display:grid;grid-template-columns:minmax(0,1fr);gap:14px">
+        <div class="res res-dem"><p class="res-label">Демередж на користь судновласників</p><p class="res-amount"><span class="res-cur">USD</span> 23 841,93</p><p class="res-sub">1 д 17 год 00 хв на демереджі · 1,70833 доби</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="scale" aria-hidden="true"></div>
+</section>
+
+<section class="sec" id="documents">
+  <div class="wrap">
+    <div class="sec-h">
+      <h2>Два документи на вході — результат на виході</h2>
+      <p>Сфотографуйте чартер-партію та стейтмент або додайте PDF. Stalia прочитає умови й час подій і сама заповнить розрахунок.</p>
+    </div>
+    <div class="trust">
+      <div><h3>Спершу замажте</h3><p>Позначте назви, ставки та все конфіденційне. Позначки зафарбовуються на сторінці ще до того, як вона залишить ваш пристрій.</p></div>
+      <div><h3>Читає сама</h3><p>Сталійний час, робочі дні, умови нотису, демередж, час подання нотису, закінчення робіт і всі перерви.</p></div>
+      <div><h3>Ви перевіряєте й виправляєте</h3><p>Ви бачите, що прочитано й чого забракло. Усі значення потрапляють у звичайну форму, де будь-яке можна виправити вручну.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="counts">
+  <div class="wrap">
+    <div class="sec-h">
+      <h2>Що він рахує</h2>
+      <p>Кожне правило нижче — це налаштування, яке ви обираєте для кожного порту.</p>
+    </div>
+    <dl class="rider">
+      <div><dt>Робочий час</dt><dd>SHINC, SHEX, SSHEX, FHEX, «із суботи 12:00 до понеділка 08:00» або будь-який тижневий період. Святкові дні зі своїм часом початку напередодні та закінчення наступного ранку. Unless used або even if used.</dd></div>
+      <div><dt>Початок сталії</dt><dd>Фіксований час нотису після його подання або правило Gencon: нотис до полудня — сталія з 13:00, після полудня — з наступного робочого дня. Нотис лише в робочі години. Unless sooner commenced.</dd></div>
+      <div><dt>Перерви</dt><dd>Дощ, перешвартування, очікування лоцмана, поломки, сюрвей, страйки. Кожна перерва рахується на 0%, 50% або будь-яку частку — і ви вказуєте, чи діє вона на демереджі.</dd></div>
+      <div><dt>Кілька портів</dt><dd>Реверсивна сталія, облік окремо по портах або усереднення. Якщо судно прибуло вже на демереджі, час іде від подання нотису — або після часу нотису, якщо так сказано в чартері.</dd></div>
+      <div><dt>Гроші</dt><dd>Демередж пропорційно часу. Диспач за половиною ставки або за власною, за заощаджений робочий або весь заощаджений час. Комісія вираховується.</dd></div>
+      <div><dt>Документ</dt><dd>Таймшит по днях і розрахунок із застосованими умовами, фактами, підсумками та двома підписами. Українською, англійською, російською, казахською, турецькою, грецькою або китайською.</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-h"><h2>Три кроки</h2></div>
+    <ol class="steps">
+      <li><h3>Умови</h3><p>Норма або години за чартером, робочі дні, порядок початку сталії, ставка демереджу.</p></li>
+      <li><h3>Факти</h3><p>Нотис, швартування, закінчення робіт і всі перерви зі стейтменту.</p></li>
+      <li><h3>Документ</h3><p>Перевірте часову шкалу, роздрукуйте PDF і надішліть контрагентові.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-h"><h2>Чому розрахунку можна довіряти</h2></div>
+    <div class="trust">
+      <div><h3>Перевірено двічі</h3><p>Перед кожним випуском сотні випадкових рейсів проходять через два незалежні розрахунки: основний і простий похвилинний. Вони мають збігтися до хвилини.</p></div>
+      <div><h3>Нічого прихованого</h3><p>У документі поруч із цифрами надруковано застосовані умови — контрагент може перевірити їх рядок за рядком.</p></div>
+      <div><h3>Дані залишаються у вас</h3><p>Розрахунки зберігаються у вашому браузері. Посилання на розрахунок містить сам розрахунок. На сервері нічого не зберігається.</p></div>
+    </div>
+    <p class="aside-note">Stalia виконує арифметику. Що саме рахується, визначає чартер-партія: звірте підсумок з її формулюваннями, перш ніж заявляти претензію або платити.</p>
+  </div>
+</section>
+
+<section class="sec" id="mobile">
+  <div class="wrap">
+    <div class="sec-h"><h2>На телефоні</h2><p>Той самий калькулятор установлюється як застосунок і працює без інтернету.</p></div>
+    <div class="trust">
+      <div><h3>Android</h3><p>Відкрийте калькулятор у Chrome, потім меню ⋮ → «Установити додаток».</p></div>
+      <div><h3>iPhone та iPad</h3><p>Відкрийте калькулятор у Safari, потім «Поширити» → «На Початковий екран».</p></div>
+      <div><h3>Комп’ютер</h3><p>У Chrome або Edge натисніть значок установлення в правій частині адресного рядка.</p></div>
+    </div>
+    <p class="copyline" data-stores hidden style="margin-top:20px"><span>Також у магазинах:</span></p>
+  </div>
+</section>
+
+<section class="sec" id="pricing">
+  <div class="wrap">
+    <div class="sec-h">
+      <h2>Ціни</h2>
+      <p>Калькулятор безкоштовний. Pro потрібен, коли розрахунок надсилають контрагентові.</p>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <h3>Free</h3>
+        <p class="price">$0</p>
+        <ul>
+          <li>Розрахунки без обмежень</li>
+          <li>Усі умови та правила сталії</li>
+          <li>Часова шкала й таймшит на екрані</li>
+          <li>Документ для друку з рядком «безкоштовна версія»</li>
+          <li>3 збережені розрахунки, 2 порти в рейсі</li>
+          <li>Посилання на розрахунок</li>
+          <li>Читання документів: обмежений безкоштовний ліміт</li>
+        </ul>
+        <div class="buy"><a class="btn" href="../app/?lang=uk">Відкрити калькулятор</a></div>
+      </div>
+      <div class="plan plan-pro">
+        <h3>Pro <span class="pill pill-pro">на користувача</span></h3>
+        <p class="price"><span data-price="usd.monthly">$19</span> <small>на місяць</small></p>
+        <p class="price-alt">або <b data-price="usd.yearly">$149</b> на рік</p>
+        <ul>
+          <li>Таймшит на бланку компанії: назва, реквізити, логотип</li>
+          <li>Чистий PDF без рядка «безкоштовна версія»</li>
+          <li>Необмежена кількість збережених розрахунків і файли-копії</li>
+          <li>Будь-яка кількість портів у рейсі</li>
+          <li>Експорт таймшиту в Excel (CSV)</li>
+          <li>Більше читань документів на день</li>
+          <li>Першочергові відповіді електронною поштою</li>
+        </ul>
+        <div class="buy"><a class="btn btn-primary" data-buy="monthly" href="#contact">Купити на місяць</a><a class="btn" data-buy="yearly" href="#contact">Купити на рік</a></div>
+      </div>
+    </div>
+    <div class="contact" id="contact">
+      <p>Потрібен рахунок чи оплата банківським переказом або маєте запитання? Напишіть нам — надішлемо рахунок і ліцензійний ключ.</p>
+      <p class="copyline"><code id="contact-email" data-contact="email">hello@example.com</code><button type="button" class="btn btn-sm" data-copy="#contact-email">Скопіювати</button><a class="btn btn-sm" data-contact="telegram" href="#" target="_blank" rel="noopener" hidden>Telegram</a></p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="faq">
+  <div class="wrap">
+    <div class="sec-h"><h2>Запитання</h2></div>
+    <dl class="faq">
+      <div><dt>Калькулятор справді безкоштовний?</dt><dd>Так. Розрахунки, часова шкала й таймшит безкоштовні та без обмежень. Pro додає бланк вашої компанії, чистий PDF, експорт і необмежену бібліотеку розрахунків.</dd></div>
+      <div><dt>Чи підходить він для танкерів?</dt><dd>Так. Укажіть сталійний час у годинах, наприклад 72 години загалом, виберіть реверсивну сталію, задайте шість годин після нотису з умовою unless sooner commenced і додайте перешвартування або простої через насоси як перерви.</dd></div>
+      <div><dt>Де зберігаються мої розрахунки?</dt><dd>У вашому браузері. На сервер нічого не завантажується. «Файл-копія» переносить розрахунок на інший комп’ютер, а «Скопіювати посилання» надсилає його колезі.</dd></div>
+      <div><dt>Чи можна спиратися на результат у претензії?</dt><dd>Так само, як на власну таблицю. Арифметику перевірено, але вирішальне слово за чартер-партією: перевірте, які винятки застосовуються і чи діють вони на демереджі.</dd></div>
+      <div><dt>Як купити Pro?</dt><dd>Оплатіть карткою онлайн — ліцензійний ключ надійде на пошту, його потрібно вставити в калькулятор. Якщо потрібен рахунок або оплата переказом, напишіть нам.</dd></div>
+      <div><dt>Якими мовами він працює?</dt><dd>Калькулятор і документ — українською, англійською, російською, казахською, турецькою, грецькою та китайською. Мову документа можна вибрати окремо від мови екрана.</dd></div>
+      <div><dt>Чи безпечно завантажувати чартер?</dt><dd>Що залишить пристрій, вирішуєте ви. Спершу замажте назви, ставки та все конфіденційне: позначки зафарбовуються просто на зображенні сторінки, і на читання ШІ-моделі надсилаються лише ці зображення. Ми їх не зберігаємо.</dd></div>
+      <div><dt>Наскільки надійне читання?</dt><dd>Воно позначає все, чого не знайшло або в чому не впевнене. Ви підтверджуєте результат і можете виправити будь-яке значення вручну — так само, якби вводили його самі. Рукописні позначки та погані фото потребують уважнішого погляду.</dd></div>
+    </dl>
+  </div>
+</section>
+</main>
+
+<div class="scale" aria-hidden="true"></div>
+<footer class="site-foot">
+  <div class="wrap">
+    <div><h4>Stalia</h4><ul><li><a href="../app/?lang=uk">Калькулятор</a></li><li><a href="#pricing">Ціни</a></li><li><a href="#contact">Контакти</a></li><li><a href="../privacy.html">Конфіденційність</a></li><li><a href="../terms.html">Умови</a></li></ul></div>
+    <div><h4>Статті</h4><ul><li><a href="../guides/how-to-calculate-laytime.html" hreflang="en">Як розрахувати сталійний час і демередж (англійською)</a></li><li><a href="../guides/shinc-shex-sshex-fhex.html" hreflang="en">SHINC, SHEX, SSHEX, FHEX: пояснення (англійською)</a></li></ul></div>
+    <div><h4>Мови</h4><!--LANGLIST--><ul><li><a href="../" lang="en" hreflang="en">English</a></li><li><a href="../ru/" lang="ru" hreflang="ru">Русский</a></li><li><a href="../kk/" lang="kk" hreflang="kk">Қазақша</a></li><li><a href="../tr/" lang="tr" hreflang="tr">Türkçe</a></li><li><a href="../el/" lang="el" hreflang="el">Ελληνικά</a></li><li><a href="../zh/" lang="zh" hreflang="zh">中文</a></li></ul><!--/LANGLIST--></div>
+    <p class="fine">© <span data-year>2026</span> Stalia. Калькулятор виконує арифметику і не є юридичною консультацією. Шрифти: IBM Plex і Fira Sans, ліцензія SIL Open Font License.</p>
+  </div>
+</footer>
+
+<div class="tip" id="tip" hidden><b></b><span></span></div>
+<script src="../app/config.js"></script>
+<script src="../app/engine.js"></script>
+<script src="../app/i18n.js"></script>
+<script src="../app/lang/uk.js"></script>
+<script src="../app/model.js"></script>
+<script src="../app/view.js"></script>
+<script src="../assets/site.js"></script>
+</body>
+</html>

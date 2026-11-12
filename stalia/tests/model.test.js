@@ -129,9 +129,9 @@ test('normalizeCalc: hostile and broken input becomes a safe, well-typed calcula
   assert.equal(M.normalizeCalc({ ports: new Array(50).fill({}) }).ports.length, M.LIMITS.ports);
 });
 
-test('i18n: English, Russian and Kazakh define exactly the same keys and placeholders', () => {
+test('i18n: every language defines exactly the same keys and placeholders as English', () => {
   const en = I.STRINGS.en;
-  assert.deepEqual(I.LANGS, ['en', 'ru', 'kk']);
+  assert.deepEqual(I.LANGS, ['en', 'ru', 'kk', 'uk', 'tr', 'el', 'zh']);
   const ph = (s) => (s.match(/\{\w+\}/g) || []).sort().join(',');
   for (const lang of I.LANGS) {
     const d = I.STRINGS[lang];
@@ -141,8 +141,7 @@ test('i18n: English, Russian and Kazakh define exactly the same keys and placeho
   }
   // the translations are real, not copies of English
   const same = (lang) => Object.keys(en).filter((k) => I.STRINGS[lang][k] === en[k] && en[k].length > 12);
-  assert.ok(same('ru').length < 8, 'untranslated ru: ' + same('ru'));
-  assert.ok(same('kk').length < 8, 'untranslated kk: ' + same('kk'));
+  for (const lang of I.LANGS.filter((l) => l !== 'en')) assert.ok(same(lang).length < 8, 'untranslated ' + lang + ': ' + same(lang));
   assert.equal(I.t('kk', 'p.port', { n: 2 }), '2-порт');
   assert.equal(I.t('ru', 'p.port', { n: 2 }), 'Порт 2');
   assert.equal(I.t('xx', 'p.port', { n: 2 }), 'Port 2');

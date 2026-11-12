@@ -12,14 +12,14 @@
   const pad = (n) => (n < 10 ? '0' : '') + n;
   const T = (lang) => (key, vars) => I.t(lang, key, vars);
   /** Kazakh follows the same number and date conventions as Russian (14 500,00 and 06.03.2026). */
-  const locale = (lang) => (lang === 'en' ? 'en-US' : 'ru-RU');
-  const dmy = (lang) => lang !== 'en';
+  /** Number, date and duration conventions of a language (lang/<code>.js -> format). */
+  const F = (lang) => I.format(lang);
 
   // ---------------------------------------------------------------- formatting
   function fmtNumber(v, lang, digits) {
     const d = digits == null ? 0 : digits;
     try {
-      return new Intl.NumberFormat(locale(lang), { minimumFractionDigits: d, maximumFractionDigits: d }).format(v);
+      return new Intl.NumberFormat(F(lang).locale, { minimumFractionDigits: d, maximumFractionDigits: d }).format(v);
     } catch (e) { return Number(v).toFixed(d); }
   }
   /** "USD 14,500.00" — currency code first, the way freight invoices are written. */
@@ -27,7 +27,7 @@
   /** Rates keep cents only when they have them: "USD 14,500". */
   const fmtRate = (v, cur, lang) => (cur || '') + ' ' + fmtNumber(v, lang, Math.abs(v - Math.round(v)) > 0.004 ? 2 : 0);
   function fmtDur(min, lang) {
-    const p = E.splitDur(min), t = T(lang), sp = dmy(lang) ? ' ' : '';
+    const p = E.splitDur(min), t = T(lang), sp = F(lang).durSpace ? ' ' : '';
     return (p.neg ? '−' : '') + p.d + sp + t('u.d') + ' ' + pad(p.h) + sp + t('u.h') + ' ' + pad(p.m) + sp + t('u.m');
   }
   const fmtDays = (min, lang) => fmtNumber(min / DAY, lang, 5);
@@ -35,15 +35,16 @@
     const d = new Date(Math.round(min) * 60000);
     return { y: d.getUTCFullYear(), mo: d.getUTCMonth(), d: d.getUTCDate(), h: d.getUTCHours(), mi: d.getUTCMinutes(), dow: d.getUTCDay() };
   }
+  /** Fill a pattern made of DD, MM, MMM and YYYY, e.g. "DD MMM YYYY" or "YYYY-MM-DD". */
+  function datePattern(pattern, p, lang) {
+    return pattern.replace(/YYYY|MMM|MM|DD/g, (k) =>
+      (k === 'YYYY' ? String(p.y) : k === 'MMM' ? I.t(lang, 'mon.' + p.mo) : k === 'MM' ? pad(p.mo + 1) : pad(p.d)));
+  }
   function fmtDate(min, lang) {
     if (min == null) return '';
-    const p = parts(min);
-    return dmy(lang) ? pad(p.d) + '.' + pad(p.mo + 1) + '.' + p.y : pad(p.d) + ' ' + I.t(lang, 'mon.' + p.mo) + ' ' + p.y;
+    return datePattern(F(lang).date, parts(min), lang);
   }
-  function fmtDayShort(min, lang) {
-    const p = parts(min);
-    return dmy(lang) ? pad(p.d) + '.' + pad(p.mo + 1) : pad(p.d) + ' ' + I.t(lang, 'mon.' + p.mo);
-  }
+  const fmtDayShort = (min, lang) => datePattern(F(lang).dayShort, parts(min), lang);
   const fmtTime = (min) => { const p = parts(min); return pad(p.h) + ':' + pad(p.mi); };
   const fmtDT = (min, lang) => (min == null ? '' : fmtDate(min, lang) + ' ' + fmtTime(min));
   const fmtDow = (min, lang) => I.t(lang, 'dows.' + parts(min).dow);
@@ -394,7 +395,7 @@
   }
   function sheetCSV(calc, result, lang) {
     const t = T(lang);
-    const sepLine = dmy(lang) ? ';' : ',';
+    const sepLine = F(lang).csvSep;
     const rows = [[t('r.port'), t('s.date'), t('s.day'), t('s.from'), t('s.to'), t('s.remarks'), t('s.pct'), t('s.counted'), t('s.total'), t('s.balance')]];
     if (result.ok) {
       for (const pr of result.ports) {

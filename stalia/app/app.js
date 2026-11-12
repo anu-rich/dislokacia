@@ -2,6 +2,7 @@
 (function () {
   'use strict';
   const E = window.StaliaEngine, I = window.StaliaI18n, M = window.StaliaModel, V = window.StaliaView, L = window.StaliaLicense;
+  const X = window.StaliaExtract, S = window.StaliaSchema;
   const CFG = window.STALIA_CONFIG || {};
   const PREVIEW = !!CFG.preview; // sandboxed preview: no printing, downloads or share links
   const NATIVE = !!CFG.native;   // packaged Android / iOS app (set by mobile/scripts/build-web.js)
@@ -26,6 +27,7 @@
     lang: 'en', calc: null, result: null, calcId: null,
     source: 'example', exampleId: null, pristine: true,
     stLang: null, stOpen: false, open: {}, confirm: null, shareHash: '', undo: null,
+    notes: [], // what to check after a calculation was read from documents: [{field, port, status, comment}]
   };
   const lic = L.create({ config: CFG });
   const t = (k, v) => I.t(state.lang, k, v);
@@ -249,6 +251,11 @@
       if (chip) chip.innerHTML = r && r.ok && r.ports[i] ? V.portChip(r.ports[i], r.totals, state.lang) : '';
     });
     $$('#form .bad').forEach((el) => el.classList.remove('bad'));
+    $$('#form .chk').forEach((el) => el.classList.remove('chk'));
+    for (const n of state.notes) {
+      const path = X.notePath(n, c), el = path && document.getElementById(idOf(path));
+      if (el) el.classList.add('chk');
+    }
     if (!r) return;
     const mark = (path) => { const el = document.getElementById(idOf(path)); if (el) el.classList.add('bad'); };
     for (const e of r.errors || []) {
@@ -297,13 +304,18 @@
   }
 
   let saveTimer = null, shareTimer = null;
+  function saveNow() {
+    clearTimeout(saveTimer); saveTimer = null;
+    if (state.calc) store.set(K.current, { calc: state.calc, calcId: state.calcId, source: state.source, exampleId: state.exampleId, pristine: state.pristine, notes: state.notes });
+  }
+  // typing without a pause keeps postponing the save: closing or leaving the page must not lose that work
+  window.addEventListener('pagehide', () => { if (saveTimer) saveNow(); });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && saveTimer) saveNow(); });
   function recalc() {
     state.result = E.compute(state.calc);
     renderResult();
     clearTimeout(saveTimer);
-    saveTimer = setTimeout(() => {
-      store.set(K.current, { calc: state.calc, calcId: state.calcId, source: state.source, exampleId: state.exampleId, pristine: state.pristine });
-    }, 400);
+    saveTimer = setTimeout(saveNow, 400);
     clearTimeout(shareTimer);
     shareTimer = setTimeout(() => { encodeShare(state.calc).then((s) => { state.shareHash = s; }).catch(() => { state.shareHash = ''; }); }, 300);
   }
@@ -346,6 +358,7 @@
     state.source = meta.source || 'blank';
     state.exampleId = meta.exampleId || null;
     state.pristine = meta.pristine !== false;
+    state.notes = cleanNotes(meta.notes, calc);
     state.open = {};
     state.confirm = null;
     renderBanner();
@@ -357,8 +370,16 @@
     setCalc(ex.calc, { source: 'example', exampleId: ex.id });
   }
   function snapshot() {
-    return { calc: JSON.parse(JSON.stringify(state.calc)), calcId: state.calcId, source: state.source, exampleId: state.exampleId, pristine: state.pristine };
+    return { calc: JSON.parse(JSON.stringify(state.calc)), calcId: state.calcId, source: state.source, exampleId: state.exampleId, pristine: state.pristine, notes: state.notes.slice() };
   }
+  /** Notes come back from storage: keep only well-formed ones that still point at something. */
+  function cleanNotes(list, calc) {
+    return (Array.isArray(list) ? list : []).filter((n) => n && X.FIELDS[n.field] && S.STATUSES.indexOf(n.status) >= 0 &&
+      (n.port == null || (Number.isInteger(n.port) && calc.ports[n.port]))).slice(0, 60)
+      .map((n) => ({ field: n.field, port: n.port == null ? null : n.port, status: n.status, comment: String(n.comment || '').slice(0, 400) }));
+  }
+  /** Nothing of the user's own is on screen: a new, untouched calculation or an untouched example. */
+  const blankish = () => state.pristine && (state.source === 'blank' || state.source === 'example');
   function touched() {
     if (!state.pristine) return;
     state.pristine = false;
@@ -369,8 +390,15 @@
   function renderBanner() {
     let h = '';
     if (PREVIEW) h += '<div class="b-plain"><p>' + esc(t('banner.preview')) + '</p></div>';
-    if (state.source === 'example') {
-      h += '<div><p>' + esc(t('banner.example')) + '</p><button type="button" class="btn btn-sm" data-act="new">' + esc(t('banner.startNew')) + '</button></div>';
+    const fromDocs = '<button type="button" class="btn btn-sm btn-primary" data-act="imp-open">' + esc(t('imp.open')) + '</button>';
+    if (state.notes.length || state.source === 'import') {
+      h += '<div class="b-notes"><p>' + esc(t('imp.banner')) + '</p><button type="button" class="btn btn-sm" data-act="notes-close">' + esc(t('common.close')) + '</button>' +
+        (state.notes.length ? '<div class="b-list"><b>' + esc(t('imp.review.notes')) + '</b><ul class="imp-notes">' +
+          state.notes.map((n) => imp.noteHTML(n, state.calc, true)).join('') + '</ul></div>' : '') + '</div>';
+    } else if (state.source === 'example') {
+      h += '<div><p>' + esc(t('banner.example')) + '</p><button type="button" class="btn btn-sm" data-act="new">' + esc(t('banner.startNew')) + '</button>' + fromDocs + '</div>';
+    } else if (state.source === 'blank' && state.pristine) {
+      h += '<div class="b-plain"><p>' + esc(t('imp.cta')) + '</p>' + fromDocs + '</div>';
     } else if (state.source === 'shared') {
       h += '<div class="b-plain"><p>' + esc(t('banner.shared')) + '</p><button type="button" class="btn btn-sm" data-act="save">' + esc(t('nav.save')) + '</button></div>';
     }
@@ -378,7 +406,7 @@
   }
 
   function renderHeader() {
-    $('#langs').innerHTML = I.LANGS.map((l) => '<button type="button" data-act="lang" data-lang="' + l + '" aria-pressed="' + (l === state.lang) + '" title="' + esc(I.t(l, 'lang.name')) + '">' + esc(I.LANG_LABELS[l]) + '</button>').join('');
+    $('#lang-select').innerHTML = I.LANGS.map((l) => '<option value="' + l + '" lang="' + l + '"' + (l === state.lang ? ' selected' : '') + '>' + esc(I.t(l, 'lang.name')) + '</option>').join('');
     const s = lic.get(), b = $('#lic');
     if (s.pro) { b.className = 'lic pill pill-lay'; b.textContent = 'Pro' + (s.licensee ? ' · ' + s.licensee.slice(0, 28) : ''); }
     else { b.className = 'lic pill pill-pro'; b.textContent = STORE ? 'Pro' : t('nav.upgrade'); }
@@ -515,7 +543,10 @@
     if (skipPop > 0) { skipPop--; return; }
     const top = overlays.pop();
     if (!top) return;
-    if (top.name === 'dialog') { if ($('#dlg').open) $('#dlg').close(); } else hideStatement();
+    if (top.name === 'dialog') { if ($('#dlg').open) $('#dlg').close(); }
+    else if (top.name === 'redact') imp.hideRedact();
+    else if (top.name === 'import') imp.hide();
+    else hideStatement();
   });
   function showDialog() {
     const d = $('#dlg');
@@ -549,7 +580,7 @@
     } else {
       if (s.status === 'expired') h += '<p class="note note-warn">' + esc(t('pro.status.expired')) + '</p>';
       else if (s.error === 'offline_too_long') h += '<p class="note note-warn">' + esc(t('pro.err.offline_too_long')) + '</p>';
-      h += '<p>' + esc(STORE ? t('pro.storeNote') : t('pro.lead')) + '</p><ul>' + ['f1', 'f2', 'f3', 'f4', 'f5', 'f6'].map((k) => '<li>' + esc(t('pro.' + k)) + '</li>').join('') + '</ul>';
+      h += '<p>' + esc(STORE ? t('pro.storeNote') : t('pro.lead')) + '</p><ul>' + ['f1', 'f2', 'f3', 'f4', 'f5', 'f7', 'f6'].map((k) => '<li>' + esc(t('pro.' + k)) + '</li>').join('') + '</ul>';
       if (!STORE) {
       h += '<div class="plans">';
       [['monthly', 'pro.monthly', 'pro.perMonth', co.monthlyUrl, 'pro.buyMonthly'], ['yearly', 'pro.yearly', 'pro.perYear', co.yearlyUrl, 'pro.buyYearly']].forEach((x) => {
@@ -604,10 +635,10 @@
 
   const actions = {
     lang(el) {
-      const l = el.dataset.lang;
+      const l = el.dataset.lang || el.value;
       if (!I.STRINGS[l] || l === state.lang) return;
       state.lang = l; store.set(K.lang, l);
-      applyI18n(); renderHeader(); renderMenus();
+      applyI18n(); renderHeader(); renderMenus(); imp.render();
       if (state.source === 'example' && state.pristine) loadExample(state.exampleId);
       else { renderBanner(); renderForm(); recalc(); }
       if (state.stOpen) { renderStatementSide(); renderStatement(); }
@@ -710,7 +741,32 @@
     'lic-remove'() { lic.remove().then(() => { toast(t('toast.licenseRemoved')); renderPro(); }); },
     'copy-email'() { copyText(CFG.contactEmail || ''); },
     'logo-remove'() { const b = getBrand(); delete b.logo; store.set(K.brand, b); renderStatementSide(); renderStatement(); },
+    'notes-close'() { state.notes = []; if (state.source === 'import') state.source = 'edited'; renderBanner(); recalc(); },
+    'note-go'(el) { showField(el.dataset.path); },
   };
+
+  // ---------------------------------------------------------------- reading documents
+  /** Bring a form field into view: its port is opened if it was folded. */
+  function showField(path) {
+    const m = /^ports\.(\d+)\./.exec(path || ''), port = m && state.calc.ports[+m[1]];
+    if (port && state.open[port.id] === false) { state.open[port.id] = true; renderForm(); }
+    if (port) { const d = $('#form details.port[data-pid="' + port.id + '"]'); if (d && !d.open) d.open = true; }
+    const el = document.getElementById(idOf(path));
+    if (!el) return;
+    el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    el.focus({ preventScroll: true });
+  }
+  const imp = window.StaliaImport.create({
+    t, esc, state, config: CFG, engine: E, model: M, view: V, extract: X, schema: S,
+    licenceKey: () => lic.storedKey(), isPro, toast, overlayOpened, overlayClosed, blankish,
+    apply(calc, notes) {
+      const prev = snapshot();
+      setCalc(calc, { source: 'import', pristine: false, notes });
+      window.scrollTo(0, 0);
+      toast(t('imp.applied'), { label: t('common.undo'), fn: () => setCalc(prev.calc, prev) });
+    },
+  });
+  Object.assign(actions, imp.actions);
 
   // ---------------------------------------------------------------- events
   document.addEventListener('click', (e) => {
@@ -745,6 +801,10 @@
       ev.kind = tp.kind; ev.countPct = String(tp.pct); ev.alsoOnDemurrage = tp.dem;
       if (tp.kind === 'note') ev.to = ''; else if (prev === 'note' && ev.from) ev.to = E.fmtDT(E.parseDT(ev.from) + 60);
     }
+    if (state.notes.length) {
+      const left = state.notes.filter((n) => X.notePath(n, state.calc) !== path);
+      if (left.length !== state.notes.length) { state.notes = left; renderBanner(); }
+    }
     touched();
     if (el.dataset.rr) renderForm();
     recalc();
@@ -753,6 +813,7 @@
   document.addEventListener('change', (e) => {
     const el = e.target;
     if (el.id === 'st-lang') { state.stLang = el.value; renderStatement(); return; }
+    if (el.id === 'lang-select') { actions.lang(el); return; }
     if (el.id === 'br-logo') {
       const f = el.files && el.files[0];
       if (!f) return;
@@ -782,7 +843,10 @@
     if (!isTextLike(el)) onField(el);
   });
   $('#form').addEventListener('submit', (e) => e.preventDefault());
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && state.stOpen && !$('#dlg').open) closeStatement(); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape' || $('#dlg').open) return;
+    if (imp.isRedacting()) imp.closeRedact(); else if (imp.isOpen()) imp.close(); else if (state.stOpen) closeStatement();
+  });
   window.addEventListener('hashchange', () => { loadFromHash(); });
 
   // Ctrl+P anywhere prints the statement, not the form.
@@ -855,7 +919,7 @@
       if (urlExample && M.examples(state.lang).some((x) => x.id === urlExample)) loadExample(urlExample);
       else if (cur && cur.calc && Array.isArray(cur.calc.ports)) {
         if (cur.source === 'example' && cur.pristine !== false) loadExample(cur.exampleId);
-        else setCalc(M.normalizeCalc(cur.calc), { source: cur.source === 'shared' ? 'edited' : cur.source, calcId: cur.calcId, exampleId: cur.exampleId, pristine: cur.pristine });
+        else setCalc(M.normalizeCalc(cur.calc), { source: cur.source === 'shared' ? 'edited' : cur.source, calcId: cur.calcId, exampleId: cur.exampleId, pristine: cur.pristine, notes: cur.notes });
       } else loadExample('bulk');
     }
 
@@ -875,5 +939,5 @@
   start();
 
   // for automated checks
-  window.__stalia = { state, lic, recalc, setCalc };
+  window.__stalia = { state, lic, recalc, setCalc, imp };
 })();

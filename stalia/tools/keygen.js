@@ -75,6 +75,8 @@ function writeConfigKeys(keys, configPath) {
   // The block between the markers must stay strict JSON (readConfigKeys parses it).
   const body = keys.length ? '[\n      ' + keys.map((k) => JSON.stringify(k)).join(',\n      ') + '\n    ]' : '[]';
   fs.writeFileSync(configPath || CONFIG_PATH, src.replace(/\/\*KEYS-START\*\/[\s\S]*?\/\*KEYS-END\*\//, () => '/*KEYS-START*/' + body + '/*KEYS-END*/'));
+  // the reading server checks licence keys with the same public keys: keep its copy in step with the site
+  if (!configPath) require('./sync-server.js').sync();
 }
 
 function args(argv) {

@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Online Starya (Laytime) ve Demuraj Hesaplama – Stalia</title>
+<meta name="description" content="Ücretsiz online starya (laytime) hesaplayıcı: SHINC, SHEX, SSHEX ve FHEX şartları, NOR kuralları, hava koşulları ve resmî tatiller, reversible starya, demuraj (sürastarya) ve dispeç. İki tarafın imzalayabileceği time sheet hazırlar.">
+<meta name="theme-color" content="#0C2231">
+<!--SEO-->
+<link rel="canonical" href="./">
+<!--/SEO-->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Stalia – starya ve demuraj hesabı, dakikası dakikasına">
+<meta property="og:description" content="Çarter parti şartlarını ve SOF kayıtlarını girin. Time sheet’i, starya süresinin dolduğu anı ve iki tarafın imzalayabileceği starya hesabını alın.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/base.css">
+<link rel="stylesheet" href="../assets/site.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Stalia","applicationCategory":"BusinessApplication","operatingSystem":"Web","inLanguage":["tr","en","ru","kk","uk","el","zh"],"description":"Yazdırılabilir time sheet hazırlayan online starya ve demuraj hesaplayıcı.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Hesaplayıcı gerçekten ücretsiz mi?","acceptedAnswer":{"@type":"Answer","text":"Evet. Hesaplamalar, zaman çizgisi ve time sheet ücretsiz ve sınırsızdır. Pro ile antetli kâğıt, sade PDF, dışa aktarma ve sınırsız arşiv gelir."}},
+{"@type":"Question","name":"Tankerler için de kullanılabilir mi?","acceptedAnswer":{"@type":"Answer","text":"Evet. Tanınan süreyi saat olarak girin (örneğin toplam 72 saat), reversible staryayı seçin, starya başlangıcını “unless sooner commenced” kaydıyla NOR verildikten altı saat sonraya ayarlayın; shifting ve pompa gecikmelerini de kesinti olarak ekleyin."}},
+{"@type":"Question","name":"Hesaplamalarım nerede saklanıyor?","acceptedAnswer":{"@type":"Answer","text":"Tarayıcınızda. Sunucuya hiçbir şey yüklenmez. “Yedek dosya” hesaplamayı başka bir bilgisayara taşır, “Bağlantıyı kopyala” ise onu bir meslektaşınıza gönderir."}},
+{"@type":"Question","name":"Sonuca bir demuraj talebinde dayanabilir miyim?","acceptedAnswer":{"@type":"Answer","text":"Kendi hesap tablonuzu nasıl kullanıyorsanız onu da öyle kullanın. Aritmetik test edilmiştir, ancak belirleyici olan çarter partidir: hangi istisnaların geçerli olduğunu ve bunların demurajda da geçerli olup olmadığını kontrol edin."}}
+]}
+</script>
+</head>
+<body>
+
+<header class="site-top">
+  <div class="wrap">
+    <a class="brand" href="./"><b>STALIA</b></a>
+    <nav class="site-nav" aria-label="Site">
+      <a href="#counts">Neleri hesaba katar</a>
+      <a href="#pricing">Fiyatlar</a>
+      <a href="../guides/how-to-calculate-laytime.html">Rehberler</a>
+      <span class="langs-links" aria-label="Dil"><!--LANGS--><a href="../" lang="en" hreflang="en">EN</a><a href="../ru/" lang="ru" hreflang="ru">RU</a><a href="../kk/" lang="kk" hreflang="kk">ҚАЗ</a><a href="../uk/" lang="uk" hreflang="uk">УКР</a><a href="./" aria-current="true" lang="tr">TR</a><a href="../el/" lang="el" hreflang="el">EL</a><a href="../zh/" lang="zh" hreflang="zh">中文</a><!--/LANGS--></span>
+      <a class="btn btn-primary btn-sm" href="../app/?lang=tr">Hesaplayıcıyı aç</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <h1>Starya ve demuraj hesabı, dakikası dakikasına</h1>
+      <p class="lead">Çarter parti şartlarını ve SOF (olay tutanağı) kayıtlarını girin. Stalia süreyi gün gün sayar, starya süresinin dolduğu anı gösterir ve iki tarafın imzalayabileceği bir starya hesabı hazırlar.</p>
+      <div class="cta">
+        <a class="btn btn-primary btn-lg" href="../app/?lang=tr">Hesaplayıcıyı aç</a>
+        <small>Ücretsiz. Kayıt gerekmez.</small>
+      </div>
+    </div>
+    <div class="demo" aria-label="Örnek hesaplama">
+      <div class="demo-cap"><span>Örnek: 27.500 MT buğday, Novorossiysk – İskenderiye</span><a href="../app/?lang=tr">Hesaplayıcıda aç →</a></div>
+      <div id="demo-body" data-example="bulk" style="display:grid;grid-template-columns:minmax(0,1fr);gap:14px">
+        <div class="res res-dem"><p class="res-label">Donatana ödenecek demuraj</p><p class="res-amount"><span class="res-cur">USD</span> 23.841,93</p><p class="res-sub">1 g 17 sa 00 dk demurajda · 1,70833 gün</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="scale" aria-hidden="true"></div>
+</section>
+
+<section class="sec" id="documents">
+  <div class="wrap">
+    <div class="sec-h">
+      <h2>İki belge girer, sonuç çıkar</h2>
+      <p>Çarter parti (çarter sözleşmesi) ile SOF belgesinin fotoğrafını çekin veya PDF dosyalarını ekleyin. Stalia şartları ve zamanları okuyup hesaplamayı doldurur.</p>
+    </div>
+    <div class="trust">
+      <div><h3>Önce karartın</h3><p>Adları, ücretleri ve gizli kalması gereken her şeyi işaretleyin. İşaretlediğiniz alanlar, sayfa cihazınızdan çıkmadan önce boyanarak kapatılır.</p></div>
+      <div><h3>Otomatik okunur</h3><p>Tanınan starya (laytime allowed), iş günleri, NOR kuralları ve demuraj; NOR’un verildiği an, operasyon bitişi ve bütün kesintiler.</p></div>
+      <div><h3>Siz kontrol eder, düzeltirsiniz</h3><p>Nelerin okunduğunu ve nelerin eksik kaldığını görürsünüz. Bütün değerler alışık olduğunuz forma aktarılır; dilediğinizi elle değiştirebilirsiniz.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="counts">
+  <div class="wrap">
+    <div class="sec-h">
+      <h2>Neleri hesaba katar</h2>
+      <p>Aşağıdaki her kural, her liman için ayrı ayrı seçtiğiniz bir ayardır.</p>
+    </div>
+    <dl class="rider">
+      <div><dt>Çalışma süresi</dt><dd>SHINC, SHEX, SSHEX, FHEX, cumartesi 12:00 – pazartesi 08:00 arası veya kendi tanımlayacağınız herhangi bir haftalık dönem. Arife günü başlangıç ve ertesi sabah bitiş saatleriyle resmî tatiller. “Unless used” veya “even if used”.</dd></div>
+      <div><dt>Starya başlangıcı</dt><dd>Hazırlık bildiriminden (NOR) sonra sabit bir turn time (bekleme süresi) veya Gencon kuralı: öğleye kadar verilen NOR ile starya 13:00’te, daha geç verilen NOR ile sonraki iş günü başlar. NOR yalnızca mesai saatlerinde geçerli sayılabilir. “Unless sooner commenced”.</dd></div>
+      <div><dt>Kesintiler</dt><dd>Yağmur, shifting (rıhtım değiştirme), kılavuz kaptan bekleme, arıza, sörvey, grev. Her biri %0, %50 veya dilediğiniz oranda sayılır; gemi demuraja girdikten sonra da geçerli olup olmadığını siz belirlersiniz.</dd></div>
+      <div><dt>Limanlar arasında</dt><dd>Reversible starya (limanlar arasında devredilebilir), non-reversible (limanlar ayrı ayrı) veya ortalama. Sonraki limana demurajda gelen gemide demuraj NOR verildiği anda, çarter parti öyle diyorsa turn time dolduktan sonra işlemeye başlar.</dd></div>
+      <div><dt>Tutarlar</dt><dd>Demuraj (sürastarya) pro rata hesaplanır. Dispeç, demurajın yarısı veya ayrı bir günlük ücret üzerinden, kazanılan çalışma süresine veya kazanılan toplam süreye göre hesaplanır. Komisyon düşülür.</dd></div>
+      <div><dt>Belge</dt><dd>Gün gün time sheet (zaman çizelgesi) ve uygulanan şartları, olayları, toplamları ve iki imza satırını içeren starya hesabı. Türkçe, İngilizce, Rusça, Kazakça, Ukraynaca, Yunanca veya Çince.</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-h"><h2>Üç adım</h2></div>
+    <ol class="steps">
+      <li><h3>Şartlar</h3><p>Yükleme/tahliye oranı veya tanınan saat, iş günleri, staryanın nasıl başlayacağı, günlük demuraj ücreti.</p></li>
+      <li><h3>Olaylar</h3><p>NOR, yanaşma, operasyon bitişi ve SOF kayıtlarındaki bütün kesintiler.</p></li>
+      <li><h3>Starya hesabı</h3><p>Zaman çizgisini kontrol edin, PDF çıktısını alın, karşı tarafa gönderin.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-h"><h2>Hesaba neden güvenebilirsiniz</h2></div>
+    <div class="trust">
+      <div><h3>İki kez kontrol edilir</h3><p>Her sürümden önce yüzlerce rastgele sefer, birbirinden bağımsız iki hesaptan geçirilir: hesaplama motoru ve dakika dakika yapılan düz sayım. İkisinin sonucu dakikasına kadar aynı olmalıdır.</p></div>
+      <div><h3>Gizli hiçbir şey yok</h3><p>Starya hesabında uygulanan kurallar rakamların yanında yazılıdır; karşı taraf bunları satır satır kontrol edebilir.</p></div>
+      <div><h3>Verileriniz sizde kalır</h3><p>Hesaplamalar tarayıcınızda saklanır. Paylaşım bağlantısı, hesaplamayı bağlantının kendi içinde taşır. Sunucuda hiçbir şey saklanmaz.</p></div>
+    </div>
+    <p class="aside-note">Stalia aritmetiği yapar. Neyin sayılacağını çarter parti belirler: talepte bulunmadan veya ödeme yapmadan önce sonucu çarter parti metniyle karşılaştırın.</p>
+  </div>
+</section>
+
+<section class="sec" id="mobile">
+  <div class="wrap">
+    <div class="sec-h"><h2>Telefonunuzda</h2><p>Aynı hesaplayıcı bir uygulama gibi yüklenir ve internet olmadan çalışır.</p></div>
+    <div class="trust">
+      <div><h3>Android</h3><p>Hesaplayıcıyı Chrome’da açın, ardından ⋮ menüsü → “Uygulamayı yükle”.</p></div>
+      <div><h3>iPhone ve iPad</h3><p>Hesaplayıcıyı Safari’de açın, ardından Paylaş → “Ana Ekrana Ekle”.</p></div>
+      <div><h3>Bilgisayar</h3><p>Chrome veya Edge’de adres çubuğunun sağ ucundaki yükleme simgesine tıklayın.</p></div>
+    </div>
+    <p class="copyline" data-stores hidden style="margin-top:20px"><span>Mağazalarda da mevcut:</span></p>
+  </div>
+</section>
+
+<section class="sec" id="pricing">
+  <div class="wrap">
+    <div class="sec-h">
+      <h2>Fiyatlar</h2>
+      <p>Hesaplayıcı ücretsizdir. Pro, karşı tarafa gönderdiğiniz starya hesapları içindir.</p>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <h3>Ücretsiz</h3>
+        <p class="price">$0</p>
+        <ul>
+          <li>Sınırsız hesaplama</li>
+          <li>Bütün starya şartları ve kuralları</li>
+          <li>Ekranda zaman çizgisi ve time sheet</li>
+          <li>“Ücretsiz sürüm” satırı içeren yazdırılabilir starya hesabı</li>
+          <li>3 kayıtlı hesaplama, sefer başına 2 liman</li>
+          <li>Paylaşım bağlantıları</li>
+          <li>Belgeleri okuma: sınırlı ücretsiz kullanım hakkı</li>
+        </ul>
+        <div class="buy"><a class="btn" href="../app/?lang=tr">Hesaplayıcıyı aç</a></div>
+      </div>
+      <div class="plan plan-pro">
+        <h3>Pro <span class="pill pill-pro">kullanıcı başına</span></h3>
+        <p class="price"><span data-price="usd.monthly">$19</span> <small>/ ay</small></p>
+        <p class="price-alt">veya yıllık <b data-price="usd.yearly">$149</b></p>
+        <ul>
+          <li>Antetli kâğıdınızda starya hesabı: şirket adı, iletişim bilgileri, logo</li>
+          <li>“Ücretsiz sürüm” satırı olmayan sade PDF</li>
+          <li>Sınırsız kayıtlı hesaplama ve yedek dosyalar</li>
+          <li>Sefer başına sınırsız liman</li>
+          <li>Time sheet’i Excel’e aktarma (CSV)</li>
+          <li>Günde daha fazla belge okuma hakkı</li>
+          <li>E-postayla öncelikli yanıt</li>
+        </ul>
+        <div class="buy"><a class="btn btn-primary" data-buy="monthly" href="#contact">Aylık satın al</a><a class="btn" data-buy="yearly" href="#contact">Yıllık satın al</a></div>
+      </div>
+    </div>
+    <div class="contact" id="contact">
+      <p>Fatura veya banka havalesi mi gerekiyor, yoksa bir sorunuz mu var? Bize yazın; faturanızı ve lisans anahtarınızı gönderelim.</p>
+      <p class="copyline"><code id="contact-email" data-contact="email">hello@example.com</code><button type="button" class="btn btn-sm" data-copy="#contact-email">Kopyala</button><a class="btn btn-sm" data-contact="telegram" href="#" target="_blank" rel="noopener" hidden>Telegram</a></p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="faq">
+  <div class="wrap">
+    <div class="sec-h"><h2>Sık sorulan sorular</h2></div>
+    <dl class="faq">
+      <div><dt>Hesaplayıcı gerçekten ücretsiz mi?</dt><dd>Evet. Hesaplamalar, zaman çizgisi ve time sheet ücretsiz ve sınırsızdır. Pro ile antetli kâğıt, sade PDF, dışa aktarma ve sınırsız arşiv gelir.</dd></div>
+      <div><dt>Tankerler için de kullanılabilir mi?</dt><dd>Evet. Tanınan süreyi saat olarak girin (örneğin toplam 72 saat), reversible staryayı seçin, starya başlangıcını “unless sooner commenced” kaydıyla NOR verildikten altı saat sonraya ayarlayın; shifting ve pompa gecikmelerini de kesinti olarak ekleyin.</dd></div>
+      <div><dt>Hesaplamalarım nerede saklanıyor?</dt><dd>Tarayıcınızda. Sunucuya hiçbir şey yüklenmez. “Yedek dosya” hesaplamayı başka bir bilgisayara taşır, “Bağlantıyı kopyala” ise onu bir meslektaşınıza gönderir.</dd></div>
+      <div><dt>Sonuca bir demuraj talebinde dayanabilir miyim?</dt><dd>Kendi hesap tablonuzu nasıl kullanıyorsanız onu da öyle kullanın. Aritmetik test edilmiştir, ancak belirleyici olan çarter partidir: hangi istisnaların geçerli olduğunu ve bunların demurajda da geçerli olup olmadığını kontrol edin.</dd></div>
+      <div><dt>Pro’yu nasıl alırım?</dt><dd>Kartla online satın alın; lisans anahtarı e-postayla gelir, onu hesaplayıcıya yapıştırırsınız. Fatura veya banka havalesi için bize yazın.</dd></div>
+      <div><dt>Hangi dillerde kullanılabilir?</dt><dd>Hesaplayıcı ve starya hesabı Türkçe, İngilizce, Rusça, Kazakça, Ukraynaca, Yunanca ve Çince olarak kullanılabilir. Starya hesabının dili ekran dilinden farklı olabilir.</dd></div>
+      <div><dt>Çarter parti yüklemek güvenli mi?</dt><dd>Cihazınızdan neyin çıkacağına siz karar verirsiniz. Önce adları, ücretleri ve gizli kalması gereken her şeyi karartın: işaretlediğiniz alanlar sayfa görüntüsünde boyanarak kapatılır ve bir yapay zekâ modeli tarafından okunmak üzere yalnızca bu görüntüler gönderilir. Görüntüleri saklamayız.</dd></div>
+      <div><dt>Okuma ne kadar güvenilir?</dt><dd>Stalia, bulamadığı veya emin olmadığı her şeyi işaretler. Sonucu siz onaylarsınız ve her değeri, kendiniz girmişsiniz gibi elle düzeltebilirsiniz. El yazısı ve kalitesiz fotoğraflar daha dikkatli bir kontrol gerektirir.</dd></div>
+    </dl>
+  </div>
+</section>
+</main>
+
+<div class="scale" aria-hidden="true"></div>
+<footer class="site-foot">
+  <div class="wrap">
+    <div><h4>STALIA</h4><ul><li><a href="../app/?lang=tr">Hesaplayıcı</a></li><li><a href="#pricing">Fiyatlar</a></li><li><a href="#contact">İletişim</a></li><li><a href="../privacy.html">Gizlilik</a></li><li><a href="../terms.html">Kullanım şartları</a></li></ul></div>
+    <div><h4>Rehberler</h4><ul><li><a href="../guides/how-to-calculate-laytime.html">Starya ve demuraj nasıl hesaplanır (İngilizce)</a></li><li><a href="../guides/shinc-shex-sshex-fhex.html">SHINC, SHEX, SSHEX, FHEX ne anlama gelir (İngilizce)</a></li></ul></div>
+    <div><h4>Diller</h4><!--LANGLIST--><ul><li><a href="../" lang="en" hreflang="en">English</a></li><li><a href="../ru/" lang="ru" hreflang="ru">Русский</a></li><li><a href="../kk/" lang="kk" hreflang="kk">Қазақша</a></li><li><a href="../uk/" lang="uk" hreflang="uk">Українська</a></li><li><a href="../el/" lang="el" hreflang="el">Ελληνικά</a></li><li><a href="../zh/" lang="zh" hreflang="zh">中文</a></li></ul><!--/LANGLIST--></div>
+    <p class="fine">© <span data-year>2026</span> Stalia. Hesaplayıcı aritmetik işlem yapar; hukuki danışmanlık değildir. Yazı tipleri: IBM Plex ve Fira Sans, SIL Open Font License.</p>
+  </div>
+</footer>
+
+<div class="tip" id="tip" hidden><b></b><span></span></div>
+<script src="../app/config.js"></script>
+<script src="../app/engine.js"></script>
+<script src="../app/i18n.js"></script>
+<script src="../app/lang/tr.js"></script>
+<script src="../app/model.js"></script>
+<script src="../app/view.js"></script>
+<script src="../assets/site.js"></script>
+</body>
+</html>

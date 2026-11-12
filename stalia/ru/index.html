@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="../assets/base.css">
 <link rel="stylesheet" href="../assets/site.css">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Stalia","applicationCategory":"BusinessApplication","operatingSystem":"Web","inLanguage":["ru","en","kk"],"description":"Онлайн-калькулятор сталийного времени и демереджа с таймшитом для печати.","offers":{"@type":"Offer","price":"0","priceCurrency":"KZT"}}
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Stalia","applicationCategory":"BusinessApplication","operatingSystem":"Web","inLanguage":["ru","en","kk","uk","tr","el","zh"],"description":"Онлайн-калькулятор сталийного времени и демереджа с таймшитом для печати.","offers":{"@type":"Offer","price":"0","priceCurrency":"KZT"}}
 </script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
@@ -37,7 +37,7 @@
       <a href="#counts">Что он считает</a>
       <a href="#pricing">Цены</a>
       <a href="guides/raschet-staliynogo-vremeni.html">Статьи</a>
-      <span class="langs-links" aria-label="Язык"><a href="../" lang="en" hreflang="en">EN</a><a href="./" aria-current="true" lang="ru">RU</a><a href="../kk/" lang="kk" hreflang="kk">ҚАЗ</a></span>
+      <span class="langs-links" aria-label="Язык"><!--LANGS--><a href="../" lang="en" hreflang="en">EN</a><a href="./" aria-current="true" lang="ru">RU</a><a href="../kk/" lang="kk" hreflang="kk">ҚАЗ</a><a href="../uk/" lang="uk" hreflang="uk">УКР</a><a href="../tr/" lang="tr" hreflang="tr">TR</a><a href="../el/" lang="el" hreflang="el">EL</a><a href="../zh/" lang="zh" hreflang="zh">中文</a><!--/LANGS--></span>
       <a class="btn btn-primary btn-sm" href="../app/?lang=ru">Открыть калькулятор</a>
     </nav>
   </div>
@@ -64,6 +64,20 @@
   <div class="scale" aria-hidden="true"></div>
 </section>
 
+<section class="sec" id="documents">
+  <div class="wrap">
+    <div class="sec-h">
+      <h2>Два документа на входе — результат на выходе</h2>
+      <p>Сфотографируйте чартер-партию и стейтмент или добавьте PDF. Stalia прочитает условия и время событий и сама заполнит расчёт.</p>
+    </div>
+    <div class="trust">
+      <div><h3>Сначала замажьте</h3><p>Отметьте названия, ставки и всё конфиденциальное. Отметки закрашиваются на странице до того, как она покинет ваше устройство.</p></div>
+      <div><h3>Читает сама</h3><p>Сталийное время, рабочие дни, порядок нотиса, демередж, нотис, окончание работ и все перерывы.</p></div>
+      <div><h3>Вы проверяете и правите</h3><p>Вы видите, что прочитано и чего не хватило. Все значения попадают в обычную форму, где любое можно исправить вручную.</p></div>
+    </div>
+  </div>
+</section>
+
 <section class="sec" id="counts">
   <div class="wrap">
     <div class="sec-h">
@@ -76,7 +90,7 @@
       <div><dt>Перерывы</dt><dd>Дождь, переход к причалу, ожидание лоцмана, поломки, сюрвей, забастовки. Каждый считается на 0%, 50% или любую долю — и вы указываете, действует ли он на демередже.</dd></div>
       <div><dt>Несколько портов</dt><dd>Реверсивная сталия, раздельный учёт или усреднение. Если судно пришло уже на демередже, время идёт с подачи нотиса — или после нотисного времени, если так сказано в чартере.</dd></div>
       <div><dt>Деньги</dt><dd>Демередж пропорционально времени. Диспач в половину ставки или по своей, за спасённое рабочее или всё спасённое время. Комиссия вычитается.</dd></div>
-      <div><dt>Документ</dt><dd>Таймшит по дням и расчёт с применёнными условиями, фактами, итогами и двумя подписями. На русском, английском или казахском.</dd></div>
+      <div><dt>Документ</dt><dd>Таймшит по дням и расчёт с применёнными условиями, фактами, итогами и двумя подписями. На русском, английском, казахском, украинском, турецком, греческом или китайском.</dd></div>
     </dl>
   </div>
 </section>
@@ -133,6 +147,7 @@
           <li>Документ для печати со строкой «бесплатная версия»</li>
           <li>3 сохранённых расчёта, 2 порта в рейсе</li>
           <li>Ссылки на расчёт</li>
+          <li>Чтение документов: ограниченный бесплатный лимит</li>
         </ul>
         <div class="buy"><a class="btn" href="../app/?lang=ru">Открыть калькулятор</a></div>
       </div>
@@ -146,6 +161,7 @@
           <li>Сколько угодно сохранённых расчётов и файлы-копии</li>
           <li>Любое число портов в рейсе</li>
           <li>Выгрузка таймшита в Excel (CSV)</li>
+          <li>Больше чтений документов в день</li>
           <li>Ответы по почте в первую очередь</li>
         </ul>
         <div class="buy"><a class="btn btn-primary" data-buy="monthly" href="#contact">Купить на месяц</a><a class="btn" data-buy="yearly" href="#contact">Купить на год</a></div>
@@ -167,7 +183,9 @@
       <div><dt>Где хранятся мои расчёты?</dt><dd>В вашем браузере. На сервер ничего не загружается. «Файл-копия» переносит расчёт на другой компьютер, а «Скопировать ссылку» отправляет его коллеге.</dd></div>
       <div><dt>Можно ли опираться на результат в претензии?</dt><dd>Так же, как на собственную таблицу. Арифметика проверена, но главное слово за чартер-партией: проверьте, какие исключения применяются и действуют ли они на демередже.</dd></div>
       <div><dt>Как купить Pro?</dt><dd>Картой онлайн — ключ придёт на почту, его нужно вставить в калькулятор. Если нужен счёт или оплата переводом, напишите нам.</dd></div>
-      <div><dt>На каких языках он работает?</dt><dd>Калькулятор и документ — на русском, английском и казахском. Язык документа можно выбрать отдельно от языка экрана.</dd></div>
+      <div><dt>На каких языках он работает?</dt><dd>Калькулятор и документ — на русском, английском, казахском, украинском, турецком, греческом и китайском. Язык документа можно выбрать отдельно от языка экрана.</dd></div>
+      <div><dt>Безопасно ли загружать чартер?</dt><dd>Что покинет устройство, решаете вы. Сначала замажьте названия, ставки и всё конфиденциальное: отметки закрашиваются прямо на изображении страницы, и на чтение ИИ-модели уходят только эти изображения. Мы их не храним.</dd></div>
+      <div><dt>Насколько надёжно чтение?</dt><dd>Оно помечает всё, чего не нашло или в чём не уверено. Вы подтверждаете результат и можете исправить любое значение вручную — так же, как если бы вводили его сами. Рукописные пометки и плохие фото требуют внимательного взгляда.</dd></div>
     </dl>
   </div>
 </section>
@@ -178,7 +196,7 @@
   <div class="wrap">
     <div><h4>Stalia</h4><ul><li><a href="../app/?lang=ru">Калькулятор</a></li><li><a href="#pricing">Цены</a></li><li><a href="#contact">Контакты</a></li><li><a href="../privacy.html#ru">Конфиденциальность</a></li><li><a href="../terms.html#ru">Условия</a></li></ul></div>
     <div><h4>Статьи</h4><ul><li><a href="guides/raschet-staliynogo-vremeni.html">Как рассчитать сталийное время и демередж</a></li><li><a href="guides/shinc-shex-sshex-fhex.html">SHINC, SHEX, SSHEX, FHEX: что входит в счёт</a></li></ul></div>
-    <div><h4>Языки</h4><ul><li><a href="../" lang="en" hreflang="en">English</a></li><li><a href="../kk/" lang="kk" hreflang="kk">Қазақша</a></li></ul></div>
+    <div><h4>Языки</h4><!--LANGLIST--><ul><li><a href="../" lang="en" hreflang="en">English</a></li><li><a href="../kk/" lang="kk" hreflang="kk">Қазақша</a></li><li><a href="../uk/" lang="uk" hreflang="uk">Українська</a></li><li><a href="../tr/" lang="tr" hreflang="tr">Türkçe</a></li><li><a href="../el/" lang="el" hreflang="el">Ελληνικά</a></li><li><a href="../zh/" lang="zh" hreflang="zh">中文</a></li></ul><!--/LANGLIST--></div>
     <p class="fine">© <span data-year>2026</span> Stalia. Калькулятор выполняет арифметику и не является юридической консультацией. Шрифты: IBM Plex и Fira Sans, лицензия SIL Open Font License.</p>
   </div>
 </footer>
@@ -187,6 +205,7 @@
 <script src="../app/config.js"></script>
 <script src="../app/engine.js"></script>
 <script src="../app/i18n.js"></script>
+<script src="../app/lang/ru.js"></script>
 <script src="../app/model.js"></script>
 <script src="../app/view.js"></script>
 <script src="../assets/site.js"></script>

@@ -1,8 +1,8 @@
 /*! Stalia — calculation model: defaults, presets, input clean-up, built-in examples. */
 (function (root, factory) {
-  if (typeof module === 'object' && module.exports) module.exports = factory(require('./engine.js'));
-  else root.StaliaModel = factory(root.StaliaEngine);
-})(typeof globalThis !== 'undefined' ? globalThis : this, function (E) {
+  if (typeof module === 'object' && module.exports) module.exports = factory(require('./engine.js'), require('./i18n.js'));
+  else root.StaliaModel = factory(root.StaliaEngine, root.StaliaI18n);
+})(typeof globalThis !== 'undefined' ? globalThis : this, function (E, I) {
   'use strict';
 
   const VERSION = 1;
@@ -157,48 +157,10 @@
   }
 
   // ---------------------------------------------------------------- examples
-  const TX = {
-    en: {
-      bulkName: 'Wheat, Novorossiysk to Alexandria', bulkCargo: '27,500 MT wheat in bulk',
-      satWork: 'Loading continued on Saturday (overtime)', rain: 'Rain — loading suspended',
-      draft: 'Initial draft survey completed', shift: 'Shifting from anchorage to berth',
-      crane: 'Ship’s crane No. 2 out of order', holiday: 'Public holiday',
-      tankName: 'Crude, Ceyhan to Trieste', tankCargo: '80,000 MT crude oil',
-      hosesOn: 'Hoses connected', shiftPilot: 'Pilot on board to all fast — shifting to berth',
-      pump: 'Stripping pump failure — discharge suspended',
-      caspName: 'Crude, Aktau to Baku', caspCargo: '12,000 MT crude oil',
-      storm: 'Port closed by the harbour master — storm', sampling: 'Cargo sampling and tank inspection',
-      owners: 'Example Shipping Co.', charterers: 'Example Trading Ltd.',
-    },
-    ru: {
-      bulkName: 'Пшеница, Новороссийск — Александрия', bulkCargo: '27 500 т пшеницы навалом',
-      satWork: 'Погрузка продолжалась в субботу (сверхурочно)', rain: 'Дождь — погрузка остановлена',
-      draft: 'Начальный драфт-сюрвей завершён', shift: 'Переход с рейда к причалу',
-      crane: 'Судовой кран № 2 неисправен', holiday: 'Праздничный день',
-      tankName: 'Нефть, Джейхан — Триест', tankCargo: '80 000 т сырой нефти',
-      hosesOn: 'Шланги подсоединены', shiftPilot: 'Лоцман на борту — ошвартован: переход к причалу',
-      pump: 'Отказ зачистного насоса — выгрузка остановлена',
-      caspName: 'Нефть, Актау — Баку', caspCargo: '12 000 т сырой нефти',
-      storm: 'Порт закрыт капитаном порта — шторм', sampling: 'Отбор проб и осмотр танков',
-      owners: 'Example Shipping Co.', charterers: 'Example Trading Ltd.',
-    },
-    kk: {
-      bulkName: 'Бидай, Новороссийск — Александрия', bulkCargo: '27 500 т бидай, үйіп тиелген',
-      satWork: 'Тиеу сенбіде жалғасты (үстеме жұмыс)', rain: 'Жаңбыр — тиеу тоқтатылды',
-      draft: 'Бастапқы драфт-сюрвей аяқталды', shift: 'Рейдтен айлаққа өту',
-      crane: '№ 2 кеме краны істен шықты', holiday: 'Мереке күні',
-      tankName: 'Мұнай, Джейхан — Триест', tankCargo: '80 000 т шикі мұнай',
-      hosesOn: 'Шлангілер қосылды', shiftPilot: 'Лоцман бортта — арқандалды: айлаққа өту',
-      pump: 'Тазарту сорғысының ақауы — түсіру тоқтатылды',
-      caspName: 'Мұнай, Ақтау — Баку', caspCargo: '12 000 т шикі мұнай',
-      storm: 'Портты порт капитаны жапты — дауыл', sampling: 'Сынама алу және танктерді тексеру',
-      owners: 'Example Shipping Co.', charterers: 'Example Trading Ltd.',
-    },
-  };
 
   /** Built-in example calculations (made-up fixtures) in the given language. */
   function examples(lang) {
-    const x = TX[lang] || TX.en;
+    const x = I.examplesText(lang);
     const P = (o) => Object.assign(blankPort(o.operation), o);
     const C = (o) => Object.assign(blankCalendar(), o);
     const N = (o) => Object.assign(blankPort().nor, o);

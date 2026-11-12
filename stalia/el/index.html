@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Υπολογισμός σταλιών και επισταλιών online (laytime calculator) – Stalia</title>
+<meta name="description" content="Δωρεάν online υπολογισμός σταλιών και επισταλιών (laytime και demurrage calculator). Όροι SHINC, SHEX, SSHEX και FHEX, κανόνες NOR, καιρός και αργίες, reversible σταλίες, επίσπευση (despatch). Εκτυπώνει time sheet που μπορούν να υπογράψουν και τα δύο μέρη.">
+<meta name="theme-color" content="#0C2231">
+<!--SEO-->
+<link rel="canonical" href="./">
+<!--/SEO-->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Stalia – σταλίες και επισταλίες με ακρίβεια λεπτού">
+<meta property="og:description" content="Συμπληρώστε τους όρους του ναυλοσυμφώνου και τα γεγονότα του SOF. Λαμβάνετε το time sheet, τη στιγμή που έληξαν οι σταλίες και κατάσταση σταλιών που μπορούν να υπογράψουν και τα δύο μέρη.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/base.css">
+<link rel="stylesheet" href="../assets/site.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Stalia","applicationCategory":"BusinessApplication","operatingSystem":"Web","inLanguage":["el","en","ru","kk","uk","tr","zh"],"description":"Online υπολογιστής σταλιών και επισταλιών με εκτυπώσιμο time sheet.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Είναι πράγματι δωρεάν ο υπολογιστής σταλιών;","acceptedAnswer":{"@type":"Answer","text":"Ναι. Οι υπολογισμοί, η χρονογραμμή και το time sheet είναι δωρεάν και χωρίς όριο. Το Pro προσθέτει το επιστολόχαρτό σας, καθαρό PDF, εξαγωγές και απεριόριστη βιβλιοθήκη."}},
+{"@type":"Question","name":"Λειτουργεί και για δεξαμενόπλοια;","acceptedAnswer":{"@type":"Answer","text":"Ναι. Συμπληρώστε τις επιτρεπόμενες ώρες, για παράδειγμα 72 ώρες συνολικά, επιλέξτε reversible σταλίες, ορίστε έξι ώρες μετά το NOR με «unless sooner commenced» και προσθέστε τη μεθόρμιση ή τις καθυστερήσεις άντλησης ως διακοπές."}},
+{"@type":"Question","name":"Πού αποθηκεύονται οι υπολογισμοί μου;","acceptedAnswer":{"@type":"Answer","text":"Στον browser σας. Τίποτα δεν ανεβαίνει σε διακομιστή. Το «Αντίγραφο ασφαλείας» μεταφέρει έναν υπολογισμό σε άλλον υπολογιστή και η «Αντιγραφή συνδέσμου» τον στέλνει σε συνάδελφο."}},
+{"@type":"Question","name":"Μπορώ να βασιστώ στο αποτέλεσμα σε μια απαίτηση (claim);","acceptedAnswer":{"@type":"Answer","text":"Χρησιμοποιήστε το όπως θα χρησιμοποιούσατε το δικό σας υπολογιστικό φύλλο. Οι πράξεις έχουν ελεγχθεί, αλλά υπερισχύει το ναυλοσύμφωνο: ελέγξτε ποιες εξαιρέσεις ισχύουν και αν ισχύουν και στις επισταλίες."}}
+]}
+</script>
+</head>
+<body>
+
+<header class="site-top">
+  <div class="wrap">
+    <a class="brand" href="./"><b>STALIA</b></a>
+    <nav class="site-nav" aria-label="Ιστότοπος">
+      <a href="#counts">Τι υπολογίζει</a>
+      <a href="#pricing">Τιμές</a>
+      <a href="../guides/how-to-calculate-laytime.html">Οδηγοί</a>
+      <span class="langs-links" aria-label="Γλώσσα"><!--LANGS--><a href="../" lang="en" hreflang="en">EN</a><a href="../ru/" lang="ru" hreflang="ru">RU</a><a href="../kk/" lang="kk" hreflang="kk">ҚАЗ</a><a href="../uk/" lang="uk" hreflang="uk">УКР</a><a href="../tr/" lang="tr" hreflang="tr">TR</a><a href="./" aria-current="true" lang="el">EL</a><a href="../zh/" lang="zh" hreflang="zh">中文</a><!--/LANGS--></span>
+      <a class="btn btn-primary btn-sm" href="../app/?lang=el">Ανοίξτε τον υπολογιστή σταλιών</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <h1>Σταλίες και επισταλίες με ακρίβεια λεπτού</h1>
+      <p class="lead">Συμπληρώστε τους όρους του ναυλοσυμφώνου και τα γεγονότα του SOF (δήλωση γεγονότων). Το Stalia μετρά τον χρόνο σταλιών ημέρα προς ημέρα, δείχνει τη στιγμή που έληξαν οι σταλίες και εκτυπώνει κατάσταση σταλιών (laytime statement) που μπορούν να υπογράψουν και τα δύο μέρη.</p>
+      <div class="cta">
+        <a class="btn btn-primary btn-lg" href="../app/?lang=el">Ανοίξτε τον υπολογιστή σταλιών</a>
+        <small>Δωρεάν. Χωρίς εγγραφή.</small>
+      </div>
+    </div>
+    <div class="demo" aria-label="Παράδειγμα υπολογισμού">
+      <div class="demo-cap"><span>Παράδειγμα: 27.500 MT σιτάρι, Νοβοροσίσκ – Αλεξάνδρεια</span><a href="../app/?lang=el">Ανοίξτε το στον υπολογιστή σταλιών →</a></div>
+      <div id="demo-body" data-example="bulk" style="display:grid;grid-template-columns:minmax(0,1fr);gap:14px">
+        <div class="res res-dem"><p class="res-label">Επισταλίες υπέρ των πλοιοκτητών</p><p class="res-amount"><span class="res-cur">USD</span> 23.841,93</p><p class="res-sub">1 η 17 ω 00 λ σε επισταλίες · 1,70833 ημέρες</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="scale" aria-hidden="true"></div>
+</section>
+
+<section class="sec" id="documents">
+  <div class="wrap">
+    <div class="sec-h">
+      <h2>Από δύο έγγραφα στο αποτέλεσμα</h2>
+      <p>Φωτογραφίστε το ναυλοσύμφωνο και το SOF ή προσθέστε τα PDF. Το Stalia διαβάζει τους όρους και τους χρόνους και συμπληρώνει τον υπολογισμό.</p>
+    </div>
+    <div class="trust">
+      <div><h3>Μαυρίστε πρώτα</h3><p>Σημειώστε ονόματα, ποσά και οτιδήποτε εμπιστευτικό. Η κάλυψη αποτυπώνεται στη σελίδα πριν αυτή φύγει από τη συσκευή σας.</p></div>
+      <div><h3>Αυτόματη ανάγνωση</h3><p>Επιτρεπόμενες σταλίες, εργάσιμες ημέρες, κανόνες ειδοποίησης, επισταλίες, NOR, ολοκλήρωση και κάθε διακοπή.</p></div>
+      <div><h3>Ελέγχετε και διορθώνετε</h3><p>Βλέπετε τι διαβάστηκε και τι έλειπε. Κάθε τιμή μπαίνει στη συνηθισμένη φόρμα, όπου μπορείτε να την αλλάξετε χειροκίνητα.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="counts">
+  <div class="wrap">
+    <div class="sec-h">
+      <h2>Τι υπολογίζει</h2>
+      <p>Κάθε κανόνας παρακάτω είναι ρύθμιση που επιλέγετε για κάθε λιμάνι.</p>
+    </div>
+    <dl class="rider">
+      <div><dt>Εργάσιμος χρόνος</dt><dd>SHINC, SHEX, SSHEX, FHEX, από Σάββατο μεσημέρι έως Δευτέρα 08:00 ή οποιαδήποτε εβδομαδιαία περίοδος ορίσετε. Αργίες με δική τους ώρα έναρξης την παραμονή και λήξης το επόμενο πρωί. «Unless used» ή «even if used».</dd></div>
+      <div><dt>Έναρξη σταλιών</dt><dd>Σταθερός χρόνος αναμονής (turn time) μετά την ειδοποίηση ετοιμότητας (NOR) ή ο κανόνας Gencon: με NOR έως το μεσημέρι οι σταλίες αρχίζουν στις 13:00, με μεταγενέστερο NOR την επόμενη εργάσιμη ημέρα. NOR μόνο σε ώρες γραφείου. «Unless sooner commenced».</dd></div>
+      <div><dt>Διακοπές</dt><dd>Βροχή, μεθόρμιση (shifting), αναμονή πλοηγού, βλάβες, επιθεωρήσεις (surveys), απεργίες. Καθεμία προσμετράται κατά 0%, 50% ή όποιο ποσοστό ορίσετε, και δηλώνετε αν ισχύει και όταν το πλοίο είναι σε επισταλίες.</dd></div>
+      <div><dt>Μεταξύ λιμανιών</dt><dd>Σταλίες reversible (ενιαίος χρόνος για όλα τα λιμάνια), χωριστά ανά λιμάνι ή με μέσο όρο (average). Αν το πλοίο φτάσει ήδη σε επισταλίες, ο χρόνος χρεώνεται από το NOR ή μετά τον χρόνο αναμονής, αν έτσι ορίζει το ναυλοσύμφωνο.</dd></div>
+      <div><dt>Ποσά</dt><dd>Επισταλίες (demurrage) κατ’ αναλογία (pro rata). Επίσπευση (despatch) στο μισό των επισταλιών ή σε δικό σας ποσό, για τον εργάσιμο ή τον συνολικό χρόνο που εξοικονομήθηκε. Η προμήθεια αφαιρείται.</dd></div>
+      <div><dt>Έγγραφα</dt><dd>Time sheet (φύλλο χρόνου) ημέρα προς ημέρα και κατάσταση σταλιών με τους όρους που εφαρμόστηκαν, τα γεγονότα, τα σύνολα και δύο θέσεις υπογραφής. Στα ελληνικά, αγγλικά, ρωσικά, καζακικά, ουκρανικά, τουρκικά ή κινεζικά.</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-h"><h2>Τρία βήματα</h2></div>
+    <ol class="steps">
+      <li><h3>Όροι</h3><p>Ρυθμός ή επιτρεπόμενες ώρες, εργάσιμες ημέρες, τρόπος έναρξης των σταλιών, ημερήσιο ποσό επισταλιών.</p></li>
+      <li><h3>Γεγονότα</h3><p>NOR, πρόσδεση, ολοκλήρωση και κάθε διακοπή από το SOF.</p></li>
+      <li><h3>Κατάσταση σταλιών</h3><p>Ελέγξτε τη χρονογραμμή, εκτυπώστε το PDF, στείλτε το στην άλλη πλευρά.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-h"><h2>Γιατί να εμπιστευτείτε τις πράξεις</h2></div>
+    <div class="trust">
+      <div><h3>Διπλός έλεγχος</h3><p>Πριν από κάθε έκδοση, εκατοντάδες τυχαία ταξίδια περνούν από δύο ανεξάρτητους υπολογισμούς: τον κύριο αλγόριθμο και μια απλή καταμέτρηση λεπτό προς λεπτό. Πρέπει να συμφωνούν στο λεπτό.</p></div>
+      <div><h3>Τίποτα κρυφό</h3><p>Η κατάσταση σταλιών τυπώνει δίπλα στα ποσά τους κανόνες που εφαρμόστηκαν, ώστε η άλλη πλευρά να μπορεί να τους ελέγξει γραμμή προς γραμμή.</p></div>
+      <div><h3>Τα δεδομένα σας μένουν σε εσάς</h3><p>Οι υπολογισμοί αποθηκεύονται στον browser σας. Ο σύνδεσμος κοινής χρήσης περιέχει τον υπολογισμό μέσα στον ίδιο τον σύνδεσμο. Τίποτα δεν αποθηκεύεται σε διακομιστή.</p></div>
+    </div>
+    <p class="aside-note">Το Stalia κάνει τις πράξεις. Το τι προσμετράται το ορίζει το ναυλοσύμφωνο: ελέγξτε το αποτέλεσμα με βάση τη διατύπωσή του πριν προβάλετε απαίτηση ή πληρώσετε.</p>
+  </div>
+</section>
+
+<section class="sec" id="mobile">
+  <div class="wrap">
+    <div class="sec-h"><h2>Στο κινητό σας</h2><p>Ο ίδιος υπολογιστής σταλιών εγκαθίσταται σαν εφαρμογή και λειτουργεί χωρίς σύνδεση στο διαδίκτυο.</p></div>
+    <div class="trust">
+      <div><h3>Android</h3><p>Ανοίξτε τον υπολογιστή σταλιών στο Chrome και μετά μενού ⋮ → «Εγκατάσταση εφαρμογής».</p></div>
+      <div><h3>iPhone και iPad</h3><p>Ανοίξτε τον υπολογιστή σταλιών στο Safari και μετά «Κοινή χρήση» → «Προσθήκη στην οθόνη Αφετηρίας».</p></div>
+      <div><h3>Υπολογιστής</h3><p>Στο Chrome ή στο Edge, πατήστε το εικονίδιο εγκατάστασης στο δεξί άκρο της γραμμής διευθύνσεων.</p></div>
+    </div>
+    <p class="copyline" data-stores hidden style="margin-top:20px"><span>Και στα καταστήματα εφαρμογών:</span></p>
+  </div>
+</section>
+
+<section class="sec" id="pricing">
+  <div class="wrap">
+    <div class="sec-h">
+      <h2>Τιμές</h2>
+      <p>Ο υπολογιστής σταλιών είναι δωρεάν. Το Pro αφορά τις καταστάσεις σταλιών που στέλνετε στην άλλη πλευρά.</p>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <h3>Free</h3>
+        <p class="price">$0</p>
+        <ul>
+          <li>Απεριόριστοι υπολογισμοί</li>
+          <li>Όλοι οι όροι και οι κανόνες σταλιών</li>
+          <li>Χρονογραμμή και time sheet στην οθόνη</li>
+          <li>Εκτυπώσιμη κατάσταση σταλιών με τη γραμμή «δωρεάν έκδοση»</li>
+          <li>3 αποθηκευμένοι υπολογισμοί, 2 λιμάνια ανά ταξίδι</li>
+          <li>Σύνδεσμοι κοινής χρήσης</li>
+          <li>Ανάγνωση εγγράφων: περιορισμένο δωρεάν όριο</li>
+        </ul>
+        <div class="buy"><a class="btn" href="../app/?lang=el">Ανοίξτε τον υπολογιστή σταλιών</a></div>
+      </div>
+      <div class="plan plan-pro">
+        <h3>Pro <span class="pill pill-pro">ανά χρήστη</span></h3>
+        <p class="price"><span data-price="usd.monthly">$19</span> <small>ανά μήνα</small></p>
+        <p class="price-alt">ή <b data-price="usd.yearly">$149</b> ανά έτος</p>
+        <ul>
+          <li>Καταστάσεις σταλιών στο επιστολόχαρτό σας: επωνυμία, στοιχεία, λογότυπο</li>
+          <li>Καθαρό PDF χωρίς τη γραμμή «δωρεάν έκδοση»</li>
+          <li>Απεριόριστοι αποθηκευμένοι υπολογισμοί και αντίγραφα ασφαλείας</li>
+          <li>Οποιοσδήποτε αριθμός λιμανιών ανά ταξίδι</li>
+          <li>Εξαγωγή time sheet σε Excel (CSV)</li>
+          <li>Περισσότερες αναγνώσεις εγγράφων την ημέρα</li>
+          <li>Απαντήσεις με e-mail κατά προτεραιότητα</li>
+        </ul>
+        <div class="buy"><a class="btn btn-primary" data-buy="monthly" href="#contact">Αγορά μηνιαίας</a><a class="btn" data-buy="yearly" href="#contact">Αγορά ετήσιας</a></div>
+      </div>
+    </div>
+    <div class="contact" id="contact">
+      <p>Χρειάζεστε τιμολόγιο ή πληρωμή με τραπεζικό έμβασμα, ή έχετε κάποια ερώτηση; Γράψτε μας και θα σας απαντήσουμε με τιμολόγιο και το κλειδί άδειας.</p>
+      <p class="copyline"><code id="contact-email" data-contact="email">hello@example.com</code><button type="button" class="btn btn-sm" data-copy="#contact-email">Αντιγραφή</button><a class="btn btn-sm" data-contact="telegram" href="#" target="_blank" rel="noopener" hidden>Telegram</a></p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="faq">
+  <div class="wrap">
+    <div class="sec-h"><h2>Ερωτήσεις</h2></div>
+    <dl class="faq">
+      <div><dt>Είναι πράγματι δωρεάν ο υπολογιστής σταλιών;</dt><dd>Ναι. Οι υπολογισμοί, η χρονογραμμή και το time sheet είναι δωρεάν και χωρίς όριο. Το Pro προσθέτει το επιστολόχαρτό σας, καθαρό PDF, εξαγωγές και απεριόριστη βιβλιοθήκη.</dd></div>
+      <div><dt>Λειτουργεί και για δεξαμενόπλοια;</dt><dd>Ναι. Συμπληρώστε τις επιτρεπόμενες ώρες, για παράδειγμα 72 ώρες συνολικά, επιλέξτε reversible σταλίες, ορίστε έξι ώρες μετά το NOR με «unless sooner commenced» και προσθέστε τη μεθόρμιση ή τις καθυστερήσεις άντλησης ως διακοπές.</dd></div>
+      <div><dt>Πού αποθηκεύονται οι υπολογισμοί μου;</dt><dd>Στον browser σας. Τίποτα δεν ανεβαίνει σε διακομιστή. Το «Αντίγραφο ασφαλείας» μεταφέρει έναν υπολογισμό σε άλλον υπολογιστή και η «Αντιγραφή συνδέσμου» τον στέλνει σε συνάδελφο.</dd></div>
+      <div><dt>Μπορώ να βασιστώ στο αποτέλεσμα σε μια απαίτηση (claim);</dt><dd>Χρησιμοποιήστε το όπως θα χρησιμοποιούσατε το δικό σας υπολογιστικό φύλλο. Οι πράξεις έχουν ελεγχθεί, αλλά υπερισχύει το ναυλοσύμφωνο: ελέγξτε ποιες εξαιρέσεις ισχύουν και αν ισχύουν και στις επισταλίες.</dd></div>
+      <div><dt>Πώς αποκτώ το Pro;</dt><dd>Αγοράστε online με κάρτα: το κλειδί άδειας έρχεται με e-mail και το επικολλάτε στον υπολογιστή σταλιών. Για τιμολόγιο ή τραπεζικό έμβασμα, γράψτε μας.</dd></div>
+      <div><dt>Ποιες γλώσσες υποστηρίζονται;</dt><dd>Ο υπολογιστής σταλιών και η κατάσταση σταλιών διατίθενται στα ελληνικά, αγγλικά, ρωσικά, καζακικά, ουκρανικά, τουρκικά και κινεζικά. Η κατάσταση σταλιών μπορεί να είναι σε διαφορετική γλώσσα από την οθόνη.</dd></div>
+      <div><dt>Είναι ασφαλές να ανεβάσω ένα ναυλοσύμφωνο;</dt><dd>Εσείς αποφασίζετε τι φεύγει από τη συσκευή σας. Μαυρίστε πρώτα ονόματα, ποσά και οτιδήποτε εμπιστευτικό: η κάλυψη αποτυπώνεται στην εικόνα της σελίδας και μόνο αυτές οι εικόνες αποστέλλονται για ανάγνωση από μοντέλο τεχνητής νοημοσύνης. Δεν τις διατηρούμε.</dd></div>
+      <div><dt>Πόσο αξιόπιστη είναι η ανάγνωση;</dt><dd>Επισημαίνει ό,τι δεν βρήκε ή για ό,τι δεν ήταν βέβαιη. Εσείς επιβεβαιώνετε το αποτέλεσμα και μπορείτε να διορθώσετε οποιαδήποτε τιμή χειροκίνητα, ακριβώς όπως αν την είχατε πληκτρολογήσει οι ίδιοι. Τα χειρόγραφα και οι κακές φωτογραφίες χρειάζονται πιο προσεκτικό έλεγχο.</dd></div>
+    </dl>
+  </div>
+</section>
+</main>
+
+<div class="scale" aria-hidden="true"></div>
+<footer class="site-foot">
+  <div class="wrap">
+    <div><h4>Stalia</h4><ul><li><a href="../app/?lang=el">Υπολογιστής σταλιών</a></li><li><a href="#pricing">Τιμές</a></li><li><a href="#contact">Επικοινωνία</a></li><li><a href="../privacy.html">Απόρρητο</a></li><li><a href="../terms.html">Όροι χρήσης</a></li></ul></div>
+    <div><h4>Οδηγοί</h4><ul><li><a href="../guides/how-to-calculate-laytime.html">Πώς υπολογίζονται οι σταλίες και οι επισταλίες (στα αγγλικά)</a></li><li><a href="../guides/shinc-shex-sshex-fhex.html">SHINC, SHEX, SSHEX, FHEX: τι σημαίνουν (στα αγγλικά)</a></li></ul></div>
+    <div><h4>Γλώσσες</h4><!--LANGLIST--><ul><li><a href="../" lang="en" hreflang="en">English</a></li><li><a href="../ru/" lang="ru" hreflang="ru">Русский</a></li><li><a href="../kk/" lang="kk" hreflang="kk">Қазақша</a></li><li><a href="../uk/" lang="uk" hreflang="uk">Українська</a></li><li><a href="../tr/" lang="tr" hreflang="tr">Türkçe</a></li><li><a href="../zh/" lang="zh" hreflang="zh">中文</a></li></ul><!--/LANGLIST--></div>
+    <p class="fine">© <span data-year>2026</span> Stalia. Ο υπολογιστής σταλιών εκτελεί αριθμητικές πράξεις και δεν αποτελεί νομική συμβουλή. Γραμματοσειρές: IBM Plex και Fira Sans, άδεια SIL Open Font License.</p>
+  </div>
+</footer>
+
+<div class="tip" id="tip" hidden><b></b><span></span></div>
+<script src="../app/config.js"></script>
+<script src="../app/engine.js"></script>
+<script src="../app/i18n.js"></script>
+<script src="../app/lang/el.js"></script>
+<script src="../app/model.js"></script>
+<script src="../app/view.js"></script>
+<script src="../assets/site.js"></script>
+</body>
+</html>

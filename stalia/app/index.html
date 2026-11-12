@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Laytime &amp; Demurrage Calculator — Stalia</title>
-<meta name="description" content="Free online laytime calculator: SHINC, SHEX, SSHEX and FHEX terms, NOR rules, weather and holiday exceptions, reversible laytime, demurrage and despatch. Printable time sheet in English, Russian and Kazakh.">
+<meta name="description" content="Free online laytime calculator: SHINC, SHEX, SSHEX and FHEX terms, NOR rules, weather and holiday exceptions, reversible laytime, demurrage and despatch. Time sheet in seven languages. Reads charter parties and statements of facts from photos and PDFs.">
 <meta name="theme-color" content="#0C2231">
 <!--SEO-->
 <link rel="canonical" href="./">
 <!--/SEO-->
 <meta property="og:type" content="website">
 <meta property="og:title" content="Stalia — laytime and demurrage calculator">
-<meta property="og:description" content="Charter party terms in, time sheet and demurrage out. Free, works offline, in English, Russian and Kazakh.">
+<meta property="og:description" content="Charter party terms in, time sheet and demurrage out. Free, works offline, in seven languages.">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
@@ -29,7 +29,7 @@
   <div class="wrap">
     <a class="brand" href="../" id="brand-link"><b>STALIA</b><span data-i18n="app.tagline">Laytime &amp; demurrage calculator</span></a>
     <div class="top-right">
-      <div class="langs" id="langs" role="group" aria-label="Language"></div>
+      <div class="langs" id="langs"><select id="lang-select" aria-label="Language"></select></div>
       <button type="button" class="lic pill" id="lic" data-act="pro">Free</button>
     </div>
   </div>
@@ -38,6 +38,7 @@
 <nav class="bar" aria-label="Calculation">
   <div class="wrap">
     <button type="button" class="btn btn-sm" data-act="new" data-i18n="nav.new">New</button>
+    <button type="button" class="btn btn-sm btn-primary" data-act="imp-open" data-i18n="imp.open">From documents</button>
     <details class="menu" id="menu-examples">
       <summary class="btn btn-sm" data-i18n="nav.examples">Examples</summary>
       <div class="menu-pop" id="examples-list"></div>
@@ -96,17 +97,58 @@
   </div>
 </section>
 
+<section class="ov" id="import" hidden aria-label="Read from documents">
+  <div class="st-bar">
+    <div class="wrap">
+      <strong class="cap" data-i18n="imp.title">Read from documents</strong>
+      <span class="grow"></span>
+      <button type="button" class="btn" data-act="imp-close" data-i18n="common.close">Close</button>
+    </div>
+  </div>
+  <div class="wrap imp-body" id="imp-body"></div>
+</section>
+
+<section class="ov rd" id="redact" hidden aria-label="Black out">
+  <div class="rd-bar">
+    <strong class="cap" data-i18n="imp.redact.title">Black out what should stay with you</strong>
+    <div class="rd-tools">
+      <button type="button" class="btn btn-sm btn-icon" data-act="rd-prev" id="rd-prev" aria-label="‹">‹</button>
+      <span class="rd-count" id="rd-count"></span>
+      <button type="button" class="btn btn-sm btn-icon" data-act="rd-next" id="rd-next" aria-label="›">›</button>
+      <button type="button" class="btn btn-sm btn-icon" data-act="rd-out" aria-label="−">−</button>
+      <button type="button" class="btn btn-sm btn-icon" data-act="rd-in" aria-label="+">+</button>
+      <button type="button" class="btn btn-sm" data-act="rd-rotate" data-i18n="imp.redact.rotate">Rotate</button>
+      <button type="button" class="btn btn-sm" data-act="rd-undo" id="rd-undo" data-i18n="imp.redact.undo">Undo</button>
+      <button type="button" class="btn btn-sm" data-act="rd-clear" id="rd-clear" data-i18n="imp.redact.clear">Clear all</button>
+      <button type="button" class="btn btn-sm btn-primary" data-act="rd-done" data-i18n="imp.redact.done">Done</button>
+    </div>
+    <p class="rd-hint" data-i18n="imp.redact.hint"></p>
+  </div>
+  <div class="rd-stage" id="rd-stage"></div>
+</section>
+
 <dialog class="dlg" id="dlg"></dialog>
 <div class="tip" id="tip" hidden><b></b><span></span></div>
 <div class="toast" id="toast" role="status" hidden></div>
 <input type="file" id="file-open" accept="application/json,.json" hidden>
+<input type="file" id="imp-file" accept="image/*,application/pdf,.pdf" multiple hidden>
+<input type="file" id="imp-cam" accept="image/*" capture="environment" hidden>
 
 <script src="config.js"></script>
 <script src="engine.js"></script>
 <script src="license.js"></script>
 <script src="i18n.js"></script>
+<script src="lang/ru.js"></script>
+<script src="lang/kk.js"></script>
+<script src="lang/uk.js"></script>
+<script src="lang/tr.js"></script>
+<script src="lang/el.js"></script>
+<script src="lang/zh.js"></script>
 <script src="model.js"></script>
 <script src="view.js"></script>
+<script src="schema.js"></script>
+<script src="extract.js"></script>
+<script src="import.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
- * Draws the link-preview images (assets/og-en.png, og-ru.png, og-kk.png, 1200 x 630):
+ * Draws the link-preview images (assets/og-<language>.png, 1200 x 630):
  * what Telegram, WhatsApp, LinkedIn and others show when someone shares a link to the site.
  * Needs Playwright with Chromium. Run after changing the brand name or colours:
  *   node tools/og-image.js
@@ -18,6 +18,10 @@ const HEAD = {
   en: ['Laytime and demurrage,', 'counted to the minute', 'Free online calculator · printable time sheet'],
   ru: ['Сталия и демередж —', 'с точностью до минуты', 'Бесплатный онлайн-калькулятор · таймшит для печати'],
   kk: ['Сталия мен демередж —', 'минутына дейін дәл', 'Тегін онлайн-калькулятор · баспа таймшиті'],
+  uk: ['Сталія та демередж —', 'з точністю до хвилини', 'Безкоштовний онлайн-калькулятор · таймшит для друку'],
+  tr: ['Starya ve demuraj,', 'dakikası dakikasına', 'Ücretsiz online hesaplayıcı · yazdırılabilir time sheet'],
+  el: ['Σταλίες και επισταλίες', 'με ακρίβεια λεπτού', 'Δωρεάν online υπολογισμός · time sheet για εκτύπωση'],
+  zh: ['装卸时间与滞期费，', '精确到分钟', '免费在线计算器 · 可打印的装卸时间计算表', 60], // a smaller heading keeps each line whole
 };
 
 function page(lang) {
@@ -41,7 +45,7 @@ function page(lang) {
   .card .tl-cap { font-size: 15px; } .card .tkl, .card .mk span { font-size: 13px; }
   .scale { height: 12px; }
 </style></head><body>
-<div class="og"><div class="txt"><b class="w">STALIA</b><h1>${V.esc(h[0])}<br>${V.esc(h[1])}</h1><p>${V.esc(h[2])}</p></div>
+<div class="og"><div class="txt"><b class="w">STALIA</b><h1${h[3] ? ' style="font-size:' + h[3] + 'px;line-height:1.12"' : ''}>${V.esc(h[0])}<br>${V.esc(h[1])}</h1><p>${V.esc(h[2])}</p></div>
 <div class="card">${V.summaryHTML(calc, res, lang)}${V.timelineHTML(res.ports[1], lang)}</div></div>
 <div class="scale"></div></body></html>`;
 }

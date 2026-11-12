@@ -286,8 +286,30 @@ dialog.dlg::backdrop { background: var(--scrim); }
 .logo-row img { max-height: 40px; max-width: 120px; background: #fff; border: 1px solid var(--line); border-radius: 2px; }
 .st-paper { min-width: 0; overflow-x: auto; }
 
-/* ---------- reading documents ---------- */
+/* ---------- overlays ---------- */
 .ov { position: fixed; inset: 0; z-index: 52; background: var(--paper); overflow: auto; }
+
+/* ---------- welcome: the language, then how to use ---------- */
+.help-body { padding-block: calc(28px + env(safe-area-inset-top, 0px)) 44px; }
+.help-card { max-width: 660px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
+.help-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.help-brand { font-family: var(--font-display); font-weight: 700; font-size: 1.75rem; letter-spacing: 0.08em; line-height: 1; }
+.help-langs-h { font-size: var(--fs-md); font-weight: 500; color: var(--ink-2); line-height: 1.7; }
+.help-langs { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.help-langs .btn { justify-content: flex-start; text-align: left; }
+.help-h { font-family: var(--font-display); font-weight: 700; font-size: 1.875rem; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.1; }
+.help-lead { color: var(--ink-2); font-size: var(--fs-lg); line-height: 1.5; }
+.help-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; counter-reset: help; }
+.help-steps li { counter-increment: help; display: grid; grid-template-columns: 2rem minmax(0, 1fr); column-gap: 14px; row-gap: 2px; }
+.help-steps li::before {
+  content: counter(help); grid-row: 1 / span 2; width: 2rem; height: 2rem; border-radius: 50%; background: var(--shoal); color: var(--ink);
+  font-family: var(--font-mono); font-weight: 600; font-size: var(--fs-md); display: grid; place-items: center;
+}
+.help-steps h3 { grid-column: 2; font-size: var(--fs-lg); font-weight: 600; line-height: 1.3; padding-top: 0.25rem; }
+.help-steps p { grid-column: 2; color: var(--ink-2); line-height: 1.5; }
+.help-go { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* ---------- reading documents ---------- */
 .imp-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; padding-block: 18px 40px; max-width: 1040px; }
 .imp-lead { color: var(--ink-2); max-width: 72ch; }
 .imp-h { font-family: var(--font-display); font-weight: 700; font-size: 1.5rem; letter-spacing: 0.06em; text-transform: uppercase; }

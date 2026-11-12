@@ -17,7 +17,7 @@
   const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
 
   // ---------------------------------------------------------------- storage (never throws)
-  const K = { current: 'stalia.current.v1', saved: 'stalia.saved.v1', lang: 'stalia.lang', brand: 'stalia.brand.v1' };
+  const K = { current: 'stalia.current.v1', saved: 'stalia.saved.v1', lang: 'stalia.lang', brand: 'stalia.brand.v1', seen: 'stalia.welcome.v1' };
   const store = {
     get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } },
@@ -546,6 +546,7 @@
     if (top.name === 'dialog') { if ($('#dlg').open) $('#dlg').close(); }
     else if (top.name === 'redact') imp.hideRedact();
     else if (top.name === 'import') imp.hide();
+    else if (top.name === 'help') hideHelp();
     else hideStatement();
   });
   function showDialog() {
@@ -638,7 +639,7 @@
       const l = el.dataset.lang || el.value;
       if (!I.STRINGS[l] || l === state.lang) return;
       state.lang = l; store.set(K.lang, l);
-      applyI18n(); renderHeader(); renderMenus(); imp.render();
+      applyI18n(); renderHeader(); renderMenus(); imp.render(); renderHelp();
       if (state.source === 'example' && state.pristine) loadExample(state.exampleId);
       else { renderBanner(); renderForm(); recalc(); }
       if (state.stOpen) { renderStatementSide(); renderStatement(); }
@@ -743,7 +744,54 @@
     'logo-remove'() { const b = getBrand(); delete b.logo; store.set(K.brand, b); renderStatementSide(); renderStatement(); },
     'notes-close'() { state.notes = []; if (state.source === 'import') state.source = 'edited'; renderBanner(); recalc(); },
     'note-go'(el) { showField(el.dataset.path); },
+    help() { openHelp('guide', false); },
+    'help-lang'(el) { actions.lang(el); helpState.step = 'guide'; renderHelp(); $('#help').scrollTop = 0; },
+    'help-pick-lang'() { helpState.step = 'lang'; renderHelp(); $('#help').scrollTop = 0; },
+    'help-close'() { closeHelp(); },
   };
+
+  // ---------------------------------------------------------------- welcome: the language first, then how to use
+  // Shown by itself on the first visit; afterwards behind the "How to use" button.
+  const helpState = { open: false, step: 'guide', first: false };
+  // the one heading a newcomer must understand before a language is chosen: the word itself, in every language
+  const LANGUAGE_WORD = I.LANGS.map((l) => I.t(l, 'help.lang')).join(' · ');
+  function helpHTML() {
+    if (helpState.step === 'lang') {
+      return '<div class="help-card"><p class="help-brand">STALIA</p><h2 class="help-langs-h">' + esc(LANGUAGE_WORD) + '</h2><div class="help-langs">' +
+        I.LANGS.map((l) => '<button type="button" class="btn btn-lg' + (l === state.lang ? ' btn-primary' : '') + '" data-act="help-lang" data-lang="' + l + '" lang="' + l + '">' +
+          esc(I.t(l, 'lang.name')) + '</button>').join('') + '</div></div>';
+    }
+    // button names are taken from the buttons themselves, so the instruction can never call them something else
+    const names = { new: t('nav.new'), examples: t('nav.examples'), docs: t('imp.open'), read: t('imp.read'), statement: t('act.statement'), save: t('nav.save'), share: t('act.share') };
+    const canShare = !PREVIEW && (!NATIVE || CFG.siteUrl);
+    const steps = [1, 2, 3, 4, 5].map((n) => '<li><h3>' + esc(t('help.s' + n + '.h')) + '</h3><p>' + esc(t('help.s' + n + '.p', names)) +
+      (n === 5 && canShare ? ' ' + esc(t('help.s5.share', names)) : '') + '</p></li>').join('');
+    return '<div class="help-card"><div class="help-top"><p class="help-brand">STALIA</p>' +
+      '<button type="button" class="btn btn-sm" data-act="help-pick-lang">' + esc(t('help.lang')) + ': ' + esc(t('lang.name')) + '</button></div>' +
+      '<h2 class="help-h">' + esc(t('help.title')) + '</h2><p class="help-lead">' + esc(t('help.lead')) + '</p><ol class="help-steps">' + steps + '</ol>' +
+      '<p class="fine">' + esc(t('disclaimer')) + '</p><div class="help-go"><button type="button" class="btn btn-primary btn-lg" data-act="help-close">' +
+      esc(t(helpState.first ? 'help.start' : 'common.close')) + '</button></div></div>';
+  }
+  function renderHelp() { if (helpState.open) $('#help-body').innerHTML = helpHTML(); }
+  function openHelp(step, first) {
+    helpState.step = step; helpState.first = !!first;
+    if (!helpState.open) {
+      helpState.open = true;
+      const el = $('#help');
+      el.hidden = false; el.scrollTop = 0;
+      document.body.style.overflow = 'hidden';
+      overlayOpened('help');
+    }
+    renderHelp();
+  }
+  function hideHelp() {
+    if (!helpState.open) return;
+    helpState.open = false;
+    $('#help').hidden = true;
+    document.body.style.overflow = '';
+    store.set(K.seen, true); // however it was closed, it does not come back by itself
+  }
+  function closeHelp() { if (!helpState.open) return; hideHelp(); overlayClosed('help'); }
 
   // ---------------------------------------------------------------- reading documents
   /** Bring a form field into view: its port is opened if it was folded. */
@@ -845,7 +893,7 @@
   $('#form').addEventListener('submit', (e) => e.preventDefault());
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape' || $('#dlg').open) return;
-    if (imp.isRedacting()) imp.closeRedact(); else if (imp.isOpen()) imp.close(); else if (state.stOpen) closeStatement();
+    if (imp.isRedacting()) imp.closeRedact(); else if (imp.isOpen()) imp.close(); else if (helpState.open) closeHelp(); else if (state.stOpen) closeStatement();
   });
   window.addEventListener('hashchange', () => { loadFromHash(); });
 
@@ -911,7 +959,8 @@
       if (state.stOpen) { renderStatementSide(); renderStatement(); }
     });
 
-    if (!(await loadFromHash())) {
+    const shared = await loadFromHash();
+    if (!shared) {
       const cur = store.get(K.current, null);
       // "?example=tanker" — links from the guides open a specific built-in example
       let urlExample = null;
@@ -926,18 +975,23 @@
     await lic.init();
     renderHeader();
     // "?license_key=…" — the link in the purchase e-mail activates Pro in one click
+    let activating = false;
     try {
       const q = new URLSearchParams(location.search), key = q.get('license_key') || q.get('key');
       if (key) {
+        activating = true;
         q.delete('license_key'); q.delete('key');
         history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash);
         const problem = await activateKey(key, true);
         if (problem) renderPro(problem);
       }
     } catch (e) { /* sandboxed */ }
+    // First visit: choose the language, then read how it works. Not in front of a calculation somebody
+    // shared or a licence being activated: those visitors came for something else, and the button is always there.
+    if (!store.get(K.seen, false) && !shared && !activating) openHelp('lang', true);
   }
   start();
 
   // for automated checks
-  window.__stalia = { state, lic, recalc, setCalc, imp };
+  window.__stalia = { state, lic, recalc, setCalc, imp, help: helpState };
 })();

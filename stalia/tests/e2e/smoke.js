@@ -12,6 +12,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { chromium } = require('playwright');
 const K = require('../../tools/keygen.js');
+const I = require('../../app/i18n.js');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const SHOTS = process.env.SHOTS || '';
@@ -50,8 +51,10 @@ const norm = (s) => String(s).replace(/[  ]/g, ' ').replace(/\s+/g, ' ').trim
   const base = 'http://127.0.0.1:' + server.address().port;
   const browser = await chromium.launch();
   const errors = [];
-  const newPage = async (opts) => {
+  const newPage = async (opts, firstVisit) => {
     const ctx = await browser.newContext(Object.assign({ viewport: { width: 1360, height: 900 }, locale: 'en-US', acceptDownloads: true, permissions: ['clipboard-read', 'clipboard-write'] }, opts || {}));
+    // the welcome screen of a first visit has its own checks; everywhere else the visitor has already seen it
+    if (!firstVisit) await ctx.addInitScript(() => { try { localStorage.setItem('stalia.welcome.v1', 'true'); } catch (e) { /* no storage */ } });
     const page = await ctx.newPage();
     page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
     page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
@@ -235,6 +238,7 @@ const norm = (s) => String(s).replace(/[  ]/g, ' ').replace(/\s+/g, ' ').trim
 
   console.log('installable, works offline');
   const octx = await browser.newContext({ viewport: { width: 390, height: 844 }, locale: 'en-US' });
+  await octx.addInitScript(() => { try { localStorage.setItem('stalia.welcome.v1', 'true'); } catch (e) { /* no storage */ } });
   const o = await octx.newPage();
   await o.goto(base + '/app/', { waitUntil: 'networkidle' });
   const manifest = await o.evaluate(async () => (await fetch(document.querySelector('link[rel=manifest]').href)).json());
@@ -337,6 +341,55 @@ const norm = (s) => String(s).replace(/[  ]/g, ' ').replace(/\s+/g, ' ').trim
   await lp.waitForSelector('#summary .res-amount');
   check('guide → opens its example in English', /USD 23,841\.93/.test(await text(lp, '#summary')) && (await lp.inputValue('#f-name')) === 'Wheat, Novorossiysk to Alexandria');
   await lp.context().close();
+
+  console.log('first visit: the language, then how to use');
+  const w = await newPage({ viewport: { width: 390, height: 844 }, locale: 'de-DE' }, true);
+  await w.goto(base + '/app/', { waitUntil: 'networkidle' });
+  check('a first visit opens on the choice of language', await w.locator('#help').isVisible() && (await w.locator('#help [data-act="help-lang"]').count()) === 7);
+  check('“language” is written in every language', /Language · Язык · Тіл · Мова · Dil · Γλώσσα · 语言/.test(await text(w, '#help')));
+  check('each language is offered under its own name', norm(await w.locator('#help .help-langs').innerText()) === 'English Русский Қазақша Українська Türkçe Ελληνικά 中文');
+  check('the language screen fits a phone', await w.evaluate(() => document.getElementById('help').scrollWidth <= document.getElementById('help').clientWidth + 1));
+  await shot(w, '20-welcome-language');
+  await w.click('#help [data-act="help-lang"][data-lang="ru"]');
+  const guide = await text(w, '#help');
+  check('then comes the instruction, in the chosen language', /Как пользоваться Stalia/i.test(guide) && (await w.locator('#help .help-steps li').count()) === 5 && (await w.getAttribute('html', 'lang')) === 'ru');
+  check('the instruction calls the buttons by the names they have on screen', ['nav.examples', 'nav.new', 'imp.open', 'imp.read', 'act.statement', 'nav.save', 'act.share'].every((k) => guide.includes('«' + I.t('ru', k) + '»')), guide);
+  check('nothing is left unfilled in it', !/[{}]/.test(guide));
+  check('the instruction fits a phone', await w.evaluate(() => document.getElementById('help').scrollWidth <= document.getElementById('help').clientWidth + 1));
+  await shot(w, '21-welcome-guide');
+  await w.click('#help [data-act="help-pick-lang"]');
+  check('the language can be changed from the instruction', (await w.locator('#help [data-act="help-lang"]').count()) === 7 && /btn-primary/.test(await w.getAttribute('#help [data-lang="ru"]', 'class')));
+  await w.click('#help [data-act="help-lang"][data-lang="zh"]');
+  check('Chinese instruction', /如何使用 Stalia/i.test(await text(w, '#help')) && (await text(w, '#help')).includes('“' + I.t('zh', 'imp.open') + '”'));
+  await w.click('#help [data-act="help-pick-lang"]');
+  await w.click('#help [data-act="help-lang"][data-lang="ru"]');
+  check('the button says “Start” on a first visit', (await text(w, '#help [data-act="help-close"]')) === 'Начать');
+  await w.click('#help [data-act="help-close"]');
+  check('“Start” leads to the calculator in that language', !(await w.locator('#help').isVisible()) && /Демередж в пользу судовладельца/i.test(await text(w, '#summary')));
+  await w.reload({ waitUntil: 'networkidle' });
+  check('it does not come back on the next visit', !(await w.locator('#help').isVisible()) && (await w.getAttribute('html', 'lang')) === 'ru');
+  await w.click('.bar [data-act="help"]');
+  check('the “How to use” button opens the instruction again, with “Close”', await w.locator('#help').isVisible() && /Как пользоваться Stalia/i.test(await text(w, '#help')) && (await text(w, '#help [data-act="help-close"]')) === 'Закрыть');
+  await w.goBack();
+  await w.waitForFunction(() => document.getElementById('help').hidden);
+  check('Back closes it', true);
+  await w.click('.bar [data-act="help"]');
+  await w.keyboard.press('Escape');
+  check('Escape closes it', !(await w.locator('#help').isVisible()));
+  await w.context().close();
+  // a visitor who came for a shared calculation is not stopped at the door
+  const ws = await newPage(null, true);
+  await ws.goto(base + '/app/', { waitUntil: 'networkidle' });
+  await ws.click('#help [data-act="help-lang"][data-lang="en"]');
+  await ws.click('#help [data-act="help-close"]');
+  await ws.waitForFunction(() => window.__stalia.state.shareHash);
+  const sharedLink = base + '/app/#c=' + await ws.evaluate(() => window.__stalia.state.shareHash);
+  await ws.context().close();
+  const wr = await newPage(null, true);
+  await wr.goto(sharedLink, { waitUntil: 'networkidle' });
+  check('a shared link opens the calculation, not the welcome screen', !(await wr.locator('#help').isVisible()) && /USD 23,841\.93/.test(await text(wr, '#summary')));
+  check('the button is still there for them', (await wr.locator('.bar [data-act="help"]').count()) === 1);
+  await wr.context().close();
 
   console.log('dark theme');
   const d = await newPage({ colorScheme: 'dark' });

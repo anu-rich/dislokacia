@@ -26,6 +26,8 @@ const PAGES = [
   { file: 'kk/guides/staliya-esepteu.html', url: '/kk/guides/staliya-esepteu.html', lang: 'kk', group: 'howto', priority: '0.8' },
   { file: 'guides/shinc-shex-sshex-fhex.html', url: '/guides/shinc-shex-sshex-fhex.html', lang: 'en', group: 'terms', priority: '0.8' },
   { file: 'ru/guides/shinc-shex-sshex-fhex.html', url: '/ru/guides/shinc-shex-sshex-fhex.html', lang: 'ru', group: 'terms', priority: '0.8' },
+  { file: 'privacy.html', url: '/privacy.html', lang: 'en', group: 'privacy', priority: '0.3' },
+  { file: 'terms.html', url: '/terms.html', lang: 'en', group: 'legal', priority: '0.3' },
 ];
 
 /** 'https://x.com/' -> 'https://x.com'; anything that is not an http(s) address -> ''. */

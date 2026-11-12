@@ -85,7 +85,19 @@
     const n = Number(s);
     return isFinite(n) ? n : NaN;
   };
-  const round2 = (v) => Math.round((v + Number.EPSILON) * 100) / 100;
+  /**
+   * Money to the cent. Halves go away from zero for a negative amount as for a positive one, and the number is
+   * rounded as it is written with 15 digits — 39553.125 becomes 39553.13 even when it is stored a hair below.
+   * This is also how a spreadsheet rounds, so an exported sheet recalculates to the same cents.
+   */
+  const round2 = (v) => {
+    if (!isFinite(v)) return v;
+    const x = Math.round(Number((Math.abs(v) * 100).toPrecision(15))) / 100;
+    return v < 0 ? -x : x;
+  };
+
+  /** Minutes to six decimals. */
+  const snapMinutes = (v) => (isFinite(v) ? Math.round(Number((v * 1e6).toPrecision(15))) / 1e6 : v);
 
   // ---------------------------------------------------------------- calendar
   /**
@@ -370,6 +382,15 @@
     return { fL, fD, reasonsL, reasonsD };
   }
 
+  /** Every moment between S and E at which the way time counts may change: calendar and event boundaries. */
+  function cutPoints(pp, wins, S, E) {
+    const clamp = (t) => Math.min(E, Math.max(S, t));
+    const set = new Set([S, E]);
+    for (const w of wins) { set.add(clamp(w.from)); set.add(clamp(w.to)); }
+    for (const e of pp.events) { set.add(clamp(e.from)); set.add(clamp(e.to)); }
+    return Array.from(set).sort((a, b) => a - b);
+  }
+
   /**
    * Run one port against a shared state {remaining, onDem}. Mutates state.
    * Returns the per-port result with time-sheet rows.
@@ -381,11 +402,7 @@
     if (arrivedOnDemurrage && opts.demFromNor && pp.norRaw != null && pp.norRaw < S) S = pp.norRaw;
 
     const wins = calendarWindows(pp.cal, S, E);
-    const clamp = (t) => Math.min(E, Math.max(S, t));
-    const set = new Set([S, E]);
-    for (const w of wins) { set.add(clamp(w.from)); set.add(clamp(w.to)); }
-    for (const e of pp.events) { set.add(clamp(e.from)); set.add(clamp(e.to)); }
-    const pts = Array.from(set).sort((a, b) => a - b);
+    const pts = cutPoints(pp, wins, S, E);
 
     const rows = [];
     let used = 0, dem = 0, expiry = arrivedOnDemurrage ? null : (state.remaining <= EPS ? S : null);
@@ -525,6 +542,9 @@
     }
     if (demMin < EPS) demMin = 0;
     if (desMin < EPS) desMin = 0;
+    // Money is charged on time taken to a millionth of a minute: the dust that arithmetic leaves behind must not
+    // decide which way an exact half cent is rounded (an exported sheet makes the same step, see export.js).
+    demMin = snapMinutes(demMin); desMin = snapMinutes(desMin);
 
     const demurrage = (demMin / DAY) * demRate;
     const despatch = despatchMode === 'none' ? 0 : (desMin / DAY) * desRate;
@@ -548,6 +568,49 @@
         net: round2(net), outcome,
       },
     };
+  }
+
+  // ---------------------------------------------------------------- public: periods
+  /**
+   * The periods of every port call with the share of each that counts — while laytime runs (fL) and once the vessel
+   * is on demurrage (fD) — without deciding which of the two applies. An editable time sheet is built from these:
+   * there laytime and demurrage are told apart by formulas, so the split follows whatever the reader corrects.
+   *
+   * `notice` marks the time between NOR and the commencement of laytime at a later port of a reversible voyage:
+   * it counts only if the vessel arrives there already on demurrage (see `demurrageAtNextPort`).
+   *
+   * @returns {Array<{idx:number,start:number,end:number,periods:Array}>|null} null when the input does not compute
+   */
+  function periods(input) {
+    input = input || {};
+    const errors = [];
+    const mode = ['reversible', 'separate', 'average'].indexOf(input.laytimeMode) >= 0 ? input.laytimeMode : 'reversible';
+    const once = input.onceOnDemurrage !== false;
+    const fromNor = mode === 'reversible' && input.demurrageAtNextPort !== 'laytimeStart';
+    const pps = (Array.isArray(input.ports) ? input.ports : []).map((p, i) => prepPort(p, i, errors, []));
+    if (!pps.length || errors.length) return null;
+    return pps.map((pp, i) => {
+      const S = pp.S, End = pp.E;
+      const from = fromNor && i > 0 && pp.norRaw != null && pp.norRaw < S ? pp.norRaw : S;
+      const wins = calendarWindows(pp.cal, from, End);
+      const set = new Set(cutPoints(pp, wins, from, End));
+      set.add(S);
+      const pts = Array.from(set).sort((a, b) => a - b);
+      const out = [];
+      for (let k = 0; k + 1 < pts.length; k++) {
+        const t0 = pts[k], t1 = pts[k + 1];
+        if (t1 - t0 < EPS) continue;
+        const c = classify(pp, wins, t0, t1, once);
+        const notice = t1 <= S + EPS;
+        const fL = notice ? 0 : c.fL;
+        const key = (notice ? 'n' : '') + '|' + fL + '|' + c.fD + '|' + JSON.stringify(c.reasonsL);
+        const last = out[out.length - 1];
+        if (last && last.key === key && Math.abs(last.to - t0) < EPS) last.to = t1;
+        else out.push({ key, from: t0, to: t1, fL, fD: c.fD, notice, reasons: c.reasonsL });
+      }
+      out.forEach((r) => { delete r.key; });
+      return { idx: pp.idx, start: S, end: End, periods: out };
+    });
   }
 
   // ---------------------------------------------------------------- presentation helpers
@@ -580,6 +643,6 @@
     parseDT, fmtDT, timeToMin, startOfDay, dow, splitDur, num, round2,
     CALENDAR_PRESETS, resolveCalendar, calendarWindows, mergeWindows, projectExpiry,
     allowedMinutes, norInOfficeHours, laytimeStart,
-    compute, splitRowsByDay,
+    compute, periods, splitRowsByDay,
   };
 });

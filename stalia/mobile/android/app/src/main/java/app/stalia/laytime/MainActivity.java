@@ -12,6 +12,7 @@ public class MainActivity extends BridgeActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         registerPlugin(StaliaPrintPlugin.class);
+        registerPlugin(StaliaSharePlugin.class);
         super.onCreate(savedInstanceState);
 
         // The page keeps a history entry for every open overlay (statement, dialog).

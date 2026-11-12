@@ -2,15 +2,24 @@
 (function () {
   'use strict';
   const E = window.StaliaEngine, I = window.StaliaI18n, M = window.StaliaModel, V = window.StaliaView, L = window.StaliaLicense;
-  const X = window.StaliaExtract, S = window.StaliaSchema;
+  const X = window.StaliaExtract, S = window.StaliaSchema, XP = window.StaliaExport;
   const CFG = window.STALIA_CONFIG || {};
   const PREVIEW = !!CFG.preview; // sandboxed preview: no printing, downloads or share links
   const NATIVE = !!CFG.native;   // packaged Android / iOS app (set by mobile/scripts/build-web.js)
   const STORE = !!CFG.store;     // app-store build: no prices or purchase links inside the app
   const capBridge = () => (NATIVE && window.Capacitor && typeof window.Capacitor.nativePromise === 'function' ? window.Capacitor : null);
-  const hasNativePrint = () => { const c = capBridge(); return !!(c && (c.PluginHeaders || []).some((h) => h.name === 'StaliaPrint')); };
+  const hasPlugin = (name) => { const c = capBridge(); return !!(c && (c.PluginHeaders || []).some((h) => h.name === name)); };
+  const hasNativePrint = () => hasPlugin('StaliaPrint');
+  const hasNativeShare = () => hasPlugin('StaliaShare'); // the phone's share sheet, for files and links
   const canPrint = () => !PREVIEW && (!NATIVE || hasNativePrint());
-  const canDownload = !PREVIEW && !NATIVE; // file downloads need a browser
+  const canShareFiles = () => {
+    try { return typeof navigator.canShare === 'function' && navigator.canShare({ files: [new File(['x'], 'x.txt', { type: 'text/plain' })] }); } catch (e) { return false; }
+  };
+  /** Can a file made by the page reach the user: a browser download, the phone's share sheet, or the preview's host. */
+  const canSave = () => (PREVIEW ? typeof CFG.saver === 'function' : NATIVE ? hasNativeShare() || canShareFiles() : true);
+  const coarse = () => { try { return window.matchMedia('(pointer: coarse)').matches; } catch (e) { return false; } };
+  const canCopyLink = () => !PREVIEW && (!NATIVE || !!CFG.siteUrl); // a link needs a public address to point at
+  const canSendLink = () => canCopyLink() && (NATIVE ? hasNativeShare() || typeof navigator.share === 'function' : typeof navigator.share === 'function' && coarse());
   const FREE = Object.assign({ maxSaved: 3, maxPorts: 2 }, CFG.free || {});
   const esc = V.esc;
   const $ = (s, r) => (r || document).querySelector(s);
@@ -282,13 +291,19 @@
     const ok = state.result && state.result.ok, dis = ok ? '' : ' disabled';
     const proTag = isPro() ? '' : ' <span class="pill pill-pro">Pro</span>';
     let h = '<button type="button" class="btn btn-primary" data-act="statement"' + dis + '>' + esc(t('act.statement')) + '</button>';
-    if (!PREVIEW && (!NATIVE || CFG.siteUrl)) h += '<button type="button" class="btn btn-sm" data-act="share"' + dis + '>' + esc(t('act.share')) + '</button>';
-    h += '<button type="button" class="btn btn-sm" data-act="copy-summary"' + dis + '>' + esc(t('act.copyText')) + '</button>';
-    if (canDownload) {
-      h += '<button type="button" class="btn btn-sm" data-act="csv"' + dis + '>' + esc(t('act.csv')) + proTag + '</button>' +
-        '<button type="button" class="btn btn-sm" data-act="json">' + esc(t('act.json')) + proTag + '</button>' +
-        '<button type="button" class="btn btn-sm" data-act="open-file">' + esc(t('act.open')) + '</button>';
+    const files = canSave();
+    if (XP && files) {
+      h += '<button type="button" class="btn btn-sm" data-act="word"' + dis + '>Word</button>' +
+        '<button type="button" class="btn btn-sm" data-act="excel"' + dis + '>Excel</button>';
     }
+    if (canSendLink()) h += '<button type="button" class="btn btn-sm" data-act="send-link"' + dis + '>' + esc(t('act.sendLink')) + '</button>';
+    if (canCopyLink()) h += '<button type="button" class="btn btn-sm" data-act="share"' + dis + '>' + esc(t('act.share')) + '</button>';
+    h += '<button type="button" class="btn btn-sm" data-act="copy-summary"' + dis + '>' + esc(t('act.copyText')) + '</button>';
+    if (files) {
+      h += '<button type="button" class="btn btn-sm" data-act="csv"' + dis + '>' + esc(t('act.csv')) + proTag + '</button>' +
+        '<button type="button" class="btn btn-sm" data-act="json">' + esc(t('act.json')) + proTag + '</button>';
+    }
+    if (!PREVIEW) h += '<button type="button" class="btn btn-sm" data-act="open-file">' + esc(t('act.open')) + '</button>';
     return h;
   }
 
@@ -339,15 +354,44 @@
     if (s[0] === 'j') return JSON.parse(new TextDecoder().decode(bytes));
     throw new Error('unknown share format');
   }
-  async function loadFromHash() {
-    const m = /^#c=([zj][A-Za-z0-9_-]{4,200000})$/.exec(location.hash || '');
-    if (!m) return false;
+  /** The calculation carried by a link: "…/app/#c=CODE" on the site, "stalia://c/CODE" for the phone app. */
+  const codeOf = (url) => { const m = /(?:#c=|\/c\/)([zj][A-Za-z0-9_-]{4,200000})$/.exec(String(url || '')); return m ? m[1] : ''; };
+  /** Show a shared calculation. With `undoable`, whatever was on screen can be brought back. */
+  async function openShared(code, undoable) {
+    if (!code) return false;
     try {
-      const data = await decodeShare(m[1]);
-      setCalc(M.normalizeCalc(data), { source: 'shared' });
-      try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* sandboxed */ }
+      const data = await decodeShare(code);
+      const prev = undoable && !blankish() ? snapshot() : null;
+      setCalc(M.normalizeCalc(data), { source: 'shared', code });
+      if (prev) toast(t('toast.linkOpened'), { label: t('common.undo'), fn: () => setCalc(prev.calc, prev) });
       return true;
     } catch (e) { return false; }
+  }
+  async function loadFromHash() {
+    const ok = await openShared(codeOf(location.hash));
+    if (ok) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* sandboxed */ } }
+    return ok;
+  }
+  // The phone app is opened by a link: at start it asks which one, and while it runs it is told.
+  async function openLaunchLink() {
+    const c = capBridge();
+    if (!c || !hasNativeShare()) return false;
+    try { const r = await c.nativePromise('StaliaShare', 'launchUrl', {}); return await openShared(codeOf(r && r.url)); } catch (e) { return false; }
+  }
+  window.addEventListener('staliaLink', (e) => { openShared(codeOf(e && e.url), true); });
+  /** The address a calculation is shared at, or '' while it is not ready. */
+  const shareUrl = () => (state.shareHash ? (NATIVE ? String(CFG.siteUrl).replace(/\/+$/, '') + '/app/' : location.href.split('#')[0]) + '#c=' + state.shareHash : '');
+  const shareTitle = () => t('share.text', { name: state.calc.name || (state.calc.meta || {}).vessel || t('st.title') });
+  /** For somebody who opened a shared link in a browser: the way into the app. */
+  function appButton() {
+    if (PREVIEW || NATIVE) return '';
+    const play = String((CFG.apps || {}).android || ''), id = (/^https:\/\/play\.google\.com\/.*[?&]id=([\w.]+)/.exec(play) || [])[1];
+    if (id && state.sharedCode && /Android/i.test(navigator.userAgent)) {
+      // opens the calculation in the app when it is installed, the store page when it is not
+      return '<a class="btn btn-sm" href="intent://c/' + state.sharedCode + '#Intent;scheme=stalia;package=' + esc(id) +
+        ';S.browser_fallback_url=' + encodeURIComponent(play) + ';end">' + esc(t('banner.openApp')) + '</a>';
+    }
+    return $('#btn-install').hidden ? '' : '<button type="button" class="btn btn-sm" data-act="install">' + esc(t('app.install')) + '</button>';
   }
 
   // ---------------------------------------------------------------- calculation lifecycle
@@ -359,6 +403,7 @@
     state.exampleId = meta.exampleId || null;
     state.pristine = meta.pristine !== false;
     state.notes = cleanNotes(meta.notes, calc);
+    state.sharedCode = state.source === 'shared' ? meta.code || '' : '';
     state.open = {};
     state.confirm = null;
     renderBanner();
@@ -400,7 +445,7 @@
     } else if (state.source === 'blank' && state.pristine) {
       h += '<div class="b-plain"><p>' + esc(t('imp.cta')) + '</p>' + fromDocs + '</div>';
     } else if (state.source === 'shared') {
-      h += '<div class="b-plain"><p>' + esc(t('banner.shared')) + '</p><button type="button" class="btn btn-sm" data-act="save">' + esc(t('nav.save')) + '</button></div>';
+      h += '<div class="b-plain"><p>' + esc(t('banner.shared')) + '</p><button type="button" class="btn btn-sm" data-act="save">' + esc(t('nav.save')) + '</button>' + appButton() + '</div>';
     }
     $('#banner').innerHTML = h;
   }
@@ -467,13 +512,59 @@
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 2000);
   }
+  const b64 = (bytes) => { let str = ''; for (let i = 0; i < bytes.length; i += 0x8000) str += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000)); return btoa(str); };
+  /** Hand a file to the user: the browser downloads it, the phone app opens the share sheet, the preview asks its host. */
+  async function saveFile(name, mime, content) {
+    const bytes = typeof content === 'string' ? new TextEncoder().encode(content) : content;
+    if (PREVIEW) { await CFG.saver(name, new Blob([bytes], { type: mime })); return; }
+    if (NATIVE) {
+      const c = capBridge();
+      if (c && hasNativeShare()) { await c.nativePromise('StaliaShare', 'file', { name, mime, data: b64(bytes) }); return; }
+      await navigator.share({ files: [new File([bytes], name, { type: mime })] });
+      return;
+    }
+    download(name, mime, bytes);
+  }
+  /** The user changed their mind in the share sheet or the save prompt: nothing to report. */
+  const gaveUp = (e) => !!e && (e.name === 'AbortError' || e.code === 'declined');
+  const exportFailed = (e) => { if (!gaveUp(e)) toast(t('toast.exportFailed')); };
+  /** The site's address for the footer of a document; the phone app and the preview have none of their own. */
+  const siteAddress = () => CFG.siteUrl || (/^https?:/.test(location.protocol) && !PREVIEW && !NATIVE ? location.origin : '');
+  /** Word and Excel cannot show a WebP logo: it is redrawn as PNG. Anything else goes as it is. */
+  function exportBrand() {
+    const b = Object.assign({}, getBrand());
+    if (!isPro() || !/^data:image\/webp;base64,/.test(b.logo || '')) return Promise.resolve(b);
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const c = document.createElement('canvas');
+          c.width = img.naturalWidth; c.height = img.naturalHeight;
+          c.getContext('2d').drawImage(img, 0, 0);
+          b.logo = c.toDataURL('image/png');
+        } catch (e) { delete b.logo; }
+        resolve(b);
+      };
+      img.onerror = () => { delete b.logo; resolve(b); };
+      img.src = b.logo;
+    });
+  }
+  /** The statement as a Word document or the time sheet as a live Excel workbook, in the statement's language. */
+  async function exportFile(kind) {
+    if (!XP || !state.result || !state.result.ok) return;
+    try {
+      const opts = { pro: isPro(), brand: await exportBrand(), siteUrl: siteAddress(), today: todayStr() };
+      const lang = state.stLang || state.lang;
+      const bytes = kind === 'docx' ? XP.docx(state.calc, state.result, lang, opts) : XP.xlsx(state.calc, state.result, lang, opts);
+      await saveFile(fileStem() + '.' + kind, XP.MIME[kind], bytes);
+    } catch (e) { exportFailed(e); }
+  }
   const fileStem = () => ('stalia-' + (state.calc.name || state.calc.meta.vessel || 'laytime')).toLowerCase().replace(/[^a-z0-9а-яёәғқңөұүһі]+/gi, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'stalia';
 
   // ---------------------------------------------------------------- statement overlay
   const getBrand = () => { const b = store.get(K.brand, {}); return b && typeof b === 'object' ? b : {}; };
   function renderStatement() {
-    const site = CFG.siteUrl || (/^https?:/.test(location.protocol) && !PREVIEW ? location.origin : '');
-    $('#st-paper').innerHTML = V.statementHTML(state.calc, state.result, state.stLang || state.lang, { pro: isPro(), brand: getBrand(), siteUrl: site, today: todayStr() });
+    $('#st-paper').innerHTML = V.statementHTML(state.calc, state.result, state.stLang || state.lang, { pro: isPro(), brand: getBrand(), siteUrl: siteAddress(), today: todayStr() });
     fitPaper();
   }
   /** On a phone the A4 sheet is shown whole, scaled down to the screen (print always uses full size). */
@@ -489,6 +580,7 @@
     const logoOk = /^data:image\/(png|jpeg|webp|gif);base64,/.test(b.logo || '');
     $('#st-lang').innerHTML = I.LANGS.map((l) => '<option value="' + l + '"' + (l === (state.stLang || state.lang) ? ' selected' : '') + '>' + esc(I.t(l, 'lang.name')) + '</option>').join('');
     $('#btn-print').hidden = !canPrint();
+    $('#btn-word').hidden = $('#btn-excel').hidden = !(XP && canSave());
     $('#st-side').innerHTML =
       '<fieldset' + (pro ? '' : ' disabled') + '><legend>' + esc(t('st.brand')) + (pro ? '' : ' <span class="pill pill-pro">Pro</span>') + '</legend>' +
       '<div class="f"><label class="f-l" for="br-company">' + esc(t('st.brand.company')) + '</label><input id="br-company" data-brand="company" maxlength="120" value="' + esc(b.company || '') + '"></div>' +
@@ -722,18 +814,28 @@
       showDialog();
     },
     share() {
-      if (!state.shareHash) { toast(t('toast.copyFailed')); return; }
-      const base = NATIVE ? String(CFG.siteUrl).replace(/\/+$/, '') + '/app/' : location.href.split('#')[0];
-      copyText(base + '#c=' + state.shareHash, 'toast.linkCopied');
+      const url = shareUrl();
+      if (url) copyText(url, 'toast.linkCopied'); else toast(t('toast.copyFailed'));
     },
+    'send-link'() { // the phone's own "share" sheet: messengers, mail, anything installed
+      const url = shareUrl(), title = shareTitle(), c = capBridge();
+      if (!url) { toast(t('toast.copyFailed')); return; }
+      let sent;
+      try {
+        sent = c && hasNativeShare() ? c.nativePromise('StaliaShare', 'text', { title, text: title + '\n' + url }) : navigator.share({ title, text: title, url });
+      } catch (e) { sent = Promise.reject(e); }
+      Promise.resolve(sent).catch((e) => { if (!gaveUp(e)) copyText(url, 'toast.linkCopied'); });
+    },
+    word() { exportFile('docx'); },
+    excel() { exportFile('xlsx'); },
     'copy-summary'() { copyText(V.summaryText(state.calc, state.result, state.lang)); },
     csv() {
       if (needPro()) return;
-      download(fileStem() + '.csv', 'text/csv;charset=utf-8', V.sheetCSV(state.calc, state.result, state.lang));
+      saveFile(fileStem() + '.csv', 'text/csv;charset=utf-8', V.sheetCSV(state.calc, state.result, state.lang)).catch(exportFailed);
     },
     json() {
       if (needPro()) return;
-      download(fileStem() + '.json', 'application/json', JSON.stringify({ stalia: M.VERSION, calc: state.calc }, null, 2));
+      saveFile(fileStem() + '.json', 'application/json', JSON.stringify({ stalia: M.VERSION, calc: state.calc }, null, 2)).catch(exportFailed);
     },
     'open-file'() { $('#file-open').click(); },
     pro() { renderPro(); },
@@ -762,10 +864,10 @@
           esc(I.t(l, 'lang.name')) + '</button>').join('') + '</div></div>';
     }
     // button names are taken from the buttons themselves, so the instruction can never call them something else
-    const names = { new: t('nav.new'), examples: t('nav.examples'), docs: t('imp.open'), read: t('imp.read'), statement: t('act.statement'), save: t('nav.save'), share: t('act.share') };
-    const canShare = !PREVIEW && (!NATIVE || CFG.siteUrl);
+    const names = { new: t('nav.new'), examples: t('nav.examples'), docs: t('imp.open'), read: t('imp.read'), statement: t('act.statement'), save: t('nav.save'),
+      share: t(canSendLink() ? 'act.sendLink' : 'act.share') };
     const steps = [1, 2, 3, 4, 5].map((n) => '<li><h3>' + esc(t('help.s' + n + '.h')) + '</h3><p>' + esc(t('help.s' + n + '.p', names)) +
-      (n === 5 && canShare ? ' ' + esc(t('help.s5.share', names)) : '') + '</p></li>').join('');
+      (n === 5 && XP && canSave() ? ' ' + esc(t('help.s5.files')) : '') + (n === 5 && canCopyLink() ? ' ' + esc(t('help.s5.share', names)) : '') + '</p></li>').join('');
     return '<div class="help-card"><div class="help-top"><p class="help-brand">STALIA</p>' +
       '<button type="button" class="btn btn-sm" data-act="help-pick-lang">' + esc(t('help.lang')) + ': ' + esc(t('lang.name')) + '</button></div>' +
       '<h2 class="help-h">' + esc(t('help.title')) + '</h2><p class="help-lead">' + esc(t('help.lead')) + '</p><ol class="help-steps">' + steps + '</ol>' +
@@ -959,7 +1061,7 @@
       if (state.stOpen) { renderStatementSide(); renderStatement(); }
     });
 
-    const shared = await loadFromHash();
+    const shared = (await loadFromHash()) || (await openLaunchLink());
     if (!shared) {
       const cur = store.get(K.current, null);
       // "?example=tanker" — links from the guides open a specific built-in example
@@ -991,6 +1093,11 @@
     if (!store.get(K.seen, false) && !shared && !activating) openHelp('lang', true);
   }
   start();
+  // the preview's host says a little later whether it can save files for the page
+  document.addEventListener('stalia-saver', () => {
+    if (state.result) $('#actions').innerHTML = actionsHTML();
+    if (state.stOpen) renderStatementSide();
+  });
 
   // for automated checks
   window.__stalia = { state, lic, recalc, setCalc, imp, help: helpState };

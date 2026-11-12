@@ -14,7 +14,7 @@ const copy = (from, to) => { fs.mkdirSync(path.dirname(to), { recursive: true })
 fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(OUT, { recursive: true });
 
-for (const f of ['app.css', 'engine.js', 'license.js', 'i18n.js', 'model.js', 'view.js', 'schema.js', 'extract.js', 'import.js', 'app.js']) copy(path.join(ROOT, 'app', f), path.join(OUT, f));
+for (const f of ['app.css', 'engine.js', 'license.js', 'i18n.js', 'model.js', 'view.js', 'export.js', 'schema.js', 'extract.js', 'import.js', 'app.js']) copy(path.join(ROOT, 'app', f), path.join(OUT, f));
 // languages, and the PDF reader that "From documents" loads when a PDF is added
 (function copyDir(from, to) {
   for (const e of fs.readdirSync(from, { withFileTypes: true })) {

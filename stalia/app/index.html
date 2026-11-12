@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Laytime &amp; Demurrage Calculator — Stalia</title>
+<meta name="description" content="Free online laytime calculator: SHINC, SHEX, SSHEX and FHEX terms, NOR rules, weather and holiday exceptions, reversible laytime, demurrage and despatch. Printable time sheet in English, Russian and Kazakh.">
+<meta name="theme-color" content="#0C2231">
+<link rel="canonical" href="./">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/base.css">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="../" id="brand-link"><b>STALIA</b><span data-i18n="app.tagline">Laytime &amp; demurrage calculator</span></a>
+    <div class="top-right">
+      <div class="langs" id="langs" role="group" aria-label="Language"></div>
+      <button type="button" class="lic pill" id="lic" data-act="pro">Free</button>
+    </div>
+  </div>
+</header>
+
+<nav class="bar" aria-label="Calculation">
+  <div class="wrap">
+    <button type="button" class="btn btn-sm" data-act="new" data-i18n="nav.new">New</button>
+    <details class="menu" id="menu-examples">
+      <summary class="btn btn-sm" data-i18n="nav.examples">Examples</summary>
+      <div class="menu-pop" id="examples-list"></div>
+    </details>
+    <details class="menu" id="menu-saved">
+      <summary class="btn btn-sm" data-i18n="nav.saved">My calculations</summary>
+      <div class="menu-pop" id="saved-list"></div>
+    </details>
+    <button type="button" class="btn btn-sm" data-act="save" data-i18n="nav.save">Save</button>
+    <span class="grow"></span>
+    <a class="btn btn-sm btn-ghost" href="../" id="site-link" data-i18n="nav.site">About &amp; pricing</a>
+  </div>
+</nav>
+
+<div class="banner"><div class="wrap" id="banner"></div></div>
+
+<main class="wrap work" id="main">
+  <form class="col-form" id="form" autocomplete="off" novalidate></form>
+  <aside class="col-fix" aria-live="polite">
+    <div class="fix">
+      <div class="fix-b">
+        <div id="summary"></div>
+        <div class="tls" id="timelines"></div>
+        <div class="acts" id="actions"></div>
+        <p class="fine" data-i18n="disclaimer"></p>
+      </div>
+    </div>
+  </aside>
+  <section class="col-sheet" id="sheet-sec" hidden>
+    <div class="sheet-h"><h2 data-i18n="sec.sheet">Time sheet</h2></div>
+    <div id="sheet"></div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p data-i18n="disclaimer"></p>
+    <p>© <span id="year">2026</span> Stalia</p>
+  </div>
+</footer>
+
+<section class="st" id="statement" hidden aria-label="Statement">
+  <div class="st-bar">
+    <div class="wrap">
+      <strong class="cap" data-i18n="st.title">Laytime statement</strong>
+      <span class="grow"></span>
+      <label><span data-i18n="st.language">Statement language</span> <select id="st-lang"></select></label>
+      <button type="button" class="btn btn-primary" data-act="print" id="btn-print" data-i18n="st.print">Print / save as PDF</button>
+      <button type="button" class="btn" data-act="st-close" data-i18n="st.close">Close</button>
+    </div>
+  </div>
+  <div class="wrap st-body">
+    <div class="st-side" id="st-side"></div>
+    <div class="st-paper" id="st-paper"></div>
+  </div>
+</section>
+
+<dialog class="dlg" id="dlg"></dialog>
+<div class="tip" id="tip" hidden><b></b><span></span></div>
+<div class="toast" id="toast" role="status" hidden></div>
+<input type="file" id="file-open" accept="application/json,.json" hidden>
+
+<script src="config.js"></script>
+<script src="engine.js"></script>
+<script src="license.js"></script>
+<script src="i18n.js"></script>
+<script src="model.js"></script>
+<script src="view.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

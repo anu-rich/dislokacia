@@ -11,6 +11,9 @@ const http = require('node:http');
 async function startMockAnthropic(script) {
   const requests = [];
   const server = http.createServer((req, res) => {
+    // a browser asks first whether it may call from another origin; the real API says yes to everybody
+    const cors = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': req.headers['access-control-request-headers'] || '*', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Access-Control-Expose-Headers': '*' };
+    if (req.method === 'OPTIONS') { res.writeHead(204, cors); res.end(); return; }
     const chunks = [];
     req.on('data', (c) => chunks.push(c));
     req.on('end', () => {
@@ -20,13 +23,13 @@ async function startMockAnthropic(script) {
       requests.push(rec);
       const plan = script(rec) || {};
       if (plan.status && plan.status !== 200) {
-        res.writeHead(plan.status, { 'Content-Type': 'application/json' });
+        res.writeHead(plan.status, Object.assign({ 'Content-Type': 'application/json' }, cors));
         res.end(JSON.stringify({ type: 'error', error: { type: plan.error || 'api_error', message: 'scripted failure' } }));
         return;
       }
       const model = plan.model || (body && body.model) || 'claude-opus-5-5';
       const send = (event, data) => res.write('event: ' + event + '\ndata: ' + JSON.stringify(Object.assign({ type: event }, data)) + '\n\n');
-      res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' });
+      res.writeHead(200, Object.assign({ 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' }, cors));
       send('message_start', {
         message: { id: 'msg_test', type: 'message', role: 'assistant', model, content: [], stop_reason: null, stop_sequence: null, usage: { input_tokens: 4321, output_tokens: 1 } },
       });

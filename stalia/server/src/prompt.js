@@ -1,6 +1,11 @@
 /*
  * What the reader is told. The answer's shape lives in ../shared/schema.cjs (SCHEMA): the two must agree.
+ *
+ * The schema is given to the model as part of the instruction, and the reply is checked and brought into
+ * shape by the server. It is NOT passed to the API as a structured-output format: the API refuses this
+ * schema ("the compiled grammar is too large"), as a real call showed.
  */
+import X from '../shared/schema.cjs';
 
 export const LANGUAGE_NAMES = {
   en: 'English', ru: 'Russian', kk: 'Kazakh', uk: 'Ukrainian', tr: 'Turkish', el: 'Greek', zh: 'Simplified Chinese',
@@ -49,7 +54,7 @@ Events: the periods in the statement of facts that change the count under the ch
 - Stoppages that do not count as laytime: rain and bad weather when laytime is in weather working days or weather is excepted in some other way; shifting from the anchorage or waiting place to the berth when the charter party excludes it; time lost through the vessel herself (breakdown of her gear, ballasting, bunkering), which is also deducted on demurrage; surveys, strikes and other stoppages where the charter party excludes them. Use counts_percent "50" where a clause counts a stoppage as half time.
 - Cargo work actually done during a weekend or holiday that the regime excepts: type "worked", with the periods in which cargo was really worked. This is what lets "unless used" terms count that time.
 - No event for things that count in full: waiting for a berth after a valid notice, shore breakdowns at the charterers' risk, meal breaks, shift changes, unless the charter party excludes them.
-- When the charter party is missing, or silent about a stoppage, treat the stoppage as it is customarily treated and add a note with status "assumed" that names what to check.
+- When the charter party is missing, or silent about a stoppage, apply the customary treatment and say so. Customary: shifting from the anchorage or waiting place to the berth is an event that does not count; a weather stoppage is an event that does not count for dry cargo (for tankers it counts, so no event); time lost through the vessel herself is an event that does not count and is deducted on demurrage too; other waiting and stoppages count in full and get no event. Then add one note with status "assumed" that lists what you assumed, so the user can check it against the charter party.
 - You may add up to five events of type "note" per port for milestones worth showing on a time sheet (anchored, pilot on board, all fast, hoses connected, documents on board). Notes never change the count. Notice of readiness, commencement and completion are not notes: they have their own fields.
 - Merge duplicate or overlapping lines of the statement of facts into one period. Keep each description short, in the wording and language of the document.
 
@@ -64,6 +69,17 @@ Keep the list short, because a user faced with ten notes reads none of them. Wri
 Each comment is one short sentence addressed to the user, saying what to check and why, for example: "The demurrage rate is under a blacked-out area: enter it by hand." Write the comments in the language named in the request. Everything else stays as it is in the documents.
 
 If the pages hold nothing about laytime (another kind of document, or images that cannot be read), return no ports, mark the documents "unreadable" or "absent", and explain in a single note with field "other".`;
+
+/** The whole instruction: what to read, then the exact shape of the reply. */
+export function systemPrompt() {
+  return SYSTEM_PROMPT + `
+
+# The answer
+
+Reply with one JSON object and nothing else: no introduction, no explanation, no Markdown fence. It must match this JSON Schema exactly: every field present, values of fields with an "enum" taken only from that list, "" for anything not stated, and no fields of your own.
+
+` + JSON.stringify(X.SCHEMA);
+}
 
 const SLOT = { cp: 'Charter party / recap', sof: 'Statement of facts / time sheet' };
 

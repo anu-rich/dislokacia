@@ -39,6 +39,8 @@
     // "From documents": the address of your reading server, e.g. 'https://stalia-reader.example.workers.dev'
     // (how to start one: server/README.md). While it is empty, pages can be added and blacked out, but not read.
     // maxPages must not be larger than MAX_PAGES of the server.
+    // Without a server, reading still works for anyone who enters a Claude API key of their own in "From documents"
+    // (the key stays in their browser). To hide that option, add  ownKey: false.
     ai: { endpoint: '', maxPages: 20 },
 
     // Limits of the free version.

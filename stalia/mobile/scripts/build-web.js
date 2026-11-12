@@ -22,6 +22,7 @@ for (const f of ['app.css', 'engine.js', 'license.js', 'i18n.js', 'model.js', 'v
   }
 })(path.join(ROOT, 'app', 'lang'), path.join(OUT, 'lang'));
 for (const f of ['pdf.min.js', 'pdf.worker.min.js', 'LICENSE']) copy(path.join(ROOT, 'app', 'vendor', 'pdfjs', f), path.join(OUT, 'vendor', 'pdfjs', f));
+for (const f of ['stalia-reader.js', 'LICENSE-anthropic-sdk.txt']) copy(path.join(ROOT, 'app', 'vendor', 'reader', f), path.join(OUT, 'vendor', 'reader', f));
 for (const d of ['standard_fonts', 'cmaps']) {
   for (const f of fs.readdirSync(path.join(ROOT, 'app', 'vendor', 'pdfjs', d))) copy(path.join(ROOT, 'app', 'vendor', 'pdfjs', d, f), path.join(OUT, 'vendor', 'pdfjs', d, f));
 }

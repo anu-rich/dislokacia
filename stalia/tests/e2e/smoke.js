@@ -242,7 +242,18 @@ const norm = (s) => String(s).replace(/[  ]/g, ' ').replace(/\s+/g, ' ').trim
   const iconsOk = await o.evaluate(async (icons) => (await Promise.all(icons.map((i) => fetch(new URL(i.src, document.querySelector('link[rel=manifest]').href)).then((r) => r.ok && /image\/png/.test(r.headers.get('content-type')))))).every(Boolean), manifest.icons);
   check('manifest icons exist', iconsOk);
   await o.evaluate(() => navigator.serviceWorker.ready);
-  await o.waitForFunction(async () => (await (await caches.open('stalia-v1')).keys()).length >= 27, null, { timeout: 15000 });
+  // wait until every file of the offline shell is really in the cache: going offline earlier would be a race
+  const shellSize = new Function('self', fs.readFileSync(path.join(ROOT, 'app', 'sw.js'), 'utf8') + '; return SHELL.length;')({ addEventListener() {}, location: {} });
+  const cached = await o.evaluate(async (want) => {
+    for (let i = 0; i < 300; i++) {
+      const name = (await caches.keys()).find((n) => n.startsWith('stalia-'));
+      const have = name ? (await (await caches.open(name)).keys()).length : 0;
+      if (have >= want) return have;
+      await new Promise((r) => setTimeout(r, 100));
+    }
+    return -1;
+  }, shellSize);
+  check('the whole offline shell is cached (' + shellSize + ' files)', cached >= shellSize, cached);
   check('install button is offered in the browser', await o.locator('#btn-install').isVisible());
   await o.click('#btn-install');
   check('install instructions name Android and iPhone', /Android/.test(await text(o, '#dlg')) && /iPhone/.test(await text(o, '#dlg')));

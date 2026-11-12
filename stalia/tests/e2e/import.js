@@ -100,8 +100,12 @@ function serveSite(configFor) {
   cfgSrc = fs.readFileSync(tmpCfg, 'utf8');
   if (!/ai: \{ endpoint: '', maxPages: 20 \}/.test(cfgSrc)) throw new Error('app/config.js: the ai setting is not where the test expects it');
   const withReader = cfgSrc.replace("ai: { endpoint: '', maxPages: 20 }", "ai: { endpoint: '" + readerUrl + "', maxPages: 20 }");
-  const site = await serveSite((req) => (/reader=off/.test(req.headers.referer || '') ? cfgSrc : withReader));
+  const site = await serveSite(() => withReader);
   const base = 'http://127.0.0.1:' + site.address().port;
+  // a second copy of the site with no reading server; its browser-side reader is pointed at the stand-in instead of Anthropic
+  const noServer = cfgSrc.replace("ai: { endpoint: '', maxPages: 20 }", "ai: { endpoint: '', maxPages: 20, directBaseUrl: '" + mock.url + "' }");
+  const siteOff = await serveSite(() => noServer);
+  const baseOff = 'http://127.0.0.1:' + siteOff.address().port;
 
   const browser = await chromium.launch();
   const errors = [];
@@ -395,11 +399,53 @@ function serveSite(configFor) {
   }
   await page.selectOption('#lang-select', 'en');
 
-  console.log('reading switched off');
+  console.log('no reading server: one’s own key');
   const off = await newPage();
-  await off.goto(base + '/app/?reader=off', { waitUntil: 'networkidle' });
+  await off.goto(baseOff + '/app/', { waitUntil: 'networkidle' });
   await off.click('.bar [data-act="imp-open"]');
   check('without a reading server the screen says so at once', /not switched on/.test(await text(off, '#imp-body .note-warn')));
+  check('and offers reading with one’s own key', await off.locator('#imp-key').evaluate((d) => d.open) && /kept on this device only/.test(await text(off, '#imp-key')));
+  await off.fill('#imp-key-in', 'not a key');
+  await off.click('[data-act="imp-key-save"]');
+  check('something that is not a key is not saved', (await off.locator('#imp-key-in').count()) === 1 && await off.evaluate(() => localStorage.getItem('stalia.ai.v1') === null));
+  const OWN_KEY = 'sk-ant-test-0123456789abcdefghijklmnopqrstuvwxyzABCD';
+  await off.fill('#imp-key-in', '  ' + OWN_KEY + ' ');
+  await off.click('[data-act="imp-key-save"]');
+  check('a key is saved and shown only in part', /in use on this device/.test(await text(off, '#imp-key')) && /sk-ant-…ABCD/.test(await text(off, '#imp-key')) && !(await text(off, '#imp-key')).includes(OWN_KEY));
+  check('the warning is gone', (await off.locator('#imp-body .note-warn').count()) === 0);
+  scenario.name = 'full';
+  await addTo(off, 'cp', docs.cpPages[0]);
+  await off.waitForFunction(() => document.querySelectorAll('.imp-page').length === 1 && !window.__stalia.imp._state.busy);
+  let n = mock.requests.length;
+  await off.click('[data-act="imp-read"]');
+  await off.waitForSelector('.imp-h', { timeout: 30000 });
+  let direct = mock.requests[n];
+  check('the pages go straight to the API with that key', mock.requests.length === n + 1 && (direct.headers['x-api-key'] === OWN_KEY || direct.headers.authorization === 'Bearer ' + OWN_KEY));
+  check('as a declared call from a browser', direct.headers['anthropic-dangerous-direct-browser-access'] === 'true' && /^http:\/\/127\.0\.0\.1/.test(direct.headers.origin || ''));
+  check('on the cheaper model by default, with the same instruction as the server uses', direct.body.model === 'claude-haiku-5-5' && /Solid black rectangles are deliberate/.test(direct.body.system) && direct.body.messages[0].content.filter((c) => c.type === 'image').length === 1);
+  check('the review appears as usual', /MV EXAMPLE TRADER/.test(await text(off, '#imp-body')));
+  await off.click('[data-act="imp-back"]');
+  await off.selectOption('#imp-key-model', 'claude-sonnet-5-5');
+  n = mock.requests.length;
+  await off.click('[data-act="imp-read"]');
+  await off.waitForSelector('.imp-h', { timeout: 30000 });
+  check('the other model can be chosen', mock.requests[n].body.model === 'claude-sonnet-5-5' && mock.requests[n].body.fallbacks === 'default');
+  await off.click('[data-act="imp-close"]');
+  await off.reload({ waitUntil: 'networkidle' });
+  await off.click('.bar [data-act="imp-open"]');
+  check('with a key saved the option is folded away', !(await off.locator('#imp-key').evaluate((d) => d.open)));
+  await off.locator('#imp-key summary').click();
+  check('key and model are remembered on this device', /sk-ant-…ABCD/.test(await text(off, '#imp-key')) && (await off.inputValue('#imp-key-model')) === 'claude-sonnet-5-5');
+  // Anthropic turning the request down is explained in its own words
+  const turnDown = answers.full; answers.full = () => ({ status: 401, error: 'authentication_error' });
+  await addTo(off, 'cp', docs.cpPages[0]);
+  await off.waitForFunction(() => document.querySelectorAll('.imp-page').length === 1 && !window.__stalia.imp._state.busy);
+  await off.click('[data-act="imp-read"]');
+  await off.waitForSelector('#imp-body .note-err');
+  check('a key that Anthropic refuses is reported with Anthropic’s reason', /Anthropic did not accept the request: scripted failure/.test(await text(off, '#imp-body .note-err')), await text(off, '#imp-body .note-err'));
+  answers.full = turnDown;
+  await off.click('[data-act="imp-key-remove"]');
+  check('the key can be removed', await off.evaluate(() => localStorage.getItem('stalia.ai.v1') === null) && (await off.locator('#imp-key-in').count()) === 1 && (await off.locator('#imp-body .note-warn').count()) === 1);
   await off.close();
 
   console.log('on a phone');
@@ -450,7 +496,7 @@ function serveSite(configFor) {
   check('no console errors', errors.length === 0, errors.join(' | '));
 
   await browser.close();
-  for (const s of [site, reader]) { s.closeAllConnections(); await new Promise((r) => s.close(r)); }
+  for (const s of [site, siteOff, reader]) { s.closeAllConnections(); await new Promise((r) => s.close(r)); }
   await mock.close();
   console.log('\n' + passed + ' passed, ' + failures.length + ' failed');
   if (failures.length) { console.log('FAILED:\n  ' + failures.join('\n  ')); process.exit(1); }

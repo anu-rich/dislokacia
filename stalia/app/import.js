@@ -14,7 +14,28 @@
    */
   function create(app) {
     const { t, esc, engine: E, view: V, extract: X, schema: S } = app;
-    const AI = Object.assign({ endpoint: '', maxPages: 20, maxMb: 18, pdfjs: 'vendor/pdfjs/pdf.min.js', pdfWorker: 'vendor/pdfjs/pdf.worker.min.js' }, app.config.ai || {});
+    const AI = Object.assign({
+      endpoint: '', maxPages: 20, maxMb: 18, pdfjs: 'vendor/pdfjs/pdf.min.js', pdfWorker: 'vendor/pdfjs/pdf.worker.min.js',
+      ownKey: true, directReader: 'vendor/reader/stalia-reader.js', directBaseUrl: '',
+    }, app.config.ai || {});
+
+    // ------------------------------------------------------------ one's own Claude API key
+    // Anyone with a key of their own can read documents without the reading server: the pages then go from this
+    // device straight to Anthropic. The key is kept in this browser only and is never sent anywhere else.
+    const OWN = 'stalia.ai.v1';
+    const OWN_MODELS = [['claude-haiku-5-5', 'Claude Haiku 5.5 · ~$0.01'], ['claude-sonnet-5-5', 'Claude Sonnet 5.5 · ~$0.10']];
+    const own = {
+      allowed: () => AI.ownKey !== false && typeof AI.reader !== 'function',
+      load() {
+        try {
+          const v = JSON.parse(localStorage.getItem(OWN) || 'null');
+          return v && typeof v.key === 'string' && v.key ? { key: v.key, model: OWN_MODELS.some((m) => m[0] === v.model) ? v.model : OWN_MODELS[0][0] } : null;
+        } catch (e) { return null; }
+      },
+      save(v) { try { localStorage.setItem(OWN, JSON.stringify(v)); return true; } catch (e) { return false; } },
+      clear() { try { localStorage.removeItem(OWN); } catch (e) { /* nothing was kept */ } },
+    };
+    const mine = () => (own.allowed() ? own.load() : null);
     const $ = (s, r) => (r || document).querySelector(s);
     const els = { box: $('#import'), body: $('#imp-body'), file: $('#imp-file'), cam: $('#imp-cam'), redact: $('#redact'), stage: $('#rd-stage') };
 
@@ -175,6 +196,13 @@
       if (typeof AI.reader === 'function') {
         try { return await AI.reader(payload, signal); } catch (e) { return { ok: false, error: e && e.name === 'AbortError' ? 'aborted' : 'server' }; }
       }
+      const key = mine();
+      if (key) {
+        try {
+          const lib = await import(new URL(AI.directReader, document.baseURI).href);
+          return await lib.readDirect({ apiKey: key.key, model: key.model, pages: payload.pages, lang: payload.lang, signal, baseURL: AI.directBaseUrl || undefined });
+        } catch (e) { return { ok: false, error: 'server' }; }
+      }
       if (!/^https?:\/\//.test(AI.endpoint || '')) return { ok: false, error: 'unavailable' };
       try {
         const res = await fetch(AI.endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), signal });
@@ -186,7 +214,7 @@
         return { ok: false, error: e && e.name === 'AbortError' ? 'aborted' : 'network' };
       }
     }
-    const available = () => typeof AI.reader === 'function' || /^https?:\/\//.test(AI.endpoint || '');
+    const available = () => typeof AI.reader === 'function' || /^https?:\/\//.test(AI.endpoint || '') || !!mine();
 
     async function read() {
       if (st.busy) return;
@@ -205,7 +233,12 @@
       const res = await send({ v: 1, lang: app.state.lang, license: app.licenceKey() || '', pages }, st.abort ? st.abort.signal : undefined);
       if (!st.open || res.error === 'aborted') { st.busy = ''; st.abort = null; return; }
       if (res.quota) st.quota = res.quota;
-      if (!res.ok) { if (res.error === 'too_many') { st.busy = ''; st.error = t('imp.tooMany', { n: res.limit || AI.maxPages }); render(); } else fail(res.error); return; }
+      if (!res.ok) {
+        if (res.error === 'too_many') { st.busy = ''; st.error = t('imp.tooMany', { n: res.limit || AI.maxPages }); render(); }
+        else if (res.error === 'key') { st.busy = ''; st.abort = null; st.error = t('imp.err.key', { text: res.said || '—' }); render(); }
+        else fail(res.error);
+        return;
+      }
       if (S.shapeError(res.extraction, S.SCHEMA)) { fail('server'); return; }
       const got = X.toCalc(res.extraction);
       if (got.empty) { fail('empty'); return; }
@@ -275,6 +308,21 @@
           (touch ? '<button type="button" class="btn" data-act="imp-cam" data-doc="' + d + '"' + dis + '>' + esc(t('imp.takePhoto')) + '</button>' : '') + '</div></section>';
       }
       h += '</div><p class="imp-privacy">' + esc(t('imp.privacy')) + '</p>';
+      if (own.allowed()) {
+        const key = own.load();
+        h += '<details class="imp-key" id="imp-key"' + (st.keyOpen || (!key && !available()) ? ' open' : '') + '><summary>' + esc(t('imp.key.title')) + '</summary><div class="imp-key-b">' +
+          '<p class="f-hint">' + esc(t('imp.key.hint')) + '</p>';
+        if (key) {
+          h += '<p class="note note-ok">' + esc(t('imp.key.saved')) + ' <code>' + esc(key.key.slice(0, 7) + '…' + key.key.slice(-4)) + '</code></p>' +
+            '<div class="f"><label class="f-l" for="imp-key-model">' + esc(t('imp.key.model')) + '</label><select id="imp-key-model">' +
+            OWN_MODELS.map((m) => '<option value="' + m[0] + '"' + (m[0] === key.model ? ' selected' : '') + '>' + esc(m[1]) + '</option>').join('') + '</select></div>' +
+            '<div><button type="button" class="btn btn-sm" data-act="imp-key-remove">' + esc(t('imp.key.remove')) + '</button></div>';
+        } else {
+          h += '<div class="imp-key-row"><input type="password" id="imp-key-in" placeholder="sk-ant-…" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="' + esc(t('imp.key.title')) + '">' +
+            '<button type="button" class="btn" data-act="imp-key-save">' + esc(t('imp.key.save')) + '</button></div>';
+        }
+        h += '</div></details>';
+      }
       if (st.busy === 'opening') h += '<p class="note imp-wait" role="status">' + esc(t('imp.opening')) + '</p>';
       if (st.busy === 'reading') h += '<p class="note imp-wait" role="status">' + esc(t('imp.reading')) + '</p>';
       if (st.error) {
@@ -523,6 +571,14 @@
       'imp-read': read,
       'imp-back'() { st.step = 'docs'; st.error = ''; render(); },
       'imp-apply': apply,
+      'imp-key-save'() {
+        const el = $('#imp-key-in'), key = el ? el.value.trim() : '';
+        if (!/^sk-[\w-]{20,400}$/.test(key)) { if (el) { el.classList.add('bad'); el.focus(); } return; }
+        own.save({ key, model: OWN_MODELS[0][0] });
+        st.error = ''; st.keyOpen = true;
+        render();
+      },
+      'imp-key-remove'() { own.clear(); st.keyOpen = true; render(); },
       'rd-done': closeRedact,
       'rd-undo'() { const p = pageById(rd.id); if (p && p.marks.length) { p.marks.pop(); p.dirty = true; rdMarks(); } },
       'rd-clear'() { const p = pageById(rd.id); if (p && p.marks.length) { p.marks = []; p.dirty = true; rdMarks(); } },
@@ -534,7 +590,11 @@
     };
     els.file.addEventListener('change', () => { addFiles(els.file.files, pickFor); });
     els.cam.addEventListener('change', () => { addFiles(els.cam.files, pickFor); });
-    els.box.addEventListener('change', (e) => { if (e.target.id === 'imp-keep') { st.keep = e.target.checked; render(); } });
+    els.box.addEventListener('change', (e) => {
+      if (e.target.id === 'imp-keep') { st.keep = e.target.checked; render(); }
+      if (e.target.id === 'imp-key-model') { const key = own.load(); if (key) own.save({ key: key.key, model: e.target.value }); }
+    });
+    els.box.addEventListener('toggle', (e) => { if (e.target.id === 'imp-key') st.keyOpen = e.target.open; }, true);
     // files dropped on a slot, and screenshots pasted with Ctrl+V
     els.box.addEventListener('dragover', (e) => { if (e.target.closest && e.target.closest('.imp-slot')) e.preventDefault(); });
     els.box.addEventListener('drop', (e) => {

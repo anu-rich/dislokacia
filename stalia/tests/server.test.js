@@ -62,6 +62,15 @@ test('the copies inside server/ match the site: schema, licence check, public ke
   }
 });
 
+test('the reader bundled for the browser was built from the current sources', () => {
+  const B = require('../tools/build-reader.js');
+  assert.equal(B.builtFrom(), B.sourceHash(), 'app/vendor/reader/stalia-reader.js is out of date: run "node tools/build-reader.js"');
+  const bundle = fs.readFileSync(path.join(ROOT, 'app', 'vendor', 'reader', 'stalia-reader.js'), 'utf8');
+  assert.match(bundle, /Solid black rectangles are deliberate/, 'the instruction is inside');
+  assert.ok(bundle.length < 700 * 1024, 'the bundle stays reasonably small');
+  assert.ok(fs.existsSync(path.join(ROOT, 'app', 'vendor', 'reader', 'LICENSE-anthropic-sdk.txt')));
+});
+
 serverTest('GET tells whether the service is up and configured', async () => {
   const s = await service();
   try {
@@ -96,7 +105,10 @@ serverTest('a reading: pages go to the model as the documentation prescribes, th
     assert.doesNotMatch(String(q.headers['anthropic-beta'] || ''), /server-side-fallback/);
     assert.equal(b.stream, true);
     assert.equal(b.max_tokens, 64000);
-    assert.deepEqual(b.output_config, { effort: 'high', format: { type: 'json_schema', schema: X.SCHEMA } });
+    // The schema travels inside the instruction; the API is not asked to enforce it (it refuses this schema as too large).
+    assert.deepEqual(b.output_config, { effort: 'high' });
+    assert.ok(b.system.endsWith(JSON.stringify(X.SCHEMA)), 'the instruction ends with the schema');
+    assert.match(b.system, /Reply with one JSON object and nothing else/);
     assert.equal('thinking' in b, false, 'thinking is left to the model’s default');
     assert.equal('temperature' in b, false);
     assert.equal('tool_choice' in b, false);
@@ -239,7 +251,7 @@ serverTest('when the model fails: nothing read is given back, a refusal or a bro
   const plans = [
     { status: 401, error: 'authentication_error' }, { status: 429, error: 'rate_limit_error' }, { status: 529, error: 'overloaded_error' },
     { status: 400, error: 'invalid_request_error' }, { status: 413, error: 'request_too_large' },
-    { text: '', stop: 'refusal' }, { text: '{"documents":', stop: 'max_tokens' }, { text: 'Sorry, I cannot.' }, { text: JSON.stringify({ ports: [] }) },
+    { text: '', stop: 'refusal' }, { text: '{"documents":', stop: 'max_tokens' }, { text: 'Sorry, I cannot.' }, { text: '[1, 2, 3]' },
   ];
   const s = await service((req) => plans[req.n - 1], { FREE_PER_DAY: '50' });
   try {
@@ -251,6 +263,28 @@ serverTest('when the model fails: nothing read is given back, a refusal or a bro
     ]);
     assert.deepEqual(s.logs.map((l) => l.error), ['config', 'busy', 'upstream', 'bad_request', 'too_big', 'refused', 'too_long', 'unreadable', 'unreadable']);
     assert.equal((await s.post(twoPages())).json.error, 'refused', 'an empty answer is a failed reading too');
+  } finally { await s.mock.close(); }
+});
+
+serverTest('a reply that is nearly right is accepted: fenced, with a sentence around it, or a little out of shape', async () => {
+  const good = answer();
+  const rough = JSON.parse(JSON.stringify(good));
+  delete rough.money.despatch_basis; rough.money.demurrage_per_day = 14500; rough.surplus = 'x'; rough.ports[0].operation = 'loading';
+  const replies = ['```json\n' + JSON.stringify(good) + '\n```', 'Here is the answer:\n' + JSON.stringify(good, null, 2) + '\nLet me know if anything is unclear.', JSON.stringify(rough), '{}'];
+  const s = await service((req) => ({ text: replies[req.n - 1] }), { FREE_PER_DAY: '9' });
+  try {
+    for (let i = 0; i < 2; i++) {
+      const r = await s.post(twoPages());
+      assert.equal(r.status, 200);
+      assert.deepEqual(r.json.extraction, good, 'reply ' + (i + 1));
+    }
+    const fixed = (await s.post(twoPages())).json.extraction;
+    assert.equal(X.shapeError(fixed, X.SCHEMA), '');
+    assert.deepEqual([fixed.money.despatch_basis, fixed.money.demurrage_per_day, 'surplus' in fixed, fixed.ports[0].operation], ['unknown', '14500', false, 'load']);
+    const empty = await s.post(twoPages());
+    assert.equal(empty.status, 200);
+    assert.deepEqual(empty.json.extraction, X.blankExtraction(), 'an empty object becomes an empty answer, which the site reports as “nothing found”');
+    assert.equal(X.toCalc(empty.json.extraction).empty, true);
   } finally { await s.mock.close(); }
 });
 

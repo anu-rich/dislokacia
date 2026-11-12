@@ -431,7 +431,7 @@
     'imp.redact.done': 'Done',
     'imp.privacy': 'Only these pages are sent for reading, with the marked areas already painted over. Stalia does not keep them.',
     'imp.read': 'Read the documents',
-    'imp.reading': 'Reading… this takes up to a minute',
+    'imp.reading': 'Reading… usually under a minute, longer for many pages',
     'imp.needDoc': 'Add at least one document.',
     'imp.tooMany': 'That is more than {n} pages. Remove the pages that have no laytime terms.',
     'imp.pdfFail': 'This PDF could not be opened. Try a photo or a screenshot of the pages you need.',
@@ -463,6 +463,13 @@
     'imp.err.server': 'The reading service returned an error. Try again in a minute.',
     'imp.err.empty': 'No laytime terms were found on these pages.',
     'imp.err.tooBig': 'The pages are too heavy to send. Remove the ones you do not need.',
+    'imp.key.title': 'Read with your own Claude API key',
+    'imp.key.hint': 'The key is kept on this device only. Pages go from this device straight to Anthropic, and each reading is charged to your Anthropic account.',
+    'imp.key.save': 'Save the key',
+    'imp.key.saved': 'Your own key is in use on this device:',
+    'imp.key.remove': 'Remove the key',
+    'imp.key.model': 'Model and approximate price of a reading',
+    'imp.err.key': 'Anthropic did not accept the request: {text}',
     'pro.f7': 'More document readings per day',
 
     // misc

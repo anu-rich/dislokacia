@@ -63,7 +63,7 @@ const originAllowed = (request, cfg) => {
 
 /** What the model's failures mean to the person waiting, and the HTTP status that goes with it. */
 const FAILURES = {
-  config: [503, 'unavailable'], busy: [503, 'server'], upstream: [502, 'server'], too_long: [502, 'server'],
+  config: [503, 'unavailable'], busy: [503, 'server'], upstream: [502, 'server'], network: [502, 'server'], too_long: [502, 'server'],
   bad_request: [400, 'bad_request'], too_big: [413, 'too_big'], refused: [422, 'refused'], unreadable: [422, 'refused'], aborted: [499, 'aborted'],
 };
 

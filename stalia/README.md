@@ -82,7 +82,7 @@ node tools/keygen.js issue --name "ТОО Пример" --days 365
 
 ```bash
 npm test                    # 55 проверок расчёта, лицензий, текстов и ссылок
-node tests/e2e/smoke.js     # 94 проверки в настоящем браузере (нужен Playwright)
+node tests/e2e/smoke.js     # более 100 проверок в настоящем браузере (нужен Playwright)
 ```
 
 ## Первые клиенты

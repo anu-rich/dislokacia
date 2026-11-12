@@ -526,8 +526,12 @@
   $('#dlg').addEventListener('close', () => overlayClosed('dialog'));
 
   // ---------------------------------------------------------------- Pro dialog
+  // Prices are shown in tenge only to visitors in Kazakhstan; everyone else sees dollars.
+  const IN_KAZAKHSTAN = (() => {
+    try { return /^Asia\/(Almaty|Qyzylorda|Qostanay|Aqtobe|Aqtau|Atyrau|Oral)$/.test(Intl.DateTimeFormat().resolvedOptions().timeZone); } catch (e) { return false; }
+  })();
   function priceText(period) {
-    const p = CFG.pricing || {}, local = state.lang !== 'en' && p.kzt, src = local ? p.kzt : (p.usd || {});
+    const p = CFG.pricing || {}, local = IN_KAZAKHSTAN && state.lang !== 'en' && p.kzt, src = local ? p.kzt : (p.usd || {});
     const v = src[period];
     if (v == null) return '';
     return local ? V.fmtNumber(v, state.lang, 0) + ' ₸' : '$' + V.fmtNumber(v, 'en', 0);

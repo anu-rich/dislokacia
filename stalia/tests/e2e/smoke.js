@@ -303,9 +303,20 @@ const norm = (s) => String(s).replace(/[  ]/g, ' ').replace(/\s+/g, ' ').trim
     }
     await sp.context().close();
   }
-  const lp = await newPage();
+  // the Russian and Kazakh pages show tenge to visitors in Kazakhstan and dollars to everyone else
+  const abroad = await newPage({ timezoneId: 'Europe/Istanbul', locale: 'ru-RU' });
+  await abroad.goto(base + '/ru/', { waitUntil: 'networkidle' });
+  const priceAbroad = norm(await abroad.locator('#pricing').innerText());
+  check('landing (ru) outside Kazakhstan: dollars only', /\$19/.test(priceAbroad) && /\$149/.test(priceAbroad) && /\$0/.test(priceAbroad) && !/₸/.test(priceAbroad), priceAbroad.slice(0, 200));
+  await abroad.goto(base + '/app/?lang=ru', { waitUntil: 'networkidle' });
+  await abroad.click('#lic');
+  check('calculator (ru) outside Kazakhstan: Pro prices in dollars', /\$19/.test(await text(abroad, '#dlg')) && !/₸/.test(await text(abroad, '#dlg')));
+  await abroad.context().close();
+  const lp = await newPage({ timezoneId: 'Asia/Almaty', locale: 'ru-RU' });
+  await lp.goto(base + '/kk/', { waitUntil: 'networkidle' });
+  check('landing (kk) in Kazakhstan: tenge', /9\s?900 ₸/.test(norm(await lp.locator('#pricing').innerText())) && /0 ₸/.test(norm(await lp.locator('#pricing').innerText())));
   await lp.goto(base + '/ru/', { waitUntil: 'networkidle' });
-  check('landing: prices come from config', /9\s?900 ₸/.test(norm(await lp.locator('#pricing').innerText())) && /\$19/.test(await lp.locator('#pricing').innerText()));
+  check('landing (ru) in Kazakhstan: tenge, with the card price in dollars alongside', /9\s?900 ₸/.test(norm(await lp.locator('#pricing').innerText())) && /\$19/.test(await lp.locator('#pricing').innerText()));
   check('landing: buy button falls back to the contact block', (await lp.getAttribute('a[data-buy="monthly"]', 'href')) === '#contact');
   await lp.click('.hero .cta a');
   await lp.waitForSelector('#summary .res-amount');

@@ -15,6 +15,17 @@
     el.textContent = p[0] === 'kzt' ? fmt(v, 'ru-RU') + ' ₸' : '$' + fmt(v, 'en-US');
   });
 
+  // ---- local prices: tenge for visitors in Kazakhstan, dollars for everyone else
+  var inKazakhstan = false;
+  try { inKazakhstan = /^Asia\/(Almaty|Qyzylorda|Qostanay|Aqtobe|Aqtau|Atyrau|Oral)$/.test(Intl.DateTimeFormat().resolvedOptions().timeZone); } catch (e) { /* unknown zone: dollars */ }
+  $$('[data-price-local]').forEach(function (el) {
+    var cur = inKazakhstan ? 'kzt' : 'usd', v = CFG.pricing && CFG.pricing[cur] && CFG.pricing[cur][el.getAttribute('data-price-local')];
+    if (v == null) return;
+    el.textContent = cur === 'kzt' ? fmt(v, 'ru-RU') + ' ₸' : '$' + fmt(v, 'en-US');
+  });
+  $$('[data-price-zero]').forEach(function (el) { el.textContent = inKazakhstan ? '0 ₸' : '$0'; });
+  $$('[data-kz-only]').forEach(function (el) { el.hidden = !inKazakhstan; });
+
   // ---- contacts and checkout links
   var email = CFG.contactEmail || '';
   $$('[data-contact="email"]').forEach(function (el) { if (email) el.textContent = email; });

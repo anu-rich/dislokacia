@@ -1,5 +1,6 @@
 /*
- * Daily counters behind the reading limits. Two stores with the same two methods:
+ * Counters behind the reading allowances (a day for free readings, a calendar month for a Pro licence).
+ * Two stores with the same two methods:
  *   get(key) -> number            add(key, delta, ttlSeconds) -> the new number
  */
 

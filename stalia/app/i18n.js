@@ -473,9 +473,10 @@
     'imp.keep.terms': 'Only the statement of facts was added: keep the terms of the current calculation',
     'imp.keep.facts': 'Only the charter party was added: keep the times of the current calculation',
     'imp.quota': 'Readings left today: {n}',
+    'imp.quotaMonth': 'Readings left this month: {n}',
     'imp.err.network': 'Could not reach the reading service. Check the connection and try again.',
     'imp.err.unavailable': 'Reading documents is not switched on yet.',
-    'imp.err.limit': 'The daily limit for reading documents is used up. Try again tomorrow.',
+    'imp.err.limit': 'This month’s readings are used up. The count starts again next month.',
     'imp.err.pro': 'The free readings for today are used up. Pro has a larger allowance.',
     'imp.err.refused': 'The documents could not be read. Make sure the pages are legible and try again.',
     'imp.err.server': 'The reading service returned an error. Try again in a minute.',
@@ -504,7 +505,7 @@
     'help.s5.share': '“{share}” sends it to a colleague.',
     'help.start': 'Start',
     'help.lang': 'Language',
-    'pro.f7': 'More document readings per day',
+    'pro.f7': '200 document readings a month',
 
     // misc
     'dow.0': 'Sunday', 'dow.1': 'Monday', 'dow.2': 'Tuesday', 'dow.3': 'Wednesday', 'dow.4': 'Thursday', 'dow.5': 'Friday', 'dow.6': 'Saturday',

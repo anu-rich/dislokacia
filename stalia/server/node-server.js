@@ -67,7 +67,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const cfg = settings(process.env);
   start(process.env).then((server) => {
     console.log('Stalia reading server is listening on port ' + server.address().port);
-    console.log(cfg.apiKey ? 'Models: ' + cfg.model + ' (Pro), ' + cfg.modelFree + ' (free) · free ' + cfg.freePerDay + '/day · Pro ' + cfg.proPerDay + '/day · all ' + cfg.globalPerDay + '/day'
+    console.log(cfg.apiKey ? 'Models: ' + cfg.model + ' (Pro), ' + cfg.modelFree + ' (free) · free ' + cfg.freePerDay + ' a day per visitor · Pro ' + cfg.proPerMonth + ' a month per licence'
       : 'ANTHROPIC_API_KEY is not set: the server answers, but reading is switched off.');
     if (!cfg.origins.length) console.log('ALLOWED_ORIGINS is empty: any site may call this server. Set it to the address of your site.');
   });

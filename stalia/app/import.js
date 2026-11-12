@@ -328,7 +328,7 @@
       if (st.error) {
         h += '<p class="note note-err" role="alert">' + esc(st.error) + (st.errorPro && !app.isPro() ? ' <button type="button" class="btn btn-sm" data-act="pro">' + esc(t('nav.upgrade')) + '</button>' : '') + '</p>';
       }
-      if (st.quota && !st.error) h += '<p class="f-hint">' + esc(t('imp.quota', { n: st.quota.left })) + '</p>';
+      if (st.quota && !st.error) h += '<p class="f-hint">' + esc(quotaText()) + '</p>';
       h += '<div class="imp-go"><button type="button" class="btn btn-primary btn-lg" data-act="imp-read"' + (st.busy || !st.pages.length ? ' disabled' : '') + '>' +
         esc(st.busy === 'reading' ? t('imp.reading') : t('imp.read')) + '</button></div>';
       return h;
@@ -364,7 +364,7 @@
       }
       h += '</section><section class="imp-sec"><h3>' + esc(t('imp.review.notes')) + '</h3>' +
         (out.notes.length ? '<ul class="imp-notes">' + out.notes.map((n) => noteHTML(n, calc, false)).join('') + '</ul>' : '<p class="empty">' + esc(t('imp.review.none')) + '</p>') + '</section>';
-      if (st.quota) h += '<p class="f-hint">' + esc(t('imp.quota', { n: st.quota.left })) + '</p>';
+      if (st.quota) h += '<p class="f-hint">' + esc(quotaText()) + '</p>';
       h += '<div class="imp-go"><button type="button" class="btn btn-primary btn-lg" data-act="imp-apply">' + esc(t('imp.review.apply')) + '</button>' +
         '<button type="button" class="btn" data-act="imp-back">' + esc(t('imp.review.back')) + '</button></div>';
       return h;
@@ -394,6 +394,8 @@
     }
     function close() { if (!st.open) return; hide(); app.overlayClosed('import'); }
     function reset() { st.pages = []; st.read = null; st.step = 'docs'; st.error = ''; st.quota = null; }
+    /** What is left of the allowance: free readings are counted by the day, Pro readings by the month. */
+    const quotaText = () => t(st.quota.perMonth != null ? 'imp.quotaMonth' : 'imp.quota', { n: st.quota.left });
 
     function apply() {
       if (!st.read) return;

@@ -34,10 +34,8 @@ export function settings(env) {
     modelFree: String(env.STALIA_MODEL_FREE || '').trim() || DEFAULT_FREE_MODEL,
     effort: String(env.STALIA_EFFORT || '').trim() || DEFAULT_EFFORT,
     origins: String(env.ALLOWED_ORIGINS || '').split(',').map((s) => s.trim().replace(/\/+$/, '')).filter(Boolean),
-    freePerDay: whole(env.FREE_PER_DAY, 2),
-    proPerDay: whole(env.PRO_PER_DAY, 20),
-    proPerMonth: whole(env.PRO_PER_MONTH, 200),
-    globalPerDay: whole(env.GLOBAL_PER_DAY, 150),
+    freePerDay: whole(env.FREE_PER_DAY, 2),      // without a licence: readings a day for one visitor
+    proPerMonth: whole(env.PRO_PER_MONTH, 200),  // with a Pro licence: readings a calendar month for one licence
     maxPages: Math.min(40, whole(env.MAX_PAGES, 20) || 20),
     maxBodyBytes: (whole(env.MAX_BODY_MB, 24) || 24) * 1024 * 1024,
     maxPageChars: 6 * 1024 * 1024, // about 4.5 MB of image
@@ -79,7 +77,7 @@ export function createHandler(deps) {
     createClient: (cfg) => new Anthropic({ apiKey: cfg.apiKey, baseURL: cfg.baseURL }),
     read: readDocuments,
   }, deps);
-  if (!d.store) throw new Error('createHandler needs a store for the daily counters');
+  if (!d.store) throw new Error('createHandler needs a store for the counters');
 
   return async function handle(request, env, ctx) {
     const cfg = settings(env);
@@ -92,7 +90,7 @@ export function createHandler(deps) {
 
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
     if (request.method === 'GET' || request.method === 'HEAD') {
-      return reply(200, { ok: true, service: 'stalia-reader', ready: !!cfg.apiKey, limits: { pages: cfg.maxPages, freePerDay: cfg.freePerDay, proPerDay: cfg.proPerDay } });
+      return reply(200, { ok: true, service: 'stalia-reader', ready: !!cfg.apiKey, limits: { pages: cfg.maxPages, freePerDay: cfg.freePerDay, proPerMonth: cfg.proPerMonth } });
     }
     if (request.method !== 'POST') return fail(405, 'bad_request');
     if (!originAllowed(request, cfg)) return fail(403, 'origin');
@@ -117,24 +115,21 @@ export function createHandler(deps) {
     pages.sort((a, b) => (a.doc === b.doc ? 0 : (a.doc === 'cp' ? -1 : 1))); // charter party first; the order inside each stays
     const lang = LANGUAGE_NAMES[body.lang] ? body.lang : 'en';
 
-    // ---- who is asking, and how much they have left today
+    // ---- who is asking, and how much they have left
+    // Two allowances and nothing else: free readings are counted per visitor and day, Pro readings per licence
+    // and calendar month. What all visitors together may spend is capped in the Anthropic console, not here.
     const lic = await planOf(body.license, env, d);
     const pro = lic.plan === 'pro';
-    const limit = pro ? cfg.proPerDay : cfg.freePerDay;
+    const limit = pro ? cfg.proPerMonth : cfg.freePerDay;
     const day = new Date(d.now()).toISOString().slice(0, 10);
-    const who = day + ':' + (pro ? 'k:' + lic.id : 'ip:' + (await sha256Hex(cfg.salt + '|' + (ctx.ip || 'unknown'))).slice(0, 32));
-    const all = day + ':all';
-    const month = pro ? day.slice(0, 7) + ':k:' + lic.id : ''; // a licence also has a ceiling for the calendar month
-    const quota = (left) => ({ plan: lic.plan, left: Math.max(0, left), perDay: limit });
+    const counter = pro ? day.slice(0, 7) + ':k:' + lic.id : day + ':ip:' + (await sha256Hex(cfg.salt + '|' + (ctx.ip || 'unknown'))).slice(0, 32);
+    const ttl = pro ? MONTH_SECONDS : DAY_SECONDS;
+    const quota = (left) => Object.assign({ plan: lic.plan, left: Math.max(0, left) }, pro ? { perMonth: limit } : { perDay: limit });
     if (limit <= 0) return fail(429, pro ? 'limit' : 'pro', { quota: quota(0) });
-    // Every counter is taken before the call, so parallel requests cannot overrun a limit; `giveBack` returns them.
-    const taken = [];
-    const take = async (key, ttl) => { taken.push([key, ttl]); return d.store.add(key, 1, ttl); };
-    const giveBack = async () => { for (const [key, ttl] of taken.splice(0)) await d.store.add(key, -1, ttl); };
-    const used = await take(who, DAY_SECONDS);
+    // The reading is counted before the call, so parallel requests cannot overrun the allowance; `giveBack` returns it.
+    const used = await d.store.add(counter, 1, ttl);
+    const giveBack = () => d.store.add(counter, -1, ttl);
     if (used > limit) { await giveBack(); return fail(429, pro ? 'limit' : 'pro', { quota: quota(0) }); }
-    if (month && (await take(month, MONTH_SECONDS)) > cfg.proPerMonth) { await giveBack(); return fail(429, 'limit', { quota: quota(0) }); }
-    if ((await take(all, DAY_SECONDS)) > cfg.globalPerDay) { await giveBack(); return fail(429, 'limit', { quota: quota(limit - used + 1) }); }
 
     // ---- the reading
     const started = d.now();

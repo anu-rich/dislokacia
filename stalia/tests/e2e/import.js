@@ -89,7 +89,7 @@ function serveSite(configFor) {
   ]);
   const serverLog = [];
   const reader = await node.start(
-    { ANTHROPIC_API_KEY: 'sk-test', STALIA_API_BASE_URL: mock.url, FREE_PER_DAY: '8', PRO_PER_DAY: '20', STALIA_PUBLIC_KEYS: JSON.stringify([kp.publicJwk]) },
+    { ANTHROPIC_API_KEY: 'sk-test', STALIA_API_BASE_URL: mock.url, FREE_PER_DAY: '8', STALIA_PUBLIC_KEYS: JSON.stringify([kp.publicJwk]) },
     { port: 0, host: '127.0.0.1', deps: { store: new limits.MemoryStore(), log: (o) => serverLog.push(o), createClient: (cfg) => new sdk.default({ apiKey: cfg.apiKey, baseURL: cfg.baseURL, maxRetries: 0 }) } });
   const readerUrl = 'http://127.0.0.1:' + reader.address().port + '/';
 
@@ -330,14 +330,14 @@ function serveSite(configFor) {
   }
   check('when the free readings are used up, Pro is offered', /free readings for today are used up/.test(outOfFree) && (await page.locator('#imp-body .note-err [data-act="pro"]').count()) === 1, outOfFree);
   await page.click('#imp-body .note-err [data-act="pro"]');
-  check('the Pro window opens above', await page.locator('#dlg').isVisible() && /More document readings per day/.test(await text(page, '#dlg')));
+  check('the Pro window opens above', await page.locator('#dlg').isVisible() && /200 document readings a month/.test(await text(page, '#dlg')));
   await page.fill('#lic-key', PRO_KEY);
   await page.click('#lic-btn');
   await page.waitForFunction(() => window.__stalia.lic.get().pro);
   await page.click('#dlg [data-act="dlg-close"]');
   await page.click('[data-act="imp-read"]');
   await page.waitForSelector('.imp-h', { timeout: 30000 });
-  check('with a Pro licence the reading goes through', /Readings left today: 19/.test(await text(page, '#imp-body')) && serverLog[serverLog.length - 1].plan === 'pro', await text(page, '#imp-body'));
+  check('with a Pro licence the reading goes through', /Readings left this month: 199/.test(await text(page, '#imp-body')) && serverLog[serverLog.length - 1].plan === 'pro', await text(page, '#imp-body'));
   check('the licence key itself never reaches the model', !JSON.stringify(mock.requests[mock.requests.length - 1].body).includes(PRO_KEY.slice(0, 40)));
 
   console.log('Back and Escape');

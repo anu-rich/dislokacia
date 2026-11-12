@@ -13,11 +13,9 @@ STALIA_MODEL = "claude-sonnet-5-5"
 STALIA_MODEL_FREE = "claude-haiku-5-5"
 # How thoroughly the model works: low | medium | high | xhigh | max.
 STALIA_EFFORT = "high"
-# Readings per day: without a licence (per visitor), with a Pro licence (per licence), and for everybody together.
+# Readings a day for one visitor without a licence ("0" makes reading a Pro-only feature).
 FREE_PER_DAY = "2"
-PRO_PER_DAY = "20"
-GLOBAL_PER_DAY = "150"
-# Readings per calendar month for one Pro licence.
+# Readings a calendar month for one Pro licence. There are no other limits: cap your spending in the Anthropic console.
 PRO_PER_MONTH = "200"
 
 # Recommended: counters that all copies of the Worker share.

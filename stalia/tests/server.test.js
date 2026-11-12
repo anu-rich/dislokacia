@@ -75,7 +75,7 @@ serverTest('GET tells whether the service is up and configured', async () => {
   const s = await service();
   try {
     const up = await (await s.handle(new Request('https://reader.test/'), s.env)).json();
-    assert.deepEqual(up, { ok: true, service: 'stalia-reader', ready: true, limits: { pages: 20, freePerDay: 2, proPerDay: 20 } });
+    assert.deepEqual(up, { ok: true, service: 'stalia-reader', ready: true, limits: { pages: 20, freePerDay: 2, proPerMonth: 200 } });
     const off = await (await s.handle(new Request('https://reader.test/'), {})).json();
     assert.equal(off.ready, false);
     const r = await s.post(twoPages(), { env: {} });
@@ -193,8 +193,9 @@ serverTest('malformed requests are turned away before anything is spent', async 
   } finally { await s.mock.close(); }
 });
 
-serverTest('limits: free per address, Pro per licence, one cap for everybody, a new day starts again', async () => {
-  const s = await service(null, { FREE_PER_DAY: '2', PRO_PER_DAY: '3', GLOBAL_PER_DAY: '6' });
+serverTest('limits: free readings per address and day, Pro readings per licence and month — and no others', async () => {
+  // settings that no longer exist (a daily Pro limit, a cap for everybody) are ignored
+  const s = await service(null, { FREE_PER_DAY: '2', PRO_PER_MONTH: '4', PRO_PER_DAY: '1', GLOBAL_PER_DAY: '3' });
   try {
     assert.equal((await s.post(twoPages())).json.quota.left, 1);
     assert.equal((await s.post(twoPages())).json.quota.left, 0);
@@ -205,36 +206,38 @@ serverTest('limits: free per address, Pro per licence, one cap for everybody, a 
     assert.equal((await s.post(twoPages({ license: expiredKey }))).json.error, 'pro');
     assert.equal((await s.post(twoPages({ license: 'STL1.bogus.bogus' }))).json.error, 'pro');
     const p1 = await s.post(twoPages({ license: proKey }));
-    assert.deepEqual([p1.status, p1.json.quota], [200, { plan: 'pro', left: 2, perDay: 3 }]);
-    assert.equal((await s.post(twoPages({ license: proKey }), { ip: '192.0.2.1' })).json.quota.left, 1);
-    assert.equal((await s.post(twoPages({ license: proKey }))).json.quota.left, 0);
-    // six readings were done today: the cap for everybody is reached, also for a new address
-    const capped = await s.post(twoPages(), { ip: '192.0.2.55' });
-    assert.deepEqual([capped.status, capped.json.error], [429, 'limit']);
-    const proOver = await s.post(twoPages({ license: proKey }));
-    assert.deepEqual([proOver.status, proOver.json.error], [429, 'limit']);
-    assert.equal(s.mock.requests.length, 6);
+    assert.deepEqual([p1.status, p1.json.quota], [200, { plan: 'pro', left: 3, perMonth: 4 }]);
+    assert.equal((await s.post(twoPages({ license: proKey }), { ip: '192.0.2.1' })).json.quota.left, 2);
+    // nothing caps all visitors together: twenty more addresses read, each within its own two a day
+    for (let i = 1; i <= 20; i++) assert.equal((await s.post(twoPages(), { ip: '203.0.113.' + (100 + i) })).status, 200, 'address ' + i);
+    assert.equal(s.mock.requests.length, 25);
+    // a new day: free readings start again, the Pro month goes on
     s.clock.t += 24 * 3600 * 1000;
-    assert.equal((await s.post(twoPages())).status, 200);
+    assert.equal((await s.post(twoPages())).json.quota.left, 1);
+    assert.equal((await s.post(twoPages({ license: proKey }))).json.quota.left, 1);
     // free readings can be switched off altogether
     const none = await s.post(twoPages(), { env: Object.assign({}, s.env, { FREE_PER_DAY: '0' }), ip: '192.0.2.77' });
     assert.deepEqual([none.status, none.json.error], [429, 'pro']);
   } finally { await s.mock.close(); }
 });
 
-serverTest('a Pro licence also has a ceiling for the calendar month', async () => {
-  const s = await service(null, { PRO_PER_DAY: '2', PRO_PER_MONTH: '3' });
+serverTest('a Pro licence: no daily limit, one allowance for the calendar month', async () => {
+  const s = await service(null, { PRO_PER_MONTH: '5' });
   try {
-    const go = () => s.post(twoPages({ license: proKey })).then((r) => [r.status, r.json.error || 'ok']);
-    assert.deepEqual([await go(), await go(), await go()], [[200, 'ok'], [200, 'ok'], [429, 'limit']], 'two a day');
+    const go = () => s.post(twoPages({ license: proKey })).then((r) => [r.status, r.json.error || 'ok', r.json.quota.left]);
+    // the whole month can be used in one day
+    assert.deepEqual([await go(), await go(), await go(), await go(), await go()], [[200, 'ok', 4], [200, 'ok', 3], [200, 'ok', 2], [200, 'ok', 1], [200, 'ok', 0]]);
+    const over = await s.post(twoPages({ license: proKey }));
+    assert.deepEqual([over.status, over.json.error, over.json.quota], [429, 'limit', { plan: 'pro', left: 0, perMonth: 5 }]);
     s.clock.t += 24 * 3600 * 1000;
-    assert.deepEqual([await go(), await go()], [[200, 'ok'], [429, 'limit']], 'the third of the month is the last');
-    s.clock.t += 24 * 3600 * 1000;
-    assert.deepEqual(await go(), [429, 'limit']);
+    assert.deepEqual(await go(), [429, 'limit', 0], 'the next day of the same month is still over');
     assert.equal((await s.post(twoPages(), { ip: '198.51.100.20' })).status, 200, 'free readings are not affected');
     s.clock.t = Date.parse('2026-12-01T00:10:00Z');
-    assert.deepEqual(await go(), [200, 'ok'], 'a new month starts again');
-    assert.equal(s.mock.requests.length, 5);
+    assert.deepEqual(await go(), [200, 'ok', 4], 'a new month starts again');
+    assert.equal(s.mock.requests.length, 7);
+    // the default is 200 a month
+    const d = await service();
+    try { assert.equal((await d.post(twoPages({ license: proKey }))).json.quota.perMonth, 200); } finally { await d.mock.close(); }
   } finally { await s.mock.close(); }
 });
 

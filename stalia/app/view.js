@@ -334,6 +334,23 @@
     return bits.join('; ') + '.';
   }
 
+  /**
+   * The terms of a calculation in plain English lines, for the document reader: with these it can count a time
+   * sheet under a contract whose pages are not attached. Needs no result, so it works before any time is entered.
+   */
+  function readerTerms(calc) {
+    const lines = [], n = (v) => (v === '' || v == null ? 'not stated' : String(v));
+    lines.push('Demurrage ' + (calc.currency || '') + ' ' + n(calc.demurrageRate) + ' per day. Despatch: ' +
+      (calc.despatchMode === 'none' ? 'none' : calc.despatchMode === 'custom' ? n(calc.despatchRate) + ' per day' : 'half the demurrage rate') +
+      '. Laytime between ports: ' + (calc.laytimeMode || 'reversible') + '. ' +
+      (calc.onceOnDemurrage === false ? 'Excepted periods also interrupt demurrage.' : 'Once on demurrage, always on demurrage.'));
+    (calc.ports || []).forEach((p, i) => {
+      lines.push('Port ' + (i + 1) + ' (' + (p.operation === 'discharge' ? 'discharging' : 'loading') + (p.name ? ', ' + p.name : '') + '): ' + portTermsText(p, 'en') + '.');
+    });
+    if (calc.meta && calc.meta.clauses) lines.push('Clauses of the charter party:', calc.meta.clauses);
+    return lines.join('\n').slice(0, 6000);
+  }
+
   // ---------------------------------------------------------------- statement (print document)
   /**
    * @param {object} opts { pro:boolean, brand:{company,details,logo}, siteUrl:string, today:string(YYYY-MM-DD) }
@@ -429,6 +446,6 @@
     esc, fmtNumber, fmtMoney, fmtRate, fmtDur, fmtDays, fmtDate, fmtDayShort, fmtTime, fmtDT, fmtDow, fmtPct,
     reasonText, rowRemarks, rowState, portFacts, portTitle, messageText, outcomeOf,
     summaryHTML, messagesHTML, timelineHTML, factsHTML, sheetRows, sheetTableHTML, sheetHTML, portSummaryHTML,
-    calendarText, portTermsText, termsText, statementHTML, sheetCSV, summaryText, portChip,
+    calendarText, portTermsText, termsText, readerTerms, statementHTML, sheetCSV, summaryText, portChip,
   };
 });

@@ -43,6 +43,10 @@
     // (the key stays in their browser). To hide that option, add  ownKey: false.
     ai: { endpoint: '', maxPages: 20 },
 
+    // The company space (shared calculations, history, links for counterparties) lives on the same server.
+    // Leave empty to use the address of ai.endpoint; set it only if the spaces run somewhere else.
+    space: { endpoint: '' },
+
     // Limits of the free version.
     free: { maxSaved: 3, maxPorts: 2 },
 

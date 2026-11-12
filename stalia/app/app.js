@@ -37,6 +37,8 @@
     source: 'example', exampleId: null, pristine: true,
     stLang: null, stOpen: false, open: {}, confirm: null, shareHash: '', undo: null,
     notes: [], // what to check after a calculation was read from documents: [{field, port, status, comment}]
+    cloud: null,     // the calculation's place in the company space: { id, base, head, role, guest, … } (see space.js)
+    contractId: '',  // the contract of the space this voyage is counted under
   };
   const lic = L.create({ config: CFG });
   const t = (k, v) => I.t(state.lang, k, v);
@@ -114,6 +116,10 @@
       h += fld('demurrageAtNextPort', 't.nextPort', sel('demurrageAtNextPort', c.demurrageAtNextPort, [['nor', t('t.nextPort.nor')], ['laytimeStart', t('t.nextPort.laytimeStart')]]), { cls: 'f-2' });
     }
     h += '</div><div style="margin-top:12px">' + ck('onceOnDemurrage', c.onceOnDemurrage, t('t.once'), { hint: t('t.once.hint') }) + '</div>';
+    // the contract's own rules in words: filled in when a charter party is read, handed back with later time sheets
+    h += '<div class="f-clauses" style="margin-top:12px"><label class="f-l" for="' + idOf('meta.clauses') + '">' + esc(t('t.clauses')) + '</label>' +
+      '<textarea id="' + idOf('meta.clauses') + '" data-path="meta.clauses" maxlength="3000" rows="' + (c.meta.clauses ? Math.min(8, 2 + c.meta.clauses.split('\n').length) : 2) + '">' + esc(c.meta.clauses || '') + '</textarea>' +
+      '<p class="f-hint">' + esc(t('t.clauses.hint')) + '</p></div>';
     return h;
   }
 
@@ -322,7 +328,7 @@
   let saveTimer = null, shareTimer = null;
   function saveNow() {
     clearTimeout(saveTimer); saveTimer = null;
-    if (state.calc) store.set(K.current, { calc: state.calc, calcId: state.calcId, source: state.source, exampleId: state.exampleId, pristine: state.pristine, notes: state.notes });
+    if (state.calc) store.set(K.current, { calc: state.calc, calcId: state.calcId, source: state.source, exampleId: state.exampleId, pristine: state.pristine, notes: state.notes, cloud: state.cloud, contractId: state.contractId });
   }
   // typing without a pause keeps postponing the save: closing or leaving the page must not lose that work
   window.addEventListener('pagehide', () => { if (saveTimer) saveNow(); });
@@ -330,6 +336,7 @@
   function recalc() {
     state.result = E.compute(state.calc);
     renderResult();
+    space.changed();
     clearTimeout(saveTimer);
     saveTimer = setTimeout(saveNow, 400);
     clearTimeout(shareTimer);
@@ -405,6 +412,8 @@
     state.pristine = meta.pristine !== false;
     state.notes = cleanNotes(meta.notes, calc);
     state.sharedCode = state.source === 'shared' ? meta.code || '' : '';
+    state.cloud = meta.cloud && meta.cloud.id ? meta.cloud : null;
+    state.contractId = meta.contractId || (state.cloud && state.cloud.contractId) || '';
     state.open = {};
     state.confirm = null;
     renderBanner();
@@ -416,7 +425,7 @@
     setCalc(ex.calc, { source: 'example', exampleId: ex.id });
   }
   function snapshot() {
-    return { calc: JSON.parse(JSON.stringify(state.calc)), calcId: state.calcId, source: state.source, exampleId: state.exampleId, pristine: state.pristine, notes: state.notes.slice() };
+    return { calc: JSON.parse(JSON.stringify(state.calc)), calcId: state.calcId, source: state.source, exampleId: state.exampleId, pristine: state.pristine, notes: state.notes.slice(), cloud: state.cloud, contractId: state.contractId };
   }
   /** Notes come back from storage: keep only well-formed ones that still point at something. */
   function cleanNotes(list, calc) {
@@ -639,6 +648,7 @@
     if (top.name === 'dialog') { if ($('#dlg').open) $('#dlg').close(); }
     else if (top.name === 'redact') imp.hideRedact();
     else if (top.name === 'import') imp.hide();
+    else if (top.name === 'space') space.hide();
     else if (top.name === 'help') hideHelp();
     else hideStatement();
   });
@@ -677,7 +687,7 @@
       else if (s.status === 'expired') h += '<p class="note note-warn">' + esc(t('pro.status.expired')) + '</p>';
       else if (s.error === 'offline_too_long') h += '<p class="note note-warn">' + esc(t('pro.err.offline_too_long')) + '</p>';
       else if (tr.state === 'ended' && !notice) h += '<p class="note note-warn">' + esc(t('trial.ended')) + '</p>';
-      h += '<p>' + esc(STORE ? t('pro.storeNote') : t('pro.lead')) + '</p><ul>' + ['f1', 'f2', 'f3', 'f4', 'f5', 'f7', 'f6'].map((k) => '<li>' + esc(t('pro.' + k)) + '</li>').join('') + '</ul>';
+      h += '<p>' + esc(STORE ? t('pro.storeNote') : t('pro.lead')) + '</p><ul>' + (space.enabled ? ['f8'] : []).concat(['f1', 'f2', 'f3', 'f4', 'f5', 'f7', 'f6']).map((k) => '<li>' + esc(t('pro.' + k)) + '</li>').join('') + '</ul>';
       if (tr.state === 'available') {
         h += '<div class="trialbox"><button type="button" class="btn btn-primary btn-lg" data-act="trial-start">' + esc(t('trial.start', { n: tr.days })) + '</button>' +
           '<p class="f-hint">' + esc(t('trial.note')) + '</p></div>';
@@ -739,7 +749,7 @@
       const l = el.dataset.lang || el.value;
       if (!I.STRINGS[l] || l === state.lang) return;
       state.lang = l; store.set(K.lang, l);
-      applyI18n(); renderHeader(); renderMenus(); imp.render(); renderHelp();
+      applyI18n(); renderHeader(); renderMenus(); imp.render(); space.render(); renderHelp();
       if (state.source === 'example' && state.pristine) loadExample(state.exampleId);
       else { renderBanner(); renderForm(); recalc(); }
       if (state.stOpen) { renderStatementSide(); renderStatement(); }
@@ -924,12 +934,24 @@
     licenceKey: () => lic.storedKey(), isPro, toast, overlayOpened, overlayClosed, blankish,
     apply(calc, notes) {
       const prev = snapshot();
-      setCalc(calc, { source: 'import', pristine: false, notes });
+      // a reading fills in the calculation on screen: it stays the same calculation of the space, under the same contract
+      setCalc(calc, { source: 'import', pristine: false, notes, cloud: prev.cloud, contractId: prev.contractId });
       window.scrollTo(0, 0);
       toast(t('imp.applied'), { label: t('common.undo'), fn: () => setCalc(prev.calc, prev) });
     },
   });
   Object.assign(actions, imp.actions);
+
+  // ---------------------------------------------------------------- the company space
+  const space = window.StaliaSpace.create({
+    t, esc, state, config: CFG, preview: PREVIEW, engine: E, model: M, view: V, core: window.StaliaSpaceCore,
+    toast, overlayOpened, overlayClosed, setCalc, copy: copyText, download: saveFile, touch: saveNow,
+    dialog(html) { $('#dlg').innerHTML = html; showDialog(); },
+    closeDialog() { if ($('#dlg').open) $('#dlg').close(); },
+    // where a link to this calculator points: this very page on the web, the site's address from inside the app
+    link: () => (NATIVE ? String(CFG.siteUrl || '').replace(/\/+$/, '') + '/app/' : location.href.split('#')[0].split('?')[0]),
+  });
+  Object.assign(actions, space.actions);
 
   // ---------------------------------------------------------------- events
   document.addEventListener('click', (e) => {
@@ -1074,7 +1096,9 @@
       if (state.stOpen) { renderStatementSide(); renderStatement(); }
     });
 
-    const shared = (await loadFromHash()) || (await openLaunchLink());
+    // "#join=…" and "#open=…" are links of the company space; "#c=…" carries a whole calculation in the link itself
+    const spaceLink = /^#(join|open)=/.test(location.hash) ? location.hash : '';
+    const shared = (!spaceLink && (await loadFromHash())) || (await openLaunchLink());
     if (!shared) {
       const cur = store.get(K.current, null);
       // "?example=tanker" — links from the guides open a specific built-in example
@@ -1083,7 +1107,7 @@
       if (urlExample && M.examples(state.lang).some((x) => x.id === urlExample)) loadExample(urlExample);
       else if (cur && cur.calc && Array.isArray(cur.calc.ports)) {
         if (cur.source === 'example' && cur.pristine !== false) loadExample(cur.exampleId);
-        else setCalc(M.normalizeCalc(cur.calc), { source: cur.source === 'shared' ? 'edited' : cur.source, calcId: cur.calcId, exampleId: cur.exampleId, pristine: cur.pristine, notes: cur.notes });
+        else setCalc(M.normalizeCalc(cur.calc), { source: cur.source === 'shared' ? 'edited' : cur.source, calcId: cur.calcId, exampleId: cur.exampleId, pristine: cur.pristine, notes: cur.notes, cloud: cur.cloud, contractId: cur.contractId });
       } else loadExample('bulk');
     }
 
@@ -1103,7 +1127,8 @@
     } catch (e) { /* sandboxed */ }
     // First visit: choose the language, then read how it works. Not in front of a calculation somebody
     // shared or a licence being activated: those visitors came for something else, and the button is always there.
-    if (!store.get(K.seen, false) && !shared && !activating) openHelp('lang', true);
+    const viaSpace = await space.start(spaceLink);
+    if (!store.get(K.seen, false) && !shared && !activating && !spaceLink && !viaSpace) openHelp('lang', true);
     // the free trial ran out since the last visit: say so once, with the ways to keep Pro
     else if (lic.trial().state === 'ended' && !isPro() && !activating && !store.get(K.trialEnd, false)) {
       store.set(K.trialEnd, true);

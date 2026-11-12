@@ -2,3 +2,8 @@ tools/.private/
 node_modules/
 *.log
 .DS_Store
+
+# what the server builds and keeps for itself
+server/public/
+server/data/
+tools/.work/

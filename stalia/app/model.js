@@ -51,7 +51,7 @@
   function blankCalc() {
     return {
       v: VERSION, name: '',
-      meta: { vessel: '', voyage: '', cpForm: '', cpDate: '', owners: '', charterers: '', cargo: '', remarks: '' },
+      meta: { vessel: '', voyage: '', cpForm: '', cpDate: '', owners: '', charterers: '', cargo: '', remarks: '', clauses: '' },
       currency: 'USD', demurrageRate: '', despatchMode: 'half', despatchRate: '', despatchBasis: 'WTS',
       commissionPct: '', laytimeMode: 'reversible', onceOnDemurrage: true, demurrageAtNextPort: 'nor',
       ports: [blankPort('load'), blankPort('discharge')],
@@ -90,6 +90,8 @@
       meta: {
         vessel: str(m.vessel), voyage: str(m.voyage), cpForm: str(m.cpForm), cpDate: dateStr(m.cpDate),
         owners: str(m.owners), charterers: str(m.charterers), cargo: str(m.cargo), remarks: str(m.remarks, 2000),
+        // the clauses that decide the count, in words: not printed, handed to the reader with the next time sheet
+        clauses: str(m.clauses, 3000),
       },
       currency: (/^[A-Za-z]{3}$/.test(src.currency || '') ? String(src.currency).toUpperCase() : b.currency),
       demurrageRate: numStr(src.demurrageRate),

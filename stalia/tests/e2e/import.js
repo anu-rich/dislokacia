@@ -292,6 +292,8 @@ function serveSite(configFor) {
   await page.click('[data-act="imp-read"]');
   await page.waitForSelector('.imp-h', { timeout: 30000 });
   check('the model was told there is no charter party', /No charter party pages were supplied/.test(mock.requests[1].body.messages[0].content.slice(-1)[0].text));
+  const words = mock.requests[1].body.messages[0].content[0].text;
+  check('and was given the terms of the calculation on screen in words, to count by them', /^The charter party is not attached/.test(words) && /Demurrage USD 14500 per day/.test(words) && /Port 1 \(loading, Novorossiysk\)/.test(words) && /its terms are given in words above/.test(mock.requests[1].body.messages[0].content.slice(-1)[0].text), words.slice(0, 300));
   check('asks whether to keep the terms', await page.locator('#imp-keep').isChecked() && /keep the terms of the current calculation/.test(await text(page, '.imp-keep')));
   const kept = await text(page, '#imp-body');
   check('with “keep”: old terms, new times, nothing to flag', /Demurrage USD 14,500/.test(kept) && /SSHEX/.test(kept) && /01 Jun 2026 09:30/.test(kept) && /Nothing to flag/.test(kept), kept);

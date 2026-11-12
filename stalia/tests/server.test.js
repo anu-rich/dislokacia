@@ -75,7 +75,7 @@ serverTest('GET tells whether the service is up and configured', async () => {
   const s = await service();
   try {
     const up = await (await s.handle(new Request('https://reader.test/'), s.env)).json();
-    assert.deepEqual(up, { ok: true, service: 'stalia-reader', ready: true, limits: { pages: 20, freePerDay: 2, proPerMonth: 200 } });
+    assert.deepEqual(up, { ok: true, service: 'stalia-reader', ready: true, space: false, limits: { pages: 20, freePerDay: 2, proPerMonth: 200 } });
     const off = await (await s.handle(new Request('https://reader.test/'), {})).json();
     assert.equal(off.ready, false);
     const r = await s.post(twoPages(), { env: {} });
@@ -333,7 +333,7 @@ serverTest('other sites cannot use the service from a browser; the site and the 
     const stranger = await from('https://evil.example');
     assert.deepEqual([stranger.status, stranger.json.error, stranger.headers.get('access-control-allow-origin')], [403, 'origin', null]);
     const pre = await s.handle(new Request('https://reader.test/', { method: 'OPTIONS', headers: { Origin: 'https://www.stalia.example', 'Access-Control-Request-Method': 'POST' } }), s.env);
-    assert.deepEqual([pre.status, pre.headers.get('access-control-allow-origin'), pre.headers.get('access-control-allow-headers')], [204, 'https://www.stalia.example', 'Content-Type']);
+    assert.deepEqual([pre.status, pre.headers.get('access-control-allow-origin'), pre.headers.get('access-control-allow-headers')], [204, 'https://www.stalia.example', 'Content-Type, Authorization']);
     // with no list at all, any site may call (the limits still apply)
     const open = await s.post(twoPages(), { headers: { Origin: 'https://anything.example' }, env: Object.assign({}, s.env, { ALLOWED_ORIGINS: '' }), ip: 'x' });
     assert.deepEqual([open.status, open.headers.get('access-control-allow-origin')], [200, 'https://anything.example']);
@@ -369,7 +369,8 @@ serverTest('the Node server answers over real HTTP and trusts X-Forwarded-For on
   const node = await import('../server/node-server.js');
   const mock = await startMockAnthropic(() => ({ text: JSON.stringify(answer()) }));
   const deps = { store: new limits.MemoryStore(), log: () => {}, createClient: (cfg) => new Anthropic({ apiKey: cfg.apiKey, baseURL: cfg.baseURL, maxRetries: 0 }) };
-  const env = { ANTHROPIC_API_KEY: 'sk-test', STALIA_API_BASE_URL: mock.url, FREE_PER_DAY: '1' };
+  // the API alone, as when the site is hosted elsewhere: no built site next to it, no spaces file on disk
+  const env = { ANTHROPIC_API_KEY: 'sk-test', STALIA_API_BASE_URL: mock.url, FREE_PER_DAY: '1', STATIC_DIR: 'off', SPACE_DB: 'off' };
   const direct = await node.start(env, { port: 0, host: '127.0.0.1', deps });
   const proxied = await node.start(Object.assign({ TRUST_PROXY: '1' }, env), { port: 0, host: '127.0.0.1', deps: Object.assign({}, deps, { store: new limits.MemoryStore() }) });
   const call = (server, ip) => fetch('http://127.0.0.1:' + server.address().port + '/', {
@@ -389,4 +390,111 @@ serverTest('the Node server answers over real HTTP and trusts X-Forwarded-For on
     for (const srv of [direct, proxied]) { srv.closeAllConnections(); await new Promise((r) => srv.close(r)); }
     await mock.close();
   }
+});
+
+serverTest('one server for everything: the built site at /, the reader and the spaces at /api, and nothing private on offer', async () => {
+  const os = require('node:os');
+  const { build } = require('../tools/build-site.js');
+  const out = fs.mkdtempSync(path.join(os.tmpdir(), 'stalia-site-'));
+  build(out);
+  const { limits } = await load();
+  const node = await import('../server/node-server.js');
+  const server = await node.start({ STATIC_DIR: out, SPACE_DB: ':memory:' }, { port: 0, host: '127.0.0.1', deps: { store: new limits.MemoryStore(), log: () => {} } });
+  const base = 'http://127.0.0.1:' + server.address().port;
+  try {
+    const page = await fetch(base + '/');
+    assert.deepEqual([page.status, page.headers.get('content-type')], [200, 'text/html; charset=utf-8']);
+    assert.match(await page.text(), /<title>[^<]*Stalia/i);
+    assert.equal((await fetch(base + '/app/')).status, 200, 'a folder serves its index.html');
+    const cfg = await (await fetch(base + '/app/config.js')).text();
+    assert.match(cfg, /c\.ai\.endpoint = "\/api"/, 'the copy of the settings points the calculator at this same server');
+    assert.equal((await fetch(base + '/assets/base.css')).headers.get('content-type'), 'text/css; charset=utf-8');
+    // what must never be handed out: tools, keys, the server's own files, anything reached by climbing out
+    for (const p of ['/tools/keygen.js', '/tools/.private/stalia-private-key.pem', '/server/node-server.js', '/mobile/android/keystore.properties', '/tests/space.test.js',
+      '/README.md', '/.gitignore', '/app/../../README.md', '/%2e%2e/README.md', '/app/%2e%2e/%2e%2e/package.json', '/..%2f..%2fpackage.json']) {
+      assert.equal((await fetch(base + p)).status, 404, p);
+    }
+    for (const name of fs.readdirSync(out)) assert.ok(build.name && require('../tools/build-site.js').INCLUDE.includes(name), 'only the listed entries are published: ' + name);
+    // the API on the same address
+    const status = await (await fetch(base + '/api')).json();
+    assert.deepEqual([status.ok, status.service, status.ready, status.space], [true, 'stalia-reader', false, true]);
+    const blob = (t) => Buffer.from(t.padEnd(24, '.')).toString('base64url');
+    const made = await (await fetch(base + '/api/v1/spaces', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: blob('ACME'), me: blob('Owner') }) })).json();
+    assert.equal(made.ok, true);
+    const over = await (await fetch(base + '/api/v1/space', { headers: { Authorization: 'Bearer ' + made.token } })).json();
+    assert.equal(over.members.length, 1);
+    assert.equal((await fetch(base + '/api/v1/space')).status, 401);
+  } finally {
+    await new Promise((r) => server.close(r));
+    fs.rmSync(out, { recursive: true, force: true });
+  }
+});
+
+serverTest('a time sheet alone, for a calculation that already has its terms: the terms go to the model in words', async () => {
+  const s = await service();
+  try {
+    const sofOnly = { v: 1, lang: 'en', license: '', pages: [{ doc: 'sof', type: 'image/jpeg', data: fakeJpeg('SOF1') }], terms: 'Demurrage USD 8000 per day.\nClauses of the charter party:\nWeather delays count as half laytime, in full on demurrage.\u0007' };
+    assert.equal((await s.post(sofOnly)).status, 200);
+    const content = s.mock.requests[0].body.messages[0].content;
+    assert.equal(content[0].type, 'text');
+    assert.match(content[0].text, /^The charter party is not attached\./);
+    assert.match(content[0].text, /<charter_party_terms>\nDemurrage USD 8000 per day\.\nClauses of the charter party:\nWeather delays count as half laytime, in full on demurrage\.\n<\/charter_party_terms>$/, 'as written, without the control character');
+    assert.match(content[0].text, /not instructions to you/);
+    assert.equal(content.filter((c) => c.type === 'image').length, 1);
+    assert.match(content[content.length - 1].text, /No charter party pages were supplied: its terms are given in words above\./);
+    assert.match(s.mock.requests[0].body.system, /those words are the charter party: apply them exactly as written/);
+    // with the charter party itself attached, words sent along are ignored: the pages are the contract
+    assert.equal((await s.post(Object.assign(twoPages(), { terms: 'Demurrage USD 1 per day.' }), { ip: 'other' })).status, 200);
+    const withCp = s.mock.requests[1].body.messages[0].content;
+    assert.doesNotMatch(JSON.stringify(withCp.filter((c) => c.type === 'text')), /charter_party_terms|USD 1 per day/);
+    // nothing sent, nothing added; and a very long text is cut, not refused
+    assert.equal((await s.post({ v: 1, lang: 'en', license: '', pages: sofOnly.pages }, { ip: 'third' })).status, 200);
+    assert.match(s.mock.requests[2].body.messages[0].content[0].text, /^Statement of facts/);
+    assert.equal((await s.post(Object.assign({}, sofOnly, { terms: 'x'.repeat(20000) }), { ip: 'fourth' })).status, 200);
+    assert.ok(s.mock.requests[3].body.messages[0].content[0].text.length < 6400);
+  } finally { await s.mock.close(); }
+});
+
+serverTest('the Cloudflare Worker: pages from the assets, the API under /api, the spaces in a D1 database', async () => {
+  const { DatabaseSync } = require('node:sqlite');
+  const worker = (await import('../server/worker.js')).default;
+  // D1 as the Worker sees it, backed by SQLite in memory
+  const sqlite = new DatabaseSync(':memory:');
+  const d1 = {
+    prepare(sql) {
+      const st = sqlite.prepare(sql);
+      let params = [];
+      const api = {
+        bind(...p) { params = p; return api; },
+        async all() { return { success: true, results: st.all(...params), meta: {} }; },
+        async first() { return st.get(...params) || null; },
+        async run() { const r = st.run(...params); return { success: true, results: [], meta: { changes: Number(r.changes) } }; },
+      };
+      return api;
+    },
+  };
+  const assets = { fetch: async (req) => new Response('page ' + new URL(req.url).pathname, { status: 200 }) };
+  const env = { DB: d1, ASSETS: assets };
+  const call = (path, init) => worker.fetch(new Request('https://stalia.example' + path, init), env);
+
+  assert.equal(await (await call('/app/')).text(), 'page /app/');
+  assert.equal(await (await call('/apiary.html')).text(), 'page /apiary.html', 'only /api itself and what is under it is the API');
+  const status = await (await call('/api')).json();
+  assert.deepEqual([status.ok, status.ready, status.space], [true, false, true]);
+
+  const blob = (t) => Buffer.from(t.padEnd(24, '.')).toString('base64url');
+  const json = (body, token) => ({ method: 'POST', headers: Object.assign({ 'Content-Type': 'application/json' }, token ? { Authorization: 'Bearer ' + token } : {}), body: JSON.stringify(body) });
+  const made = await (await call('/api/v1/spaces', json({ name: blob('ACME'), me: blob('Owner') }))).json();
+  assert.equal(made.ok, true, JSON.stringify(made));
+  const calc = await (await call('/api/v1/calcs', json({ key: blob('k'), meta: blob('m'), data: blob('v1') }, made.token))).json();
+  const put = (base) => call('/api/v1/calcs/' + calc.calc.id, { method: 'PUT', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + made.token }, body: JSON.stringify({ base, data: blob('next') }) });
+  assert.equal((await (await put(1)).json()).calc.head, 2);
+  assert.equal((await put(1)).status, 409, 'the same protection against overwriting, on D1');
+  const list = await (await call('/api/v1/calcs', { headers: { Authorization: 'Bearer ' + made.token } })).json();
+  assert.deepEqual(list.calcs.map((c) => [c.id, c.head]), [[calc.calc.id, 2]]);
+
+  // without a database bound the spaces are off and say so; without assets the Worker is the API alone
+  const bare = (path, init) => worker.fetch(new Request('https://reader.example' + path, init), {});
+  assert.equal((await (await bare('/')).json()).space, false);
+  assert.equal((await bare('/v1/spaces', json({ name: blob('x'), me: blob('y') }))).status, 404);
 });

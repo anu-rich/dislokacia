@@ -1,10 +1,10 @@
 {
-  "name": "stalia-reader",
+  "name": "stalia-server",
   "version": "1.0.0",
   "private": true,
-  "description": "Stalia — the small server that reads charter parties and statements of facts with Claude",
+  "description": "Stalia — the server: reads documents with Claude, keeps the company spaces, serves the site",
   "type": "module",
-  "engines": { "node": ">=20" },
+  "engines": { "node": ">=22.5" },
   "scripts": {
     "start": "node node-server.js",
     "build:worker": "esbuild worker.js --bundle --format=esm --platform=browser --conditions=worker,browser --target=es2022 --minify --legal-comments=none --outfile=dist/stalia-worker.js",

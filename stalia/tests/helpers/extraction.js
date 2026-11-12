@@ -19,7 +19,7 @@ function extractionOf(calc) {
     despatch_per_day: calc.despatchRate, despatch_basis: calc.despatchBasis === 'ATS' ? 'all_time_saved' : 'working_time_saved',
     commission_percent: calc.commissionPct,
   };
-  ex.laytime = { between_ports: calc.laytimeMode, exceptions_apply_on_demurrage: calc.onceOnDemurrage ? 'no' : 'yes' };
+  ex.laytime = { between_ports: calc.laytimeMode, clauses: (calc.meta && calc.meta.clauses) || '', exceptions_apply_on_demurrage: calc.onceOnDemurrage ? 'no' : 'yes' };
   ex.ports = calc.ports.map((p) => {
     const o = X.blankExtractionPort(p.operation), c = p.calendar, n = p.nor;
     o.name = p.name;

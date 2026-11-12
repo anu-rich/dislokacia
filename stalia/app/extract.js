@@ -75,6 +75,8 @@
     raw.meta = {
       vessel: text(fx.vessel), voyage: text(fx.voyage), cpForm: text(fx.charter_party_form), cpDate: dateText(fx.charter_party_date),
       owners: text(fx.owners), charterers: text(fx.charterers), cargo: text(fx.cargo), remarks: '',
+      // the charter party's own rules for the count, kept in words for the next time sheet under the same contract
+      clauses: String(lt.clauses == null ? '' : lt.clauses).replace(/\r/g, '').replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim().slice(0, 3000),
     };
     const cur = text(mo.currency, 3).toUpperCase();
     raw.currency = /^[A-Z]{3}$/.test(cur) ? cur : 'USD';

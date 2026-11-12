@@ -1,9 +1,24 @@
-# Stalia reading server on Cloudflare Workers.
-#   npx wrangler secret put ANTHROPIC_API_KEY     (once: paste the key when asked)
+# Stalia on Cloudflare Workers: the site, the calculator, the document reader and the company spaces on one address.
+#
+#   node ../tools/build-site.js                   (puts the site into ./public; run again after every change of the site)
+#   npx wrangler d1 create stalia                 (once: prints a database_id; put it below and remove the four "#")
+#   npx wrangler secret put ANTHROPIC_API_KEY     (once: paste the key when asked; only reading documents needs it)
 #   npx wrangler deploy
-name = "stalia-reader"
+name = "stalia"
 main = "worker.js"
 compatibility_date = "2026-10-01"
+
+# The built site. Pages and files come straight from here; only /api reaches the Worker's code.
+[assets]
+directory = "./public"
+binding = "ASSETS"
+run_worker_first = ["/api", "/api/*"]
+
+# The company spaces. Without this block the spaces are switched off and everything else works.
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "stalia"
+# database_id = ""
 
 [vars]
 # The address of your site, e.g. "https://stalia.example". Empty = any site may call the server.
@@ -17,6 +32,8 @@ STALIA_EFFORT = "high"
 FREE_PER_DAY = "2"
 # Readings a calendar month for one Pro licence. There are no other limits: cap your spending in the Anthropic console.
 PRO_PER_MONTH = "200"
+# A new company space works in full for this many days, then needs a Pro licence (it stays readable without one).
+SPACE_TRIAL_DAYS = "14"
 
 # Recommended: counters that all copies of the Worker share.
 #   npx wrangler kv namespace create LIMITS      -> prints an id; put it below and remove the three "#"

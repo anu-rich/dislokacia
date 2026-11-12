@@ -57,6 +57,7 @@
     }),
     laytime: obj({
       between_ports: str('reversible = one pooled allowance for loading and discharging; separate = each port has its own; average = time saved at one port offsets time lost at the other.', ['reversible', 'separate', 'average', 'unknown']),
+      clauses: str('The clauses of the charter party that decide the count, in the charter party\'s own words, shortened, one per line: when laytime starts and stops at each port, what does not count or counts in part, and how each of these is treated on demurrage. At most 1200 characters. "" when no charter party was supplied.'),
       exceptions_apply_on_demurrage: str('"yes" only if the charter party says that weekends, holidays or weather also interrupt demurrage. "no" for "once on demurrage, always on demurrage" and when the charter party is read and says nothing.', YNU),
     }),
     ports: list(obj({
@@ -123,7 +124,7 @@
       documents: { charter_party: 'absent', statement_of_facts: 'absent' },
       fixture: { vessel: '', voyage: '', charter_party_form: '', charter_party_date: '', owners: '', charterers: '', cargo: '' },
       money: { currency: '', demurrage_per_day: '', despatch: 'unknown', despatch_per_day: '', despatch_basis: 'unknown', commission_percent: '' },
-      laytime: { between_ports: 'unknown', exceptions_apply_on_demurrage: 'unknown' },
+      laytime: { between_ports: 'unknown', clauses: '', exceptions_apply_on_demurrage: 'unknown' },
       ports: [], notes: [],
     };
   }

@@ -318,6 +318,39 @@ test('one document only: the next-working-day rule is a term — kept with the t
   assert.deepEqual(rm.ports.map((p) => E.fmtDT(p.start)), ['2026-03-09T08:00', '2026-03-16T08:00']); // Friday -> Monday; Sunday -> Monday
 });
 
+test('the charter party’s own rules are kept in words and stay when only a time sheet is read later', () => {
+  const V = require('../app/view.js');
+  const a = extractionOf(examples()[1].calc);
+  a.documents = { charter_party: 'read', statement_of_facts: 'read' };
+  a.laytime.clauses = '  Laytime at the loading port ends when the documents are on board.\r\n\n\n\nWeather delays count   as half laytime, in full on demurrage.  ';
+  const first = X.toCalc(a).calc;
+  assert.equal(first.meta.clauses, 'Laytime at the loading port ends when the documents are on board.\n\nWeather delays count as half laytime, in full on demurrage.');
+  // a contract that long is cut, and a calculation saved before this field existed still opens
+  a.laytime.clauses = 'x'.repeat(5000);
+  assert.equal(X.toCalc(a).calc.meta.clauses.length, 3000);
+  const old = JSON.parse(JSON.stringify(first)); delete old.meta.clauses;
+  assert.equal(M.normalizeCalc(old).meta.clauses, '');
+
+  // what the reader is given next time, when only the time sheet is attached
+  const said = V.readerTerms(first);
+  assert.match(said, /^Demurrage USD \d+ per day\. Despatch: none\. Laytime between ports: reversible\. Once on demurrage, always on demurrage\./);
+  assert.match(said, /\nPort 1 \(loading, [^)]+\): .*NOR/);
+  assert.match(said, /\nPort 2 \(discharging, /);
+  assert.ok(said.endsWith('Clauses of the charter party:\nLaytime at the loading port ends when the documents are on board.\n\nWeather delays count as half laytime, in full on demurrage.'));
+  assert.doesNotMatch(V.readerTerms(M.blankCalc()), /Clauses/);
+  assert.match(V.readerTerms(M.blankCalc()), /Demurrage USD not stated per day/, 'works before anything is entered');
+
+  // the next voyage: only a time sheet is read; the terms and the clauses stay, the times are the new ones
+  const next = extractionOf(examples()[1].calc);
+  next.documents = { charter_party: 'absent', statement_of_facts: 'read' };
+  next.laytime.clauses = '';
+  next.ports[0].notice.tendered = '2026-05-01T08:00';
+  const merged = X.merge(first, X.toCalc(next), 'terms').calc;
+  assert.equal(merged.meta.clauses, first.meta.clauses);
+  assert.equal(merged.demurrageRate, first.demurrageRate);
+  assert.equal(merged.ports[0].nor.tendered, '2026-05-01T08:00');
+});
+
 test('“72 hours in total” for two ports reads as reversible; separate allowances read as separate', () => {
   const tanker = extractionOf(examples()[1].calc);
   tanker.laytime.between_ports = 'unknown';

@@ -16,13 +16,13 @@ export const MODELS = [DEFAULT_FREE_MODEL, DEFAULT_MODEL];
 const MEANS = { too_big: 'too_big', refused: 'refused', unreadable: 'refused', aborted: 'aborted', network: 'network' };
 
 /**
- * @param {{apiKey: string, model?: string, effort?: string, pages: Array<{doc:string,type:string,data:string}>, lang: string, signal?: AbortSignal, baseURL?: string}} o
+ * @param {{apiKey: string, model?: string, effort?: string, pages: Array<{doc:string,type:string,data:string}>, lang: string, terms?: string, signal?: AbortSignal, baseURL?: string}} o
  * @returns {Promise<{ok: true, extraction: object, model: string, usage: object} | {ok: false, error: string, said?: string}>}  never throws
  */
-export async function readDirect({ apiKey, model, effort, pages, lang, signal, baseURL }) {
+export async function readDirect({ apiKey, model, effort, pages, lang, terms, signal, baseURL }) {
   try {
     const client = new Anthropic({ apiKey, baseURL: baseURL || 'https://api.anthropic.com', dangerouslyAllowBrowser: true, maxRetries: 1 });
-    const out = await readDocuments({ client, model: MODELS.includes(model) ? model : MODELS[0], effort: effort || DEFAULT_EFFORT, pages, lang, signal });
+    const out = await readDocuments({ client, model: MODELS.includes(model) ? model : MODELS[0], effort: effort || DEFAULT_EFFORT, pages, lang, terms, signal });
     return { ok: true, extraction: out.extraction, model: out.model, usage: out.usage };
   } catch (e) {
     const code = e && e.code;

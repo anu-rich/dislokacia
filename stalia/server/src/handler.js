@@ -48,8 +48,8 @@ function corsHeaders(request, cfg) {
   const h = { Vary: 'Origin' };
   if (origin && (!cfg.origins.length || cfg.origins.includes(origin) || APP_ORIGINS.includes(origin))) {
     h['Access-Control-Allow-Origin'] = origin;
-    h['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS';
-    h['Access-Control-Allow-Headers'] = 'Content-Type';
+    h['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+    h['Access-Control-Allow-Headers'] = 'Content-Type, Authorization';
     h['Access-Control-Max-Age'] = '86400';
   }
   return h;
@@ -66,7 +66,8 @@ const FAILURES = {
 };
 
 /**
- * @param {{store: object, now?: Function, fetch?: Function, log?: Function, createClient?: Function, read?: Function}} deps
+ * @param {{store: object, now?: Function, fetch?: Function, log?: Function, createClient?: Function, read?: Function, space?: Function}} deps
+ *        `space` is the handler of the shared space (src/space.js); without it the server only reads documents
  * @returns {(request: Request, env: object, ctx?: {ip?: string, signal?: AbortSignal}) => Promise<Response>}
  */
 export function createHandler(deps) {
@@ -89,8 +90,17 @@ export function createHandler(deps) {
     const fail = (status, error, extra) => reply(status, Object.assign({ ok: false, error }, extra || {}));
 
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
+    // the shared space lives under /v1/ on the same server
+    if (/\/v1\//.test(new URL(request.url).pathname)) {
+      if (!d.space) return fail(404, 'not_found');
+      if (!originAllowed(request, cfg)) return fail(403, 'origin');
+      try { return await d.space(request, env, ctx, { reply, fail }); } catch (e) {
+        d.log({ t: new Date(d.now()).toISOString(), space: true, ok: false, detail: String((e && e.message) || e).slice(0, 200) });
+        return fail(500, 'server');
+      }
+    }
     if (request.method === 'GET' || request.method === 'HEAD') {
-      return reply(200, { ok: true, service: 'stalia-reader', ready: !!cfg.apiKey, limits: { pages: cfg.maxPages, freePerDay: cfg.freePerDay, proPerMonth: cfg.proPerMonth } });
+      return reply(200, { ok: true, service: 'stalia-reader', ready: !!cfg.apiKey, space: !!d.space, limits: { pages: cfg.maxPages, freePerDay: cfg.freePerDay, proPerMonth: cfg.proPerMonth } });
     }
     if (request.method !== 'POST') return fail(405, 'bad_request');
     if (!originAllowed(request, cfg)) return fail(403, 'origin');
@@ -114,6 +124,8 @@ export function createHandler(deps) {
     }
     pages.sort((a, b) => (a.doc === b.doc ? 0 : (a.doc === 'cp' ? -1 : 1))); // charter party first; the order inside each stays
     const lang = LANGUAGE_NAMES[body.lang] ? body.lang : 'en';
+    // the charter party in words, sent along with a time sheet when the calculation already has its terms
+    const terms = typeof body.terms === 'string' && !pages.some((p) => p.doc === 'cp') ? body.terms.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '').slice(0, 6000).trim() : '';
 
     // ---- who is asking, and how much they have left
     // Two allowances and nothing else: free readings are counted per visitor and day, Pro readings per licence
@@ -135,7 +147,7 @@ export function createHandler(deps) {
     const started = d.now();
     const line = { t: new Date(started).toISOString(), plan: lic.plan, pages: pages.length, kb: Math.round(raw.length / 1024) };
     try {
-      const out = await d.read({ client: d.createClient(cfg), model: pro ? cfg.model : cfg.modelFree, effort: cfg.effort, pages, lang, signal: ctx.signal });
+      const out = await d.read({ client: d.createClient(cfg), model: pro ? cfg.model : cfg.modelFree, effort: cfg.effort, pages, lang, terms, signal: ctx.signal });
       d.log(Object.assign(line, { ms: d.now() - started, ok: true, model: out.model, in: out.usage.input, out: out.usage.output }));
       return reply(200, { ok: true, extraction: out.extraction, quota: quota(limit - used) });
     } catch (e) {

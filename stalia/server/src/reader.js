@@ -25,10 +25,11 @@ export class ReadError extends Error {
 const saidBy = (e) => String((e && e.error && e.error.error && e.error.error.message) || '').slice(0, 300);
 
 /**
- * @param {{client: Anthropic, model?: string, effort?: string, pages: Array<{doc:string,type:string,data:string}>, lang: string, signal?: AbortSignal}} o
+ * @param {{client: Anthropic, model?: string, effort?: string, pages: Array<{doc:string,type:string,data:string}>, lang: string, terms?: string, signal?: AbortSignal}} o
+ *        `terms`: the charter party in words, when only a time sheet is being read for a calculation that already has its terms
  * @returns {Promise<{extraction: object, model: string, usage: {input: number, output: number}}>}
  */
-export async function readDocuments({ client, model, effort, pages, lang, signal }) {
+export async function readDocuments({ client, model, effort, pages, lang, terms, signal }) {
   let message;
   try {
     const params = {
@@ -36,7 +37,7 @@ export async function readDocuments({ client, model, effort, pages, lang, signal
       max_tokens: 64000,
       output_config: { effort: EFFORTS.includes(effort) ? effort : DEFAULT_EFFORT },
       system: systemPrompt(),
-      messages: [{ role: 'user', content: userContent(pages, lang) }],
+      messages: [{ role: 'user', content: userContent(pages, lang, terms) }],
     };
     if (hasFallback(params.model)) {
       // If a safety classifier declines the request by mistake, the API retries it on the model Anthropic recommends.

@@ -202,7 +202,7 @@
       if (key) {
         try {
           const lib = await import(new URL(AI.directReader, document.baseURI).href);
-          return await lib.readDirect({ apiKey: key.key, model: key.model, pages: payload.pages, lang: payload.lang, signal, baseURL: AI.directBaseUrl || undefined });
+          return await lib.readDirect({ apiKey: key.key, model: key.model, pages: payload.pages, lang: payload.lang, terms: payload.terms, signal, baseURL: AI.directBaseUrl || undefined });
         } catch (e) { return { ok: false, error: 'server' }; }
       }
       if (!/^https?:\/\//.test(AI.endpoint || '')) return { ok: false, error: 'unavailable' };
@@ -232,7 +232,10 @@
       if (!st.open || st.busy !== 'reading') return; // closed meanwhile
       if (!pages) { fail('too_big'); return; }
       st.abort = typeof AbortController === 'function' ? new AbortController() : null;
-      const res = await send({ v: 1, lang: app.state.lang, license: app.licenceKey() || '', pages }, st.abort ? st.abort.signal : undefined);
+      // a time sheet alone, for a calculation that already has its terms: the terms go along in words,
+      // so the reader applies this contract's rules instead of the customary ones
+      const terms = !pages.some((p) => p.doc === 'cp') && !app.blankish() ? V.readerTerms(app.state.calc) : '';
+      const res = await send({ v: 1, lang: app.state.lang, license: app.licenceKey() || '', pages, terms }, st.abort ? st.abort.signal : undefined);
       if (!st.open || res.error === 'aborted') { st.busy = ''; st.abort = null; return; }
       if (res.quota) st.quota = res.quota;
       if (!res.ok) {

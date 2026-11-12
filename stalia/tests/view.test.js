@@ -227,3 +227,17 @@ test('the contract’s rules for delays in one line, in the reader’s language'
   assert.match(V.rulesText(c, 'ru'), /^Непогода \/ дождь: 50% · .*: 0% \(Действует и на демередже\)$/);
   for (const lang of I.LANGS) assert.ok(V.rulesText(c, lang).includes('50%'), lang);
 });
+
+test('a duration in a sentence drops empty days; a month is written the way the language writes dates', () => {
+  assert.equal(V.fmtDurShort(135, 'en'), '2h 15m');
+  assert.equal(V.fmtDurShort(135, 'ru'), '2 ч 15 мин');
+  assert.equal(V.fmtDurShort(5, 'ru'), '0 ч 05 мин');
+  assert.equal(V.fmtDurShort(1440 + 135, 'en'), V.fmtDur(1440 + 135, 'en'));
+  assert.equal(V.fmtDurShort(1440 + 135, 'ru'), '1 сут 02 ч 15 мин');
+  assert.equal(V.fmtMonth('2026-05', 'en'), 'May 2026');
+  assert.equal(V.fmtMonth('2026-05', 'ru'), '05.2026');
+  assert.equal(V.fmtMonth('2026-05', 'zh'), '2026-05');
+  assert.equal(V.fmtMonth('', 'en'), '');
+  assert.equal(V.fmtMonth('nonsense', 'ru'), '');
+  for (const lang of I.LANGS) assert.ok(/2026/.test(V.fmtMonth('2026-12', lang)) && !/01/.test(V.fmtMonth('2026-12', lang)), lang + ': ' + V.fmtMonth('2026-12', lang));
+});

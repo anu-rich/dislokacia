@@ -357,7 +357,7 @@
   function claimWhyHTML() {
     const c = state.calc, x = AU.explain(c, claimed());
     if (!x) return '';
-    const lang = state.lang, at = (v) => V.fmtDT(E.parseDT(v), lang), dur = (m) => V.fmtDur(Math.abs(m), lang);
+    const lang = state.lang, at = (v) => V.fmtDT(E.parseDT(v), lang), dur = (m) => V.fmtDurShort(Math.abs(m), lang);
     const port = (i) => (i == null || !c.ports[i] ? '' : t('p.port', { n: i + 1 }) + (c.ports[i].name ? ' (' + c.ports[i].name + ')' : '') + ': ');
     const what = (l) => (!l ? '' : l.what === 'nor' ? t('cl.w.nor') : l.what === 'commenced' ? t('cl.w.commenced') : (l.desc || t('et.' + l.type)));
     const line = (k) => {

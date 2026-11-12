@@ -30,6 +30,11 @@
     const p = E.splitDur(min), t = T(lang), sp = F(lang).durSpace ? ' ' : '';
     return (p.neg ? '−' : '') + p.d + sp + t('u.d') + ' ' + pad(p.h) + sp + t('u.h') + ' ' + pad(p.m) + sp + t('u.m');
   }
+  /** A duration in a sentence: the days are said only when there are any ("2 h 15 min", "1 d 02 h 15 min"). */
+  function fmtDurShort(min, lang) {
+    const p = E.splitDur(min), t = T(lang), sp = F(lang).durSpace ? ' ' : '';
+    return (p.neg ? '−' : '') + (p.d ? p.d + sp + t('u.d') + ' ' + pad(p.h) : String(p.h)) + sp + t('u.h') + ' ' + pad(p.m) + sp + t('u.m');
+  }
   const fmtDays = (min, lang) => fmtNumber(min / DAY, lang, 5);
   function parts(min) {
     const d = new Date(Math.round(min) * 60000);
@@ -45,6 +50,12 @@
     return datePattern(F(lang).date, parts(min), lang);
   }
   const fmtDayShort = (min, lang) => datePattern(F(lang).dayShort, parts(min), lang);
+  /** A month given as "YYYY-MM", the way this language writes dates but without the day: "May 2026", "05.2026", "2026-05". */
+  function fmtMonth(period, lang) {
+    const at = E.parseDT(String(period || '') + '-01T00:00');
+    if (at == null) return '';
+    return datePattern(F(lang).date.replace(/^DD[^A-Za-z]+|[^A-Za-z]+DD$/, ''), parts(at), lang);
+  }
   const fmtTime = (min) => { const p = parts(min); return pad(p.h) + ':' + pad(p.mi); };
   const fmtDT = (min, lang) => (min == null ? '' : fmtDate(min, lang) + ' ' + fmtTime(min));
   const fmtDow = (min, lang) => I.t(lang, 'dows.' + parts(min).dow);
@@ -467,6 +478,6 @@
     esc, fmtNumber, fmtMoney, fmtRate, fmtDur, fmtDays, fmtDate, fmtDayShort, fmtTime, fmtDT, fmtDow, fmtPct,
     reasonText, rowRemarks, rowState, portFacts, portTitle, messageText, outcomeOf,
     summaryHTML, messagesHTML, timelineHTML, factsHTML, sheetRows, sheetTableHTML, sheetHTML, portSummaryHTML,
-    calendarText, portTermsText, termsText, rulesText, readerTerms, statementHTML, sheetCSV, summaryText, portChip,
+    fmtDurShort, fmtMonth, calendarText, portTermsText, termsText, rulesText, readerTerms, statementHTML, sheetCSV, summaryText, portChip,
   };
 });

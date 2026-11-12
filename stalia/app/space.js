@@ -233,7 +233,7 @@
       const all = ui.list || [], rows = filtered();
       if (!all.length) return '<p class="sp-empty">' + esc(t('sp.calcs.empty')) + '</p>';
       const months = Array.from(new Set(all.map((r) => r.meta.period).filter(Boolean))).sort().reverse();
-      const monthName = (p) => V.fmtDate(E.parseDT(p + '-01T00:00'), state.lang).replace(/^\S+\s/, '');
+      const monthName = (p) => V.fmtMonth(p, state.lang);
       let h = '<div class="sp-tools"><input type="search" id="sp-q" data-sp="q" placeholder="' + esc(t('sp.calcs.search')) + '" value="' + esc(ui.f.q) + '">' +
         '<select data-sp="contract">' + opt('', t('sp.calcs.allContracts'), ui.f.contract) + (ui.contracts || []).map((c) => opt(c.id, c.data.name || '—', ui.f.contract)).join('') + opt('-', t('sp.calcs.noContract'), ui.f.contract) + '</select>' +
         '<select data-sp="month">' + opt('', t('sp.calcs.allMonths'), ui.f.month) + months.map((p) => opt(p, monthName(p), ui.f.month)).join('') + '</select>' +
